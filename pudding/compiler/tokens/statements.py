@@ -3,12 +3,12 @@
 import re
 from typing import Self, TypeVar
 
-from .datatypes import Data, Or, String, Varname
+from ..datatypes import Data, Or, String, Varname
 
-from ..processor import PAction
-from ..processor.context import Context
+from ...processor import PAction
+from ...processor.context import Context
 from .token import Token
-from .util import EXP_VAR
+from ..util import EXP_VAR
 
 _T = TypeVar("_T", bound=tuple)
 

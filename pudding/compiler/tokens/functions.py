@@ -3,14 +3,14 @@
 import re
 from typing import NoReturn, Self, TypeVar
 
-from .datatypes import Regex, String, Varname
+from ..datatypes import Regex, String, Varname
 
-from ..processor import PAction
-from ..processor.context import Context
-from ..processor.triggers import Timing, Trigger, TriggerQueue
-from ..writer.xml import Xml
+from ...processor import PAction
+from ...processor.context import Context
+from ...processor.triggers import Timing, Trigger, TriggerQueue
+from ...writer.xml import Xml
 from .token import Token
-from .util import EXP_VAR, STRING_VAR_RE
+from ..util import EXP_VAR, STRING_VAR_RE
 
 OPTIONAL_STRING = rf"(?:\, *({String.regex}))?"
 _D = TypeVar("_D")

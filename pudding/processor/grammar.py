@@ -1,6 +1,6 @@
 """Module for Grammar class."""
 
-from ..compiler.token import Token
+from ..compiler.tokens.token import Token
 
 type SyntaxList = list[Token | tuple[Token, SyntaxList]]
 

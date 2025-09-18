@@ -4,7 +4,7 @@ from re import Pattern
 from types import UnionType
 from typing import Any, Self, TypeVar
 
-from .datatypes import Data, string_to_datatype
+from ..datatypes import Data, string_to_datatype
 
 _D = TypeVar("_D")
 _T = TypeVar("_T", bound=tuple)

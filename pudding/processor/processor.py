@@ -2,9 +2,9 @@
 
 from ..compiler.compiler import Syntax, TokenList
 from ..compiler.datatypes import Data
-from ..compiler.functions import Add, Enter, GrammarCall, Open
-from ..compiler.statements import Define, Import
-from ..compiler.token import Token
+from ..compiler.tokens.functions import Add, Enter, GrammarCall, Open
+from ..compiler.tokens.statements import Define, Import
+from ..compiler.tokens.token import Token
 from ..reader.reader import Reader
 from ..writer.writer import Writer
 from . import PAction

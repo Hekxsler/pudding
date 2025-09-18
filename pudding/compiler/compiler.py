@@ -3,10 +3,10 @@
 from collections.abc import Sequence
 import logging
 
-from .functions import FUNCTIONS
+from .tokens.functions import FUNCTIONS
 from ..processor.grammar import Grammar, SyntaxList
-from .statements import STATEMENTS, Define, Grammar as GrammarStmt, Import
-from .token import Token
+from .tokens.statements import STATEMENTS, Define, Grammar as GrammarStmt, Import
+from .tokens.token import Token
 from .util import INDENTATION_RE
 
 COMMENT_CHAR = "#"
