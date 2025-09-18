@@ -1,0 +1,63 @@
+"""Main script."""
+
+import argparse
+import datetime
+import logging
+import os
+
+from argparse import ArgumentError
+from pudding import convert_files
+
+DESCRIPTION = """
+Pudding converts text to a structured format, such as XML, JSON or YAML.
+"""
+parser = argparse.ArgumentParser(description=DESCRIPTION)
+parser.add_argument("filename", help="The file or files to convert.", nargs="+")
+parser.add_argument(
+    "-s",
+    "--syntax",
+    default=None,
+    help="The file containing the syntax for parsing the input.",
+    metavar="FILE",
+    required=True,
+)
+parser.add_argument(
+    "-f",
+    "--format",
+    choices=["xml", "json", "yaml", "none"],
+    default="xml",
+    help="The output format.",
+    metavar="FORMAT",
+)
+parser.add_argument(
+    "--debug", default=0, help="Print debug info.", metavar="NUM", type=int
+)
+LOG_LEVEL = logging.INFO
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    if args.debug:
+        LOG_LEVEL = logging.DEBUG
+    logging.basicConfig(
+        format="[%(asctime)s] %(levelname)s: %(message)s",
+        datefmt="%Y-%m-%d %I:%M:%S",
+        level=LOG_LEVEL,
+    )
+    logger = logging.getLogger(__name__)
+
+    if not os.path.exists(args.syntax):
+        raise ArgumentError(None, f"no such file or directory: {repr(args.syntax)}")
+    if not os.path.isfile(args.syntax):
+        raise ArgumentError(None, f"not a valid input file: {repr(args.syntax)}")
+
+    start = datetime.datetime.now()
+    outs = []
+    for f in args.filename:
+        if not os.path.exists(f):
+            raise ArgumentError(None, f"no such file or directory: {repr(f)}")
+        if not os.path.isfile(f):
+            raise ArgumentError(None, f"not a valid input file: {repr(f)}")
+        path, ext = os.path.splitext(f)
+        outs.append(f"{path}.{args.format.lower()}")
+    convert_files(args.syntax, args.filename, outs, args.format)
+    logging.debug("Total: %s", str(datetime.datetime.now() - start))

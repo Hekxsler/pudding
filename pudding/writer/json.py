@@ -1,0 +1,185 @@
+"""Module defining json writer class."""
+
+import json
+
+from .writer import Writer
+
+type JsonType = dict[str, JsonType | list[JsonType] | str]
+
+
+def _to_json(attribs: dict[str, str], text: str | None = None) -> JsonType:
+    """Create a json type objects from attributes and text.
+
+    :param attribs: Attributes of the json object.
+    :param text: Text of the object or None if it has no text.
+    :returns: The JsonType object.
+    """
+    elem: JsonType = {}
+    for k, v in attribs.items():
+        elem[f"@{k}"] = v
+    if text is not None:
+        elem["#text"] = text
+    return elem
+
+
+def _filter_attr(elems: list[JsonType], attribs: dict[str, str]) -> JsonType | None:
+    """Filter a list of json objects by attributes and return the first matching.
+    To match a object must have the exact same attributes.
+
+    :param elems: The list to filter.
+    :param attribs: Attributes to filter by.
+    :returns: The object or None if none matched.
+    """
+    for elem in elems:
+        found = True
+        for k, v in elem.items():
+            if not k.startswith("@"):
+                continue
+            k = k.lstrip("@")
+            if not v == attribs.get(k):
+                found = False
+                break
+        if found:
+            return elem
+    return None
+
+
+class Json(Writer):
+    """Writer class for json output."""
+
+    tree: JsonType = {}
+    prev_roots: list[dict] = []
+
+    def __init__(self) -> None:
+        self.root = self.tree
+        super().__init__()
+
+    def _get_element(self, path: str) -> JsonType:
+        """Return the element at the given path."""
+        elem = self.root
+        for sub_path in self._split_path(path):
+            tag, attribs = self._parse_node(sub_path[0])
+            elements = elem.get(tag)
+            if elements is None or isinstance(elements, str):
+                raise ValueError(f"Element at path {path} does not exist")
+            if isinstance(elements, dict):
+                elements = [elements]
+            elem = _filter_attr(elements, attribs)
+            if not elem:
+                raise ValueError(f"Element at path {path} does not exist")
+        return elem
+
+    def _get_or_create_element(self, path: str) -> JsonType:
+        """Return the element at the given path."""
+        elem = self.root
+        for sub_path in self._split_path(path):
+            if isinstance(elem, (str, list)):
+                raise ValueError(f"Invalid path {path}.")
+            tag, attribs = self._parse_node(sub_path[0])
+            elements = elem.get(tag)
+            if isinstance(elements, str):
+                raise ValueError(f"Invalid path {path}.")
+            if elements is None:
+                elem[tag] = _to_json(attribs)
+                elem = elem[tag]
+                continue
+            if isinstance(elements, dict):
+                elements = [elements]
+            # if is list of elements
+            sub_elem = _filter_attr(elements, attribs)
+            if sub_elem is not None:
+                elem = sub_elem
+                continue
+            elements.append(_to_json(attribs))
+            elem[tag] = elements
+            elem = attribs
+        return elem
+
+    def add_attribute(self, path: str, name: str, value: str) -> None:
+        """Add an attribute to an element.
+
+        :param path: Path of the element.
+        :param name: Name of the attribute.
+        :param value: Value of the attribute."""
+        self._get_element(path)[f"@{name}"] = value
+
+    def create_element(self, path: str, value: str | None = None) -> JsonType:
+        """Add an element to the current node.
+
+        :param path: Path of the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        parent = "".join([path[0] for path in self._split_path(path)[:-1]])
+        elem = self._get_or_create_element(parent)
+        tag, attribs = self._parse_node(self._split_path(path)[-1][0])
+        new = _to_json(attribs, value)
+        childs = elem.get(tag)
+        if childs is None:
+            childs = new
+        elif isinstance(childs, dict):
+            childs = [childs, new]
+        elif isinstance(childs, list):
+            childs.append(new)
+        elem[tag] = childs
+        return new
+
+    def add_element(self, path: str, value: str | None = None) -> JsonType:
+        """Adds an element if it not already exists. Otherwise it appends the string
+        to the already existing element.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        elem = self._get_or_create_element(path)
+        text = elem.get("#text", "")
+        elem["#text"] = f"{text}{value}"
+        return elem
+
+    def enter_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        elem = self._get_or_create_element(path)
+        if value is not None:
+            elem["#text"] = value
+        self.prev_roots.append(self.root)
+        self.root = elem
+
+    def open_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist,
+        but alway create the last node in the path.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        elem = self.create_element(path)
+        self.prev_roots.append(self.root)
+        self.root = elem
+
+    def leave_path(self) -> None:
+        """Set the current root object to the previous one."""
+        self.root = self.prev_roots.pop()
+
+    def delete_element(self, path: str) -> None:
+        """Delete an element.
+
+        :param path: Path of the element.
+        """
+        parent = "".join([path[0] for path in self._split_path(path)[:-1]])
+        elem = self._get_element(parent)
+        elem.pop(self._split_path(path)[-1][2])
+
+    def replace_element(self, path: str, value: str | None = None) -> None:
+        """Replace an element.
+
+        :param path: Path of the element.
+        :param value: Value of the replaced element or None if it has no value.
+        """
+        self.delete_element(path)
+        self.add_element(path, value)
+
+    def generate_output(self) -> str:
+        """Generate output in specified format."""
+        return json.dumps(self.tree, indent=4)
