@@ -14,8 +14,9 @@ requires-python = ">=3.12"
 readme = "README.md"
 license = {text = "MIT"}
 
-[tool.pdm.version]
-source = "scm"
+[build-system]
+requires = ["setuptools", "wheel", "lxml"]
+build-backend = "setuptools.build_meta"
 
 [tool.pdm.dev-dependencies]
 format = [
@@ -61,7 +62,6 @@ mypy = "mypy {args} ."
 legacy_tox_ini = """
     [tox]
     env_list = py3{12}
-    isolated_build = True
 
     [testenv]
     groups = dev
