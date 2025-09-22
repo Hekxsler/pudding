@@ -1,14 +1,17 @@
 """Module defining base writer class."""
 
 import re
+from typing import Any
 
 from . import NODE_ATTRIBUTE_RE, NODE_RE
+
 
 class Writer:
     """Base writer class."""
 
     attrib_re = re.compile(NODE_ATTRIBUTE_RE)
     node_re = re.compile(NODE_RE)
+    root_name: str | None = None
 
     def _split_path(self, path: str) -> list[tuple[str, ...]]:
         """Split the path."""
@@ -20,7 +23,7 @@ class Writer:
         :param path: Path node to parse.
         :returns: Tuple with name as string and attributes as a dict.
         """
-        attributes = {}
+        attributes: dict[str, str] = {}
         path = path.lstrip("./")
         for attribute in self.attrib_re.findall(path):
             attributes[attribute[1]] = attribute[2]
@@ -38,7 +41,7 @@ class Writer:
         :param value: Value of the attribute."""
         raise NotImplementedError
 
-    def create_element(self, path: str, value: str | None = None) -> None:
+    def create_element(self, path: str, value: str | None = None) -> Any:
         """Add an element to the current node.
 
         :param path: Path of the element.
@@ -46,7 +49,7 @@ class Writer:
         """
         raise NotImplementedError
 
-    def add_element(self, path: str, value: str | None = None) -> None:
+    def add_element(self, path: str, value: str | None = None) -> Any:
         """Adds an element if it not already exists. Otherwise it appends the string
         to the already existing element.
 

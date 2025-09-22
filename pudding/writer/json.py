@@ -48,7 +48,7 @@ class Json(Writer):
     """Writer class for json output."""
 
     tree: JsonType = {}
-    prev_roots: list[dict] = []
+    prev_roots: list[JsonType] = []
 
     def __init__(self) -> None:
         self.root = self.tree
@@ -182,4 +182,7 @@ class Json(Writer):
 
     def generate_output(self) -> str:
         """Generate output in specified format."""
-        return json.dumps(self.tree, indent=4)
+        tree = self.tree
+        if self.root_name is not None:
+            tree = tree[self.root_name] = tree
+        return json.dumps(tree, indent=4)

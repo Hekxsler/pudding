@@ -9,7 +9,7 @@ class Xml(Writer):
     """Writer class for xml output."""
 
     prev_roots: list[Element] = []
-    root_name: str = "xml"
+    root_name = "xml"
 
     def __init__(self) -> None:
         self.root = Element(self.root_name)
