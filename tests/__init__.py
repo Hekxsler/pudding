@@ -1,1 +1,1 @@
-"""Test for pudding."""
+"""Tests for pudding."""

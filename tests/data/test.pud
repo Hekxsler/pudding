@@ -1,0 +1,7 @@
+define nl /[\r\n]+/
+define nonl /[^\r\n]/
+
+
+grammar input:
+    match /\w+/ ':' /\s+/ nonl nl:
+        out.add('$0', '$3')
