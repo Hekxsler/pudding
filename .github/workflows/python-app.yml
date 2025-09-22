@@ -24,8 +24,4 @@ jobs:
     - name: Install dependencies
       run: pdm install
     - name: Install dependencies
-      run: |
-        pip install tox tox-pdm --quiet
-        pdm install
-    - name: Run pdm
-      run: tox
+      run: pdm

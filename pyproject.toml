@@ -80,19 +80,6 @@ flake8 = "flake8 {args}"
 pytest = "pytest {args}"
 mypy = "mypy {args} ."
 
-[tool.tox]
-legacy_tox_ini = """
-    [tox]
-    env_list = py3{12}
-
-    [testenv]
-    groups = dev
-    commands =
-        test
-        lint
-        typing
-"""
-
 [tool.black]
 line-length = 88
 
