@@ -3,9 +3,9 @@
 from collections.abc import Sequence
 import logging
 
-from .tokens.functions import FUNCTIONS
 from ..processor.grammar import Grammar, SyntaxList
-from .tokens.statements import STATEMENTS, Define, Grammar as GrammarStmt, Import
+from .tokens import DEFAULT_TOKENS
+from .tokens.statements import Define, Grammar as GrammarStmt, Import
 from .tokens.token import Token
 from .util import INDENTATION_RE
 
@@ -24,11 +24,10 @@ class Compiler:
     def __init__(self, tokens: Sequence[type[Token]] | None = None) -> None:
         """Init of Compiler class.
 
-        :param functions: Functions to check if they exist.
-        :param statements: Statements to check if they exist.
+        :param tokens: Token classes needed to compile. If is None use default tokens.
         """
         if tokens is None:
-            tokens = FUNCTIONS + STATEMENTS
+            tokens = DEFAULT_TOKENS
         self.tokens = tokens
 
     def _parse_indent(self, line: str, lineno: int) -> int:

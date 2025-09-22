@@ -7,7 +7,7 @@ from ..datatypes import Regex, String, Varname
 
 from ...processor import PAction
 from ...processor.context import Context
-from ...processor.triggers import Timing, Trigger, TriggerQueue
+from ...processor.triggers import Timing, Trigger
 from ...writer.xml import Xml
 from .token import Token
 from ..util import EXP_VAR, STRING_VAR_RE
@@ -57,7 +57,7 @@ class Function(Token):
             raise ValueError("No args in function.")
         return cls(lineno, name, args.groups())
 
-    def execute(self, _) -> NoReturn:
+    def execute(self, context: Context) -> PAction | NoReturn:
         """Function executed by the context.
 
         :param context: The current context instance.
@@ -134,7 +134,7 @@ class Do(Function):
 
     value_types = tuple()
 
-    def execute(self, _) -> NoReturn:
+    def execute(self, context: Context) -> PAction | NoReturn:
         """Action for control functions."""
         raise NotImplementedError()
 
@@ -151,7 +151,7 @@ class Out(Function):
     min_args = 1
     max_args = 2
 
-    def execute(self, _) -> NoReturn:
+    def execute(self, context: Context) -> PAction | NoReturn:
         """Action for output generation functions."""
         raise NotImplementedError()
 
@@ -201,7 +201,7 @@ class Next(Do):
     match_re = re.compile(r"(do\.next)\(\)$")
     value_re = re.compile(r"do\.next\(\)")
 
-    def execute(self, _) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for next function."""
         return PAction.CONTINUE
 
@@ -220,7 +220,7 @@ class Return(Do):
     match_re = re.compile(r"(do\.return)\(\)$")
     value_re = re.compile(r"do\.return\(\)")
 
-    def execute(self, _) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for return function."""
         return PAction.EXIT
 
@@ -261,7 +261,7 @@ class Skip(Do):
     match_re = re.compile(r"(do\.skip)\(\)$")
     value_re = re.compile(r"do\.skip\(\)")
 
-    def execute(self, _) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for skip function."""
         return PAction.RESTART
 
@@ -340,9 +340,9 @@ class ClearQueue(Out):
     match_re = re.compile(r"(out\.clear_queue)\(\)$")
     value_re = re.compile(r"out\.clear_queue\(\)")
 
-    def execute(self, queue: TriggerQueue) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for clear_queue function."""
-        queue.clear_triggers()
+        context.queue.clear_triggers()
         return PAction.CONTINUE
 
 
@@ -596,7 +596,7 @@ class GrammarCall(Function):
     value_re = re.compile(rf"{Varname.regex}\(\)")
     value_types = (Varname,)
 
-    def execute(self, _) -> None:
+    def execute(self, context: Context) -> NoReturn:
         """Action for a grammar call."""
         raise NotImplementedError
 

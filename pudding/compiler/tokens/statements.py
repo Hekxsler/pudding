@@ -10,7 +10,8 @@ from ...processor.context import Context
 from .token import Token
 from ..util import EXP_VAR
 
-_T = TypeVar("_T", bound=tuple)
+
+_T = TypeVar("_T", bound=tuple[Data, ...])
 
 #########################
 #      Base classes     #
@@ -41,7 +42,7 @@ class Statement(Token):
             raise ValueError("No values in statement.")
         return cls(lineno, name, values.groups())
 
-    def execute(self, _) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Function for context changing actions."""
         raise NotImplementedError()
 
@@ -91,7 +92,7 @@ class MultiExpStatement(Statement):
             patterns[-1] += rf"({value.value})"
         return patterns
 
-    def execute(self, _) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Function for context changing actions."""
         raise NotImplementedError()
 
@@ -114,7 +115,7 @@ class Import(Statement):
     value_re = re.compile(rf"import ({String.regex})")
     value_types = (String,)
 
-    def execute(self, _) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for import statement."""
         raise SyntaxError(
             f"Import statement not defined at top level in line {self.lineno}"
@@ -134,7 +135,7 @@ class Define(Statement):
     value_re = re.compile(rf"define ({Varname.regex}) *({EXP_VAR})")
     value_types = (Varname, Data)
 
-    def execute(self, _: Context) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for define statement."""
         raise SyntaxError(
             f"Define statement not defined at top level in line {self.lineno}"
@@ -154,7 +155,7 @@ class Grammar(Statement):
     value_re = re.compile(r"grammar (\w+)(?:\((\w+)\))?")
     value_types = (Varname, Varname)
 
-    def execute(self, _: Context) -> PAction:
+    def execute(self, context: Context) -> PAction:
         """Action for grammar statement."""
         raise SyntaxError(f"Grammar not defined at top level in line {self.lineno}")
 

@@ -22,10 +22,6 @@ class Trigger:
         self.match = match
         self.token = token
 
-    def execute(self, *args, **kwargs) -> None:
-        """Trigger execute method of token."""
-        self.token.execute(*args, **kwargs)
-
 
 class TriggerQueue:
     """Queue for triggers."""

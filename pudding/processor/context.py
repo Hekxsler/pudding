@@ -4,7 +4,7 @@ from ..compiler.datatypes import Data, Varname
 from .grammar import Grammar
 from ..reader.reader import Reader
 from ..writer.writer import Writer
-from .triggers import Timing, TriggerQueue
+from .triggers import Timing, Trigger, TriggerQueue
 
 
 class Context:
@@ -44,10 +44,10 @@ class Context:
 
     def trigger(self, timing: Timing) -> None:
         """Trigger a timing."""
-        untriggered = []
+        untriggered: list[Trigger] = []
         for trigger in self.queue.get(timing, []):
             if not self.reader.match(trigger.match):
                 untriggered.append(trigger)
                 continue
-            trigger.execute(self)
+            trigger.token.execute(self)
         self.queue[timing] = untriggered

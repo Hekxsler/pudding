@@ -2,12 +2,15 @@
 
 from re import Pattern
 from types import UnionType
-from typing import Any, Self, TypeVar
+from typing import NoReturn, Self, TypeVar
+
+from pudding.processor import PAction
+from pudding.processor.context import Context
 
 from ..datatypes import Data, string_to_datatype
 
 _D = TypeVar("_D")
-_T = TypeVar("_T", bound=tuple)
+_T = TypeVar("_T", bound=tuple[Data, ...])
 
 
 class Token:
@@ -30,8 +33,6 @@ class Token:
         self.name = name
         converted: list[Data] = []
         for value in values:
-            if value is None:
-                continue
             try:
                 data = string_to_datatype(value)
             except TypeError as e:
@@ -70,7 +71,7 @@ class Token:
         """
         return cls.match_re.search(string) is not None
 
-    def execute(self, _) -> Any:
+    def execute(self, context: Context) -> PAction | NoReturn:
         """Function being executed by context."""
         raise NotImplementedError()
 
