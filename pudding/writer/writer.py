@@ -50,8 +50,9 @@ class Writer:
         raise NotImplementedError
 
     def add_element(self, path: str, value: str | None = None) -> Any:
-        """Adds an element if it not already exists. Otherwise it appends the string
-        to the already existing element.
+        """Adds an element if it not already exists.
+        
+        Otherwise it appends the string to the already existing element.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
@@ -67,8 +68,9 @@ class Writer:
         raise NotImplementedError
 
     def open_path(self, path: str, value: str | None = None) -> None:
-        """Enter a node and create elements in the path if they do not already exist,
-        but always creates the last node.
+        """Enter a node and create elements in the path if they do not already exist.
+        
+        Always creates the last node.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.

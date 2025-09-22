@@ -29,9 +29,18 @@ class TriggerQueue:
     triggers: dict[Timing, list[Trigger]] = {}
 
     def __getitem__(self, key: Timing) -> list[Trigger]:
+        """Get triggers with the given timing.
+        
+        :param key: Timing of the triggers.
+        """
         return self.triggers[key]
 
     def __setitem__(self, key: Timing, value: list[Trigger]) -> None:
+        """Enqueue a list of triggers at a given timing.
+        
+        :param timing: Timing of the triggers.
+        :param value: Triggers to set.
+        """
         self.triggers[key] = value
 
     def add_trigger(self, timing: Timing, trigger: Trigger) -> None:
@@ -45,7 +54,7 @@ class TriggerQueue:
         self.triggers[timing] = triggers
 
     def clear_triggers(self, timing: Timing | None = None) -> None:
-        """Clear a trigger queue or all of them.
+        """Clear a trigger queue.
 
         :param timing: Timing of a queue to clear or none to clear all.
         """
@@ -55,5 +64,9 @@ class TriggerQueue:
             self.triggers = {}
 
     def get(self, timing: Timing, default: _D = None) -> list[Trigger] | _D:
-        """Return list of triggers for a timing."""
+        """Return list of triggers for a timing.
+        
+        :param timing: Timing of the triggers.
+        :param default: Default value if timing is not set.
+        """
         return self.triggers.get(timing, default)

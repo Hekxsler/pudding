@@ -23,10 +23,6 @@ _D = TypeVar("_D")
 class Function(Token):
     """Base class for a function.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
     :var min_args: Minimum amount of arguments.
     :var max_args: Maximum amount of arguments.
     """
@@ -35,6 +31,7 @@ class Function(Token):
     max_args = 0
 
     def __init__(self, lineno: int, name: str, values: tuple[str, ...]) -> None:
+        """Init for Function class."""
         err_msg = f"Expected {self.min_args} but got {len(values)}"
         if len(values) < self.min_args:
             raise SyntaxError(f"Missing arguments in line {lineno}. {err_msg}")
@@ -124,13 +121,7 @@ class Function(Token):
 
 
 class Do(Function):
-    """Base class for control functions.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
-    """
+    """Base class for control functions."""
 
     value_types = tuple()
 
@@ -140,13 +131,7 @@ class Do(Function):
 
 
 class Out(Function):
-    """Base class for output generation functions.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
-    """
+    """Base class for output generation functions."""
 
     min_args = 1
     max_args = 2
@@ -165,12 +150,9 @@ class Out(Function):
 
 class Fail(Do):
     """Class for `do.fail` function.
-    Like do.say(), but immediately terminates with an error.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Immediately terminates parsing with an error. Takes exactly one argument
+    with a string printed to stdout on execution.
     """
 
     min_args = 1
@@ -187,15 +169,11 @@ class Fail(Do):
 
 class Next(Do):
     """Class for `do.next` function.
+
     Skip the current match and continue with the next match statement without jumping
     back to the top of the current grammar block. This function is rarely used and
     probably not what you want. Instead, use do.skip() in almost all cases,
     unless it is for some performance-specific hacks.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
     """
 
     match_re = re.compile(r"(do\.next)\(\)$")
@@ -208,13 +186,9 @@ class Next(Do):
 
 class Return(Do):
     """Class for `do.return` function.
+
     Immediately leave the current grammar block and return to the calling function.
     When used at the top level (i.e. in the input grammar), stop parsing.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
     """
 
     match_re = re.compile(r"(do\.return)\(\)$")
@@ -227,12 +201,8 @@ class Return(Do):
 
 class Say(Do):
     """Class for `do.say` function.
-    Prints the given string to stdout, with additional debug information.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Prints the given string to stdout.
     """
 
     min_args = 1
@@ -250,12 +220,8 @@ class Say(Do):
 
 class Skip(Do):
     """Class for `do.skip` function.
-    Skip the current match and jump back to the top of the current grammar block.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Skips the current match and jump back to the top of the current grammar block.
     """
 
     match_re = re.compile(r"(do\.skip)\(\)$")
@@ -271,13 +237,9 @@ class Skip(Do):
 
 class Add(Out):
     """Class for `out.add` function.
-    Like out.create(), but appends the string to the text of the existing node
-    if it already exists.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Appends the string value to the text of the existing node if it already exists.
+    Otherwise it creates a new node.
     """
 
     match_re = re.compile(rf"(out\.add)\({String.regex}{OPTIONAL_STRING}\)$")
@@ -294,12 +256,8 @@ class Add(Out):
 
 class AddAttribute(Out):
     """Class for `out.add_attribute` function.
-    Adds the attribute with the given name and value to the node with the given path.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Adds the attribute with the given name and value to the node at the given path.
     """
 
     min_args = 3
@@ -325,13 +283,9 @@ class AddAttribute(Out):
 
 class ClearQueue(Out):
     """Class for `out.clear_queue` function.
+
     Removes any items from the queue that were previously queued
     using the out.enqueue_*() functions.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
     """
 
     min_args = 0
@@ -348,16 +302,12 @@ class ClearQueue(Out):
 
 class Create(Out):
     """Class for `out.create` function.
+
     Creates the leaf node (and attributes) in the given path, regardless of whether or
     not it already exists. In other words, using this function twice will lead to
     duplicates. If the given path contains multiple elements, the parent nodes are only
     created if they do not yet exist. If the second argument is given, the new node is
     also assigned the string as data.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
     """
 
     match_re = re.compile(rf"(out\.create)\({String.regex}{OPTIONAL_STRING}\)$")
@@ -375,13 +325,10 @@ class Create(Out):
 
 class Enter(Out):
     """Class for `out.enter` function.
-    Like out.open(), but only creates the nodes in the given path
-    if they do not already exist.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Creates the nodes in the given path if they do not already exist and
+    selects the last node. Therefore the PATH of all subsequent function calls is
+    relative to the selected node until the end of the match block is reached.
     """
 
     match_re = re.compile(rf"(out\.enter)\({String.regex}{OPTIONAL_STRING}\)$")
@@ -399,13 +346,9 @@ class Enter(Out):
 
 class EnqueueAfter(Out):
     """Class for `out.enqueue_after` function.
-    Like out.enqueue_before(), but is executed after the given regular expression
-    matches the input and the next match statement was processed.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Like out.add(), but is executed after the given regular expression
+    matches the input and the next match statement was processed.
     """
 
     min_args = 2
@@ -436,14 +379,9 @@ class EnqueueAfter(Out):
 
 class EnqueueBefore(Out):
     """Class for `out.enqueue_before` function.
-    Like out.add(), but is not immediately executed. Instead, it is executed as soon as
-    the given regular expression matches the input, regardless of the grammar in which
-    the match occurs.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Like out.add(), but is executed as soon as the given regular expression
+    matches the input, regardless of the grammar in which the match occurs.
     """
 
     min_args = 2
@@ -474,13 +412,9 @@ class EnqueueBefore(Out):
 
 class EnqueueOnAdd(Out):
     """Class for `out.enqueue_on_add` function.
-    Like out.enqueue_before(), but is executed after the given regular expression
-    matches the input and the next node is added to the output.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Like out.add(), but is executed after the given regular expression
+    matches the input and the next node is added to the output.
     """
 
     min_args = 2
@@ -511,14 +445,10 @@ class EnqueueOnAdd(Out):
 
 class Open(Out):
     """Class for `out.open` function.
+
     Like out.create(), but also selects the addressed node, such that the PATH of all
     subsequent function calls is relative to the selected node until the end of the
     match block is reached.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
     """
 
     match_re = re.compile(rf"(out\.open)\({String.regex}{OPTIONAL_STRING}\)$")
@@ -533,14 +463,26 @@ class Open(Out):
         return PAction.CONTINUE
 
 
+class Remove(Out):
+    """Class for `out.remove` function.
+
+    Deletes the last node in the given path.
+    """
+
+    match_re = re.compile(rf"(out\.remove)\({String.regex}\)$")
+    value_re = re.compile(rf"out\.remove\(({String.regex})\)")
+    value_types = (String, String)
+
+    def execute(self, context: Context) -> PAction:
+        """Action for remove function."""
+        context.writer.delete_element(self.get_replaced_string(0, context))
+        return PAction.CONTINUE
+
+
 class Replace(Out):
     """Class for `out.replace` function.
-    Like out.create(), but replaces the nodes in the given path if they already exist.
 
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
+    Replaces the text of the last node in the given path.
     """
 
     match_re = re.compile(rf"(out\.replace)\({String.regex}{OPTIONAL_STRING}\)$")
@@ -556,13 +498,7 @@ class Replace(Out):
 
 
 class SetRootName(Out):
-    """Class for `out.set_root_name` function.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `out.set_root_name` function."""
 
     max_args = 1
 
@@ -581,13 +517,7 @@ class SetRootName(Out):
 
 
 class GrammarCall(Function):
-    """Class for a grammar call.
-
-    :var match_re: Regex matching the function in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the arguments in the function match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for a grammar call."""
 
     min_args = 0
     max_args = 0

@@ -11,14 +11,17 @@ class Data:
     value: str
 
     def __init__(self, value: str) -> None:
+        """Init for Data class."""
         if not self.compile_re().fullmatch(value):
             raise TypeError(f"Value is not of datatype {self.__class__.__name__}")
         self.value = value
 
     def __str__(self) -> str:
+        """Value as a string."""
         return self.value
 
     def __repr__(self) -> str:
+        """String representation of a Data object."""
         return f"<{self.__class__.__name__} value={repr(self.value)}>"
 
     @classmethod
@@ -44,6 +47,7 @@ class String(Data):
     regex = r"\'(?:\\\'|[^\'])+\'"
 
     def __init__(self, value: str) -> None:
+        """Init for String class."""
         super().__init__(value)
         self.value = value[1:-1]
 
@@ -54,6 +58,7 @@ class Regex(Data):
     regex = r"\/(?:\\\/|[^\/])+\/"
 
     def __init__(self, value: str) -> None:
+        """Init for Regex class."""
         super().__init__(value)
         self.value = value[1:-1]
 

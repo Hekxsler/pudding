@@ -16,11 +16,13 @@ _T = TypeVar("_T", bound=tuple[Data, ...])
 class Token:
     """Base class for tokens.
 
+    :var lineno: Line number of this token in the syntax file.
     :var match_re: Regex matching the token in a string.
     :vartype match_re: Pattern[str]
     :var value_re: Regex matching the user set values of this token.
-    :vartype match_re: Pattern[str]
-    :var lineno: Line number of this token in the syntax file.
+    :vartype value_re: Pattern[str]
+    :var value_types: Data types defining the type of the user set values.
+    :vartype value_types: tuple[type | UnionType, ...]
     """
 
     match_re: Pattern[str]

@@ -24,7 +24,8 @@ def _to_json(attribs: dict[str, str], text: str | None = None) -> JsonType:
 
 def _filter_attr(elems: list[JsonType], attribs: dict[str, str]) -> JsonType | None:
     """Filter a list of json objects by attributes and return the first matching.
-    To match a object must have the exact same attributes.
+
+    An object must have the exact same attributes.
 
     :param elems: The list to filter.
     :param attribs: Attributes to filter by.
@@ -51,6 +52,7 @@ class Json(Writer):
     prev_roots: list[JsonType] = []
 
     def __init__(self) -> None:
+        """Init for Json writer class."""
         self.root = self.tree
         super().__init__()
 
@@ -100,7 +102,8 @@ class Json(Writer):
 
         :param path: Path of the element.
         :param name: Name of the attribute.
-        :param value: Value of the attribute."""
+        :param value: Value of the attribute.
+        """
         self._get_element(path)[f"@{name}"] = value
 
     def create_element(self, path: str, value: str | None = None) -> JsonType:
@@ -124,8 +127,9 @@ class Json(Writer):
         return new
 
     def add_element(self, path: str, value: str | None = None) -> JsonType:
-        """Adds an element if it not already exists. Otherwise it appends the string
-        to the already existing element.
+        """Adds an element if it not already exists.
+         
+        Otherwise it appends the string to the already existing element.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
@@ -148,8 +152,9 @@ class Json(Writer):
         self.root = elem
 
     def open_path(self, path: str, value: str | None = None) -> None:
-        """Enter a node and create elements in the path if they do not already exist,
-        but alway create the last node in the path.
+        """Enter a node and create elements in the path if they do not already exist.
+         
+        Always creates the last node.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
@@ -177,8 +182,9 @@ class Json(Writer):
         :param path: Path of the element.
         :param value: Value of the replaced element or None if it has no value.
         """
-        self.delete_element(path)
-        self.add_element(path, value)
+        parent = "".join([path[0] for path in self._split_path(path)[:-1]])
+        elem = self._get_element(parent)
+        elem["#text"] = value
 
     def generate_output(self) -> str:
         """Generate output in specified format."""

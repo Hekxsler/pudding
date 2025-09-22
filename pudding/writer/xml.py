@@ -12,13 +12,14 @@ class Xml(Writer):
     root_name = "xml"
 
     def __init__(self) -> None:
+        """Init for Xml writer class."""
         self.root = Element(self.root_name)
         self.tree = ElementTree(self.root)
         super().__init__()
 
     def _find(self, elem: Element, path: str) -> Element | None:
         """Find first matching element at path.
-        
+
         :param elem: Element to search from.
         :param path: Path to another element.
         :returns: The first element found or none if it does not exist.
@@ -88,12 +89,13 @@ class Xml(Writer):
 
         :param path: Path of the element.
         :param name: Name of the attribute.
-        :param value: Value of the attribute."""
+        :param value: Value of the attribute.
+        """
         elem = self._get_element(path)
         elem.set(name, value)
 
     def create_element(self, path: str, value: str | None = None) -> Element:
-        """Add an element at the given path and always create the last element in the path.
+        """Add an element and always create the last element in the path.
 
         :param path: Path of the element.
         :param value: Value of the element or None if it has no value.
@@ -113,8 +115,9 @@ class Xml(Writer):
         return new
 
     def add_element(self, path: str, value: str | None = None) -> Element:
-        """Adds an element if it not already exists. Otherwise it appends the string
-        to the already existing element.
+        """Adds an element if it not already exists.
+        
+        Otherwise it appends the string to the already existing element.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
@@ -139,8 +142,9 @@ class Xml(Writer):
         self.root = elem
 
     def open_path(self, path: str, value: str | None = None) -> None:
-        """Enter a node and create elements in the path if they do not already exist,
-        but alway create the last node in the path.
+        """Enter a node and create elements in the path if they do not already exist.
+
+        Always creates the last node.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
@@ -170,8 +174,8 @@ class Xml(Writer):
         :param path: Path of the element.
         :param value: Value of the replaced element or None if it has no value.
         """
-        self.delete_element(path)
-        self.add_element(path, value)
+        elem = self._get_element(path)
+        elem.text = value
 
     def generate_output(self) -> str:
         """Generate output in specified format."""

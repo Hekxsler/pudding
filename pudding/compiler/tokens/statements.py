@@ -19,13 +19,7 @@ _T = TypeVar("_T", bound=tuple[Data, ...])
 
 
 class Statement(Token):
-    """Base class for a statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Base class for a statement."""
 
     @classmethod
     def from_string(cls, string: str, lineno: int) -> Self:
@@ -48,13 +42,7 @@ class Statement(Token):
 
 
 class MultiExpStatement(Statement):
-    """Base class for a statement with multiple but unknown amount of expressions.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Base class for a statement with multiple expressions."""
 
     value_types = (Data,)
 
@@ -70,6 +58,7 @@ class MultiExpStatement(Statement):
 
     @classmethod
     def from_string(cls, string: str, lineno: int) -> Self:
+        """Parse a string into a MultiExpStatement object."""
         statement = cls.match_re.search(string)
         if not statement:
             raise ValueError("Statement not in given string.")
@@ -103,13 +92,7 @@ class MultiExpStatement(Statement):
 
 
 class Import(Statement):
-    """Class for `import` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `import` statement."""
 
     match_re = re.compile(rf"(import) {String.regex}$")
     value_re = re.compile(rf"import ({String.regex})")
@@ -123,13 +106,7 @@ class Import(Statement):
 
 
 class Define(Statement):
-    """Class for `define` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `define` statement."""
 
     match_re = re.compile(rf"(define) {Varname.regex} *{EXP_VAR}$")
     value_re = re.compile(rf"define ({Varname.regex}) *({EXP_VAR})")
@@ -143,13 +120,7 @@ class Define(Statement):
 
 
 class Grammar(Statement):
-    """Class for `grammar` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `grammar` statement."""
 
     match_re = re.compile(r"(grammar) \w+(?:\(\w+\))?\:$")
     value_re = re.compile(r"grammar (\w+)(?:\((\w+)\))?")
@@ -161,13 +132,7 @@ class Grammar(Statement):
 
 
 class IMatch(MultiExpStatement):
-    """Class for `imatch` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `imatch` statement."""
 
     match_re = re.compile(rf"(imatch)(?: {EXP_VAR})+\:$")
     value_re = re.compile(rf"imatch((?: {EXP_VAR})+)")
@@ -182,13 +147,7 @@ class IMatch(MultiExpStatement):
 
 
 class Match(MultiExpStatement):
-    """Class for `match` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `match` statement."""
 
     match_re = re.compile(rf"(match)(?: {EXP_VAR})+\:$")
     value_re = re.compile(rf"match((?: {EXP_VAR})+)")
@@ -203,26 +162,14 @@ class Match(MultiExpStatement):
 
 
 class Skip(Match):
-    """Class for `skip` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `skip` statement."""
 
     match_re = re.compile(rf"(skip)(?: {EXP_VAR})+$")
     value_re = re.compile(rf"skip((?: {EXP_VAR})+)")
 
 
 class When(MultiExpStatement):
-    """Class for `when` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `when` statement."""
 
     match_re = re.compile(rf"(when)(?: {EXP_VAR})+\:$")
     value_re = re.compile(rf"when((?: {EXP_VAR})+)")
@@ -237,13 +184,7 @@ class When(MultiExpStatement):
 
 
 class IWhen(MultiExpStatement):
-    """Class for `iwhen` statement.
-
-    :var match_re: Regex matching the statement in a string.
-    :vartype match_re: Pattern[str]
-    :var value_re: Regex matching the user set values in the statement match.
-    :vartype value_re: Pattern[str]
-    """
+    """Class for `iwhen` statement."""
 
     match_re = re.compile(rf"(iwhen)(?: {EXP_VAR})+\:$")
     value_re = re.compile(rf"iwhen((?: {EXP_VAR})+)")

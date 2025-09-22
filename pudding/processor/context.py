@@ -1,4 +1,4 @@
-"""Module defining context class"""
+"""Module defining context class."""
 
 from ..compiler.datatypes import Data, Varname
 from .grammar import Grammar
@@ -15,6 +15,7 @@ class Context:
     variables: dict[str, Data] = {}
 
     def __init__(self, content: str, writer_cls: type[Writer]) -> None:
+        """Init for Context class."""
         self.reader = Reader(content)
         self.writer = writer_cls()
 
