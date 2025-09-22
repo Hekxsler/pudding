@@ -116,7 +116,7 @@ class Xml(Writer):
 
     def add_element(self, path: str, value: str | None = None) -> Element:
         """Adds an element if it not already exists.
-        
+
         Otherwise it appends the string to the already existing element.
 
         :param path: Path to the element.

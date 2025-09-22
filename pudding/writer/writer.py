@@ -38,7 +38,8 @@ class Writer:
 
         :param path: Path of the element.
         :param name: Name of the attribute.
-        :param value: Value of the attribute."""
+        :param value: Value of the attribute.
+        """
         raise NotImplementedError
 
     def create_element(self, path: str, value: str | None = None) -> Any:
@@ -51,7 +52,7 @@ class Writer:
 
     def add_element(self, path: str, value: str | None = None) -> Any:
         """Adds an element if it not already exists.
-        
+
         Otherwise it appends the string to the already existing element.
 
         :param path: Path to the element.
@@ -69,7 +70,7 @@ class Writer:
 
     def open_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path if they do not already exist.
-        
+
         Always creates the last node.
 
         :param path: Path to the element.

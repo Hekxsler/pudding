@@ -30,14 +30,14 @@ class TriggerQueue:
 
     def __getitem__(self, key: Timing) -> list[Trigger]:
         """Get triggers with the given timing.
-        
+
         :param key: Timing of the triggers.
         """
         return self.triggers[key]
 
     def __setitem__(self, key: Timing, value: list[Trigger]) -> None:
         """Enqueue a list of triggers at a given timing.
-        
+
         :param timing: Timing of the triggers.
         :param value: Triggers to set.
         """
@@ -65,7 +65,7 @@ class TriggerQueue:
 
     def get(self, timing: Timing, default: _D = None) -> list[Trigger] | _D:
         """Return list of triggers for a timing.
-        
+
         :param timing: Timing of the triggers.
         :param default: Default value if timing is not set.
         """
