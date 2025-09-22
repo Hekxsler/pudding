@@ -1,22 +1,44 @@
+[build-system]
+requires = ["setuptools >= 77.0.3", "wheel", "lxml"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "pudding"
-version = "0.0.1"
+dynamic = ["version"]
 description = "Pudding converts text to a structured format, such as XML, JSON or YAML."
 authors = [
     {name = "Moritz Hille", email = "moritz.hekxsler@gmail.com"},
 ]
 dependencies = [
     "argparse",
+    "lxml",
     "pyyaml",
-    "lxml"
 ]
 requires-python = ">=3.12"
 readme = "README.md"
-license = {text = "MIT"}
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+keywords = ["parser", "converter", "text", "xml", "yaml", "json"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: File Formats",
+  "Topic :: Text Processing",
+  "Topic :: Utilities"
+]
 
-[build-system]
-requires = ["setuptools", "wheel", "lxml"]
-build-backend = "setuptools.build_meta"
+[project.scripts]
+pud = "pud:main"
+
+[project.urls]
+Homepage = "https://github.com/Hekxsler/pudding"
+Issues = "https://github.com/Hekxsler/pudding/issues"
+
+[tool.setuptools.dynamic]
+version = {attr = "pudding.__version__"}
+
+
 
 [tool.pdm.dev-dependencies]
 format = [
@@ -70,13 +92,6 @@ legacy_tox_ini = """
         lint
         typing
 """
-
-[tool.pytest.ini_options]
-env = [
-    "SCRIPTS_LOG=/tmp/pytest",
-    "SCRIPTS_GROUP=developers",
-    "TACACS_USER_FILE=/tmp/pytest_tempfile.txt",
-]
 
 [tool.black]
 line-length = 88
