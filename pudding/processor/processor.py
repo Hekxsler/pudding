@@ -1,6 +1,6 @@
 """Module defining processor class."""
 
-from ..compiler.compiler import Syntax, TokenList
+from ..compiler.compiler import Syntax
 from ..compiler.datatypes import Data
 from ..compiler.tokens.functions import Add, Enter, GrammarCall, Open
 from ..compiler.tokens.statements import Define, Import
@@ -9,7 +9,7 @@ from ..reader.reader import Reader
 from ..writer.writer import Writer
 from . import PAction
 from .context import Context
-from .grammar import Grammar
+from .grammar import Grammar, TokenList
 from .triggers import Timing
 
 

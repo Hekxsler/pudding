@@ -63,7 +63,9 @@ class TriggerQueue:
         else:
             self.triggers = {}
 
-    def get(self, timing: Timing, default: _D | None = None) -> list[Trigger] | _D | None:
+    def get(
+        self, timing: Timing, default: _D | None = None
+    ) -> list[Trigger] | _D | None:
         """Return list of triggers for a timing.
 
         :param timing: Timing of the triggers.
