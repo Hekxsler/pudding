@@ -91,7 +91,7 @@ class Token:
         """
         raise NotImplementedError()
 
-    def get_value(self, index: int, default: _D = None) -> _D | Data:
+    def get_value(self, index: int, default: _D | None = None) -> _D | None | Data:
         """Get a value.
 
         :param index: Index of the value in values tuple.
