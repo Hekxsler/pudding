@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 import logging
 
-from ..processor.grammar import Grammar, SyntaxList
+from ..processor.grammar import Grammar, TokenList
 from .tokens import DEFAULT_TOKENS
 from .tokens.statements import Define, Grammar as GrammarStmt, Import
 from .tokens.token import Token
@@ -14,7 +14,6 @@ INDENT_SPACES = 4
 
 logger = logging.getLogger(__name__)
 
-type TokenList = list[Token | tuple[Token, TokenList]]
 type Syntax = list[Define | Import | Grammar]
 
 
@@ -88,7 +87,7 @@ class Compiler:
         """
 
         def create_grammar(
-            token: GrammarStmt, sub_tokens: SyntaxList, inherits: str = ""
+            token: GrammarStmt, sub_tokens: TokenList, inherits: str = ""
         ) -> Grammar:
             """Create a grammar object from a token.
 
@@ -102,7 +101,7 @@ class Compiler:
             return Grammar(token.lineno, token.values[0].value, sub_tokens, inherits)
 
         new_syntax: Syntax = []
-        sub_tokens = []
+        sub_tokens: TokenList = []
         for token in syntax:
             if isinstance(token, tuple):
                 token, sub_tokens = token

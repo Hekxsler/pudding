@@ -2,7 +2,7 @@
 
 from ..compiler.tokens.token import Token
 
-type SyntaxList = list[Token | tuple[Token, SyntaxList]]
+type TokenList = list[Token | tuple[Token, TokenList]]
 
 
 class Grammar:
@@ -12,7 +12,7 @@ class Grammar:
         self,
         lineno: int,
         name: str,
-        tokens: SyntaxList,
+        tokens: TokenList,
         inherits: str | None = None,
     ) -> None:
         """Init of Grammar."""
