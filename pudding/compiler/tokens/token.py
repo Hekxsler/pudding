@@ -2,10 +2,9 @@
 
 from re import Pattern
 from types import UnionType
-from typing import NoReturn, Self, TypeVar
+from typing import Any, NoReturn, Self, TypeVar
 
 from pudding.processor import PAction
-from pudding.processor.context import Context
 
 from ..datatypes import Data, string_to_datatype
 
@@ -30,7 +29,12 @@ class Token:
     value_types: tuple[type | UnionType, ...]
 
     def __init__(self, lineno: int, name: str, values: tuple[str, ...]) -> None:
-        """Init function."""
+        """Init function for Token class.
+        
+        :param lineno: Line number.
+        :param name: Name of this token.
+        :param values: Tuple with string values of this token.
+        """
         self.lineno = lineno
         self.name = name
         converted: list[Data] = []
@@ -45,7 +49,12 @@ class Token:
         self.values = self._check_value_types(tuple(converted))
 
     def _check_value_types(self, values: _T) -> _T:
-        """Check if values are of the correct type."""
+        """Check if values are of the correct type.
+        
+        :param values: Tuple with values to check.
+        :returns: The given tuple.
+        :raises TypeError: If value is not the correct data type.
+        """
         for value, _type in zip(values, self.value_types):
             if isinstance(value, _type):
                 continue
@@ -62,6 +71,7 @@ class Token:
         """Create Function object from string.
 
         :param string: String containing the function.
+        :param lineno: Line number of the token.
         """
         raise NotImplementedError()
 
@@ -73,12 +83,21 @@ class Token:
         """
         return cls.match_re.search(string) is not None
 
-    def execute(self, context: Context) -> PAction | NoReturn:
-        """Function being executed by context."""
+    def execute(self, context: Any) -> PAction | NoReturn:
+        """Execution function of this token.
+        
+        :param context: Context object.
+        :type context: Context
+        """
         raise NotImplementedError()
 
     def get_value(self, index: int, default: _D = None) -> _D | Data:
-        """Return a value from values."""
-        if index < len(self.values):
+        """Get a value.
+        
+        :param index: Index of the value in values tuple.
+        :param default: Default value.
+        :returns: The value at index or the default value if index is invalid.
+        """
+        if 0 < index < len(self.values):
             return self.values[index]
         return default
