@@ -12,9 +12,9 @@ def _same_file(file_1: str, file_2: str) -> bool:
 
 def test_convert_file() -> None:
     """Test convert_file function."""
-    convert_file("data/test.pud", "data/input.txt", "data/result.json", "json")
-    assert _same_file("data/result.json", "data/expected.json")
-    convert_file("data/test.pud", "data/input.txt", "data/result.xml", "xml")
-    assert _same_file("data/result.xml", "data/expected.xml")
-    convert_file("data/test.pud", "data/input.txt", "data/result.yaml", "yaml")
-    assert _same_file("data/result.yaml", "data/expected.yaml")
+    convert_file("./data/test.pud", "./data/input.txt", "./data/result.json", "json")
+    assert _same_file("./data/result.json", "./data/expected.json")
+    convert_file("./data/test.pud", "./data/input.txt", "./data/result.xml", "xml")
+    assert _same_file("./data/result.xml", "./data/expected.xml")
+    convert_file("./data/test.pud", "./data/input.txt", "./data/result.yaml", "yaml")
+    assert _same_file("./data/result.yaml", "./data/expected.yaml")
