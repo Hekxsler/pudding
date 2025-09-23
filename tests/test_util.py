@@ -10,7 +10,7 @@ def _same_file(file_1: str, file_2: str) -> bool:
     return content_1 == content_2
 
 
-def test_convert_file():
+def test_convert_file() -> None:
     """Test convert_file function."""
     convert_file("data/test.pud", "data/input.txt", "data/result.json", "json")
     assert _same_file("data/result.json", "data/expected.json")

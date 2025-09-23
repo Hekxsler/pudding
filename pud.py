@@ -32,7 +32,7 @@ parser.add_argument(
 parser.add_argument("--debug", action="store_true", help="Print debug info.")
 
 
-def main():
+def main() -> None:
     """Script function."""
     args = parser.parse_args()
     log_level = logging.INFO

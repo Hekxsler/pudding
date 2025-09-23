@@ -3,6 +3,8 @@
 import datetime
 import logging
 
+from pudding.writer.writer import Writer
+
 from .compiler.compiler import Compiler
 from .processor.context import Context
 from .processor.processor import Processor
@@ -29,6 +31,7 @@ def convert_files(
     :param output_format: Format of the output.
     :param encoding: Encoding of the input and output files.
     """
+    writer_cls: type[Writer]
     match output_format:
         case "json":
             writer_cls = json.Json
