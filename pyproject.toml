@@ -44,28 +44,29 @@ version = {attr = "pudding.__version__"}
 
 [tool.pdm.dev-dependencies]
 format = [
-    "black>=23.7.0",
-    "isort>=5.0.0",
+    "black",
+    "isort",
 ]
 lint = [
-    "flake8>=4.0.1",
-    "flake8-docstrings>=1.6.0",
-    "Flake8-pyproject>=1.2.3",
-    "mypy>=1.4.1",
-    "types-requests>=2.31.0",
+    "flake8",
+    "flake8-docstrings",
+    "Flake8-pyproject",
+    "mypy",
+    "types-requests",
+    "pip"
 ]
 refactor = [
-    "rope>=1.2.0",
+    "rope",
 ]
 test = [
-    "pytest>=7.1.2",
-    "pytest-env>=0.8.2",
-    "testfixtures>=7.1.0",
+    "pytest",
+    "pytest-env",
+    "testfixtures",
 ]
 tool = [
-    "tox>=4.6.4",
-    "tox-pdm>=0.6.1",
-    "pre-commit>=3.3.3",
+    "tox",
+    "tox-pdm",
+    "pre-commit",
 ]
 
 [tool.pdm.scripts]
