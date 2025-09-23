@@ -4,8 +4,8 @@ from collections.abc import Sequence
 import logging
 
 from ..processor.grammar import Grammar, TokenList
-from .tokens import DEFAULT_TOKENS
-from .tokens.statements import Define, Grammar as GrammarStmt, Import
+from .tokens.functions import FUNCTIONS
+from .tokens.statements import Define, Grammar as GrammarStmt, Import, STATEMENTS
 from .tokens.token import Token
 from .util import INDENTATION_RE
 
@@ -26,7 +26,7 @@ class Compiler:
         :param tokens: Token classes needed to compile. If is None use default tokens.
         """
         if tokens is None:
-            tokens = DEFAULT_TOKENS
+            tokens = FUNCTIONS + STATEMENTS
         self.tokens = tokens
 
     def _parse_indent(self, line: str, lineno: int) -> int:
