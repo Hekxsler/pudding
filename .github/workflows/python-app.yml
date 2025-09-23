@@ -22,14 +22,14 @@ jobs:
     - name: Setup PDM
       uses: pdm-project/setup-pdm@v4
     - name: Install dependencies
-      run: pdm install
+      run: |
+        pdm install
+        pdm pip install types-lxml
     - name: Check linting
       continue-on-error: true
       run: pdm lint
     - name: Check typing
       continue-on-error: true
-      run: |
-        pdm pip install types-lxml
-        pdm typing --install-types --non-interactive
+      run: pdm typing --install-types --non-interactive
     - name: Run tests
       run: pdm test
