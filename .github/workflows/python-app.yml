@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         pdm install
-        mypy --install-types
+        pdm mypy --install-types
     - name: Check linting
       continue-on-error: true
       run: pdm lint

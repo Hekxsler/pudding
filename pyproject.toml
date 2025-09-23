@@ -77,10 +77,10 @@ test = "pytest {args}"
 typing = "mypy {args} ."
 all = {composite = ["isort", "format", "typing", "lint", "test"]}
 # Specific commands for convinience.
-black = "black {args} ."
+black = "black {args}"
 flake8 = "flake8 {args}"
 pytest = "pytest {args}"
-mypy = "mypy {args} ."
+mypy = "mypy {args}"
 
 [tool.black]
 line-length = 88
