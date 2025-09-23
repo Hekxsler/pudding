@@ -2,6 +2,7 @@
 
 from collections.abc import Sequence
 import logging
+from pathlib import Path
 
 from ..processor.grammar import Grammar, TokenList
 from .tokens.functions import FUNCTIONS
@@ -20,13 +21,16 @@ type Syntax = list[Define | Import | Grammar]
 class Compiler:
     """Base Compiler class."""
 
+    source_path: Path
+
     def __init__(self, tokens: Sequence[type[Token]] | None = None) -> None:
         """Init of Compiler class.
 
         :param tokens: Token classes needed to compile. If is None use default tokens.
         """
+        default_tokens: Sequence[type[Token]] = FUNCTIONS + STATEMENTS
         if tokens is None:
-            tokens = FUNCTIONS + STATEMENTS
+            tokens = default_tokens
         self.tokens = tokens
 
     def _parse_indent(self, line: str, lineno: int) -> int:
@@ -114,7 +118,12 @@ class Compiler:
                     importpath = token.values[0].value
                     logger.debug("Importing %s...", importpath)
                     filepath = importpath.replace(".", "/")
-                    new_syntax.extend(self.compile_file(f"{filepath}.pud"))
+                    if hasattr(self, "source_path"):
+                        base_dir = self.source_path.parent
+                    else:
+                        raise ImportError("Can not import without a source file.")
+                    import_file = base_dir / f"{filepath}.pud"
+                    new_syntax.extend(self.compile_file(import_file))
                 case _:
                     raise SyntaxError(
                         f"Invalid statement outside grammar in line {token.lineno}"
@@ -131,12 +140,13 @@ class Compiler:
         logger.debug("Parsed %s lines", lines)
         return self._compile_syntax(syntax)
 
-    def compile_file(self, file: str, encoding: str = "utf-8") -> Syntax:
+    def compile_file(self, file: Path, encoding: str = "utf-8") -> Syntax:
         """Produce executable syntax object from pud file.
 
         :param file: Path of the syntax file.
         :return: Tuple with syntax and last line number.
         """
         logger.debug("Compiling %s", file)
+        self.source_path = file
         content = open(file, "r", encoding=encoding).read()
         return self.compile(content)

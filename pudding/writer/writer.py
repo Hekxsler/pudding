@@ -1,5 +1,6 @@
 """Module defining base writer class."""
 
+from pathlib import Path
 import re
 from typing import Any
 
@@ -105,7 +106,7 @@ class Writer:
         """Print output to stdout."""
         print(self.generate_output())
 
-    def write_to(self, file_path: str, encoding: str = "utf-8") -> None:
+    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
         """Write generated output to file.
 
         :param file_path: Path of the file to write to.
