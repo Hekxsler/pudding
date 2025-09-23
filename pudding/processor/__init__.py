@@ -2,4 +2,10 @@
 
 from enum import Enum
 
-PAction = Enum("ProcessingAction", names="CONTINUE EXIT RESTART")
+
+class PAction(Enum):
+    """Processing action."""
+
+    CONTINUE = 0
+    EXIT = 1
+    RESTART = 2
