@@ -198,4 +198,13 @@ class IWhen(MultiExpStatement):
         return PAction.CONTINUE
 
 
-STATEMENTS: list[type[Statement]] = [Import, Define, Grammar, IMatch, Match, Skip, When]
+STATEMENTS: list[type[Statement]] = [
+    Import,
+    Define,
+    Grammar,
+    IMatch,
+    Match,
+    Skip,
+    IWhen,
+    When,
+]

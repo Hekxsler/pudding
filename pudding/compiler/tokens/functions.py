@@ -546,6 +546,7 @@ FUNCTIONS: list[type[Function]] = [
     EnqueueBefore,
     EnqueueOnAdd,
     Open,
+    Remove,
     Replace,
     SetRootName,
     GrammarCall,
