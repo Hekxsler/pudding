@@ -30,7 +30,7 @@ class Token:
 
     def __init__(self, lineno: int, name: str, values: tuple[str, ...]) -> None:
         """Init function for Token class.
-        
+
         :param lineno: Line number.
         :param name: Name of this token.
         :param values: Tuple with string values of this token.
@@ -50,7 +50,7 @@ class Token:
 
     def _check_value_types(self, values: _T) -> _T:
         """Check if values are of the correct type.
-        
+
         :param values: Tuple with values to check.
         :returns: The given tuple.
         :raises TypeError: If value is not the correct data type.
@@ -85,7 +85,7 @@ class Token:
 
     def execute(self, context: Any) -> PAction | NoReturn:
         """Execution function of this token.
-        
+
         :param context: Context object.
         :type context: Context
         """
@@ -93,7 +93,7 @@ class Token:
 
     def get_value(self, index: int, default: _D = None) -> _D | Data:
         """Get a value.
-        
+
         :param index: Index of the value in values tuple.
         :param default: Default value.
         :returns: The value at index or the default value if index is invalid.
