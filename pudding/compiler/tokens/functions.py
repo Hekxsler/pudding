@@ -105,8 +105,8 @@ class Function(Token):
         return self.replace_string_vars(self.get_string(index), context)
 
     def get_repl_opt_string(
-        self, index: int, context: Context, default: _D = None
-    ) -> str | _D:
+        self, index: int, context: Context, default: _D | None = None
+    ) -> str | _D | None:
         """Get a optional string with replaced variables.
 
         :param index: Index of the string in values.
@@ -364,14 +364,14 @@ class EnqueueAfter(Out):
 
     def execute(self, context: Context) -> PAction:
         """Action for enqueue_after function."""
-        values = (self.get_replaced_string(1, context),)
+        values = [self.get_replaced_string(1, context)]
         if isinstance(self.get_value(2), String):
-            values += (self.get_replaced_string(2, context),)
+            values.append(self.get_replaced_string(2, context))
         context.queue.add_trigger(
             Timing.AFTER,
             Trigger(
                 re.compile(self.values[0].value),
-                Add(self.lineno, "EnqueuedAdd", values),
+                Add(self.lineno, "EnqueuedAdd", tuple(values)),
             ),
         )
         return PAction.CONTINUE
@@ -397,14 +397,14 @@ class EnqueueBefore(Out):
 
     def execute(self, context: Context) -> PAction:
         """Action for enqueue_before function."""
-        values = (self.get_replaced_string(1, context),)
+        values = [self.get_replaced_string(1, context)]
         if isinstance(self.get_value(2), String):
-            values += (self.get_replaced_string(2, context),)
+            values.append(self.get_replaced_string(2, context))
         context.queue.add_trigger(
             Timing.BEFORE,
             Trigger(
                 re.compile(self.values[0].value),
-                Add(self.lineno, "EnqueuedAdd", values),
+                Add(self.lineno, "EnqueuedAdd", tuple(values)),
             ),
         )
         return PAction.CONTINUE
@@ -430,14 +430,14 @@ class EnqueueOnAdd(Out):
 
     def execute(self, context: Context) -> PAction:
         """Action for enqueue_on_add function."""
-        values = (self.get_replaced_string(1, context),)
+        values = [self.get_replaced_string(1, context)]
         if isinstance(self.get_value(2), String):
-            values += (self.get_replaced_string(2, context),)
+            values.append(self.get_replaced_string(2, context))
         context.queue.add_trigger(
             Timing.ON_ADD,
             Trigger(
                 re.compile(self.values[0].value),
-                Add(self.lineno, "EnqueuedAdd", values),
+                Add(self.lineno, "EnqueuedAdd", tuple(values)),
             ),
         )
         return PAction.CONTINUE
