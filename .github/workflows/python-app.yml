@@ -25,9 +25,9 @@ jobs:
       run: pdm install
     - name: Check linting
       continue-on-error: true
-      run: pdm lint --install-types --non-interactive
+      run: pdm lint
     - name: Check typing
       continue-on-error: true
-      run: pdm typing
+      run: pdm typing --install-types --non-interactive
     - name: Run tests
       run: pdm test
