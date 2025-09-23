@@ -22,12 +22,10 @@ jobs:
     - name: Setup PDM
       uses: pdm-project/setup-pdm@v4
     - name: Install dependencies
-      run: |
-        pdm install
-        pdm mypy --install-types --non-interactive
+      run: pdm install
     - name: Check linting
       continue-on-error: true
-      run: pdm lint
+      run: pdm lint --install-types --non-interactive
     - name: Check typing
       continue-on-error: true
       run: pdm typing
