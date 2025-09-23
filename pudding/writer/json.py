@@ -7,6 +7,25 @@ from .writer import Writer
 type JsonType = dict[str, JsonType | list[JsonType] | str]
 
 
+def _add_element(parent: JsonType, tag: str, child: JsonType) -> JsonType:
+    """Add a child element to a parent.
+
+    :param parent: The parent element.
+    :param tag: Tag of the child element.
+    :param child: The child element to add.
+    :returns: The child element.
+    """
+    children = parent.get(tag)
+    if children is None:
+        children = child
+    elif isinstance(children, dict):
+        children = [children, child]
+    elif isinstance(children, list):
+        children.append(child)
+    parent[tag] = children
+    return child
+
+
 def _to_json(attribs: dict[str, str], text: str | None = None) -> JsonType:
     """Create a json type objects from attributes and text.
 
@@ -57,45 +76,47 @@ class Json(Writer):
         super().__init__()
 
     def _get_element(self, path: str) -> JsonType:
-        """Return the element at the given path."""
-        elem = self.root
+        """Return the element at the given path.
+
+        :param path: Pudding path to the element.
+        :returns: The JsonType object.
+        :raises ValueError: If path is invalid.
+        """
+        start_elem = self.root
         for sub_path in self._split_path(path):
             tag, attribs = self._parse_node(sub_path[0])
-            elements = elem.get(tag)
-            if elements is None or isinstance(elements, str):
-                raise ValueError(f"Element at path {path} does not exist")
-            if isinstance(elements, dict):
-                elements = [elements]
-            elem = _filter_attr(elements, attribs)
-            if not elem:
-                raise ValueError(f"Element at path {path} does not exist")
-        return elem
+            sub_elements = start_elem.get(tag, [])
+            if isinstance(sub_elements, str):
+                raise KeyError(f"Path {path} leads to an attribute.")
+            if isinstance(sub_elements, dict):
+                sub_elements = [sub_elements]
+            sub_elem = _filter_attr(sub_elements, attribs)
+            if sub_elem is not None:
+                start_elem = sub_elem
+                continue
+            new_elem = _to_json(attribs)
+            start_elem = _add_element(start_elem, tag, new_elem)
+        return start_elem
 
     def _get_or_create_element(self, path: str) -> JsonType:
-        """Return the element at the given path."""
-        elem = self.root
+        """Return the element at the given path and create missing elements.
+
+        :param path: Pudding path to the element.
+        :returns: The JsonType object.
+        """
+        start_elem = self.root
         for sub_path in self._split_path(path):
-            if isinstance(elem, (str, list)):
-                raise ValueError(f"Invalid path {path}.")
             tag, attribs = self._parse_node(sub_path[0])
-            elements = elem.get(tag)
-            if isinstance(elements, str):
-                raise ValueError(f"Invalid path {path}.")
-            if elements is None:
-                elem[tag] = _to_json(attribs)
-                elem = elem[tag]
-                continue
-            if isinstance(elements, dict):
-                elements = [elements]
-            # if is list of elements
-            sub_elem = _filter_attr(elements, attribs)
-            if sub_elem is not None:
-                elem = sub_elem
-                continue
-            elements.append(_to_json(attribs))
-            elem[tag] = elements
-            elem = attribs
-        return elem
+            sub_elements = start_elem.get(tag, [])
+            if isinstance(sub_elements, str):
+                raise KeyError(f"Path {path} leads to an attribute.")
+            if isinstance(sub_elements, dict):
+                sub_elements = [sub_elements]
+            sub_elem = _filter_attr(sub_elements, attribs)
+            if sub_elem is None:
+                raise KeyError(f"Element at path {path} does not exist")
+            start_elem = sub_elem
+        return start_elem
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
         """Add an attribute to an element.
@@ -116,15 +137,7 @@ class Json(Writer):
         elem = self._get_or_create_element(parent)
         tag, attribs = self._parse_node(self._split_path(path)[-1][0])
         new = _to_json(attribs, value)
-        childs = elem.get(tag)
-        if childs is None:
-            childs = new
-        elif isinstance(childs, dict):
-            childs = [childs, new]
-        elif isinstance(childs, list):
-            childs.append(new)
-        elem[tag] = childs
-        return new
+        return _add_element(elem, tag, new)
 
     def add_element(self, path: str, value: str | None = None) -> JsonType:
         """Adds an element if it not already exists.
@@ -184,7 +197,10 @@ class Json(Writer):
         """
         parent = "".join([path[0] for path in self._split_path(path)[:-1]])
         elem = self._get_element(parent)
-        elem["#text"] = value
+        if value is not None:
+            elem["#text"] = value
+        else:
+            elem.pop("#text", None)
 
     def generate_output(self) -> str:
         """Generate output in specified format."""
