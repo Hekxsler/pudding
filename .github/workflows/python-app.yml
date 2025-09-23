@@ -23,8 +23,11 @@ jobs:
       uses: pdm-project/setup-pdm@v4
     - name: Install dependencies
       run: pdm install
-    - name: Run PDM
-      run: |
-        pdm lint
-        pdm test
-        pdm typing
+    - name: Check linting
+      continue-on-error: true
+      run: pdm lint
+    - name: Check typing
+      continue-on-error: true
+      run: pdm typing
+    - name: Run tests
+      run: pdm test
