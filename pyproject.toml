@@ -35,6 +35,8 @@ pud = "pud:main"
 Homepage = "https://github.com/Hekxsler/pudding"
 Issues = "https://github.com/Hekxsler/pudding/issues"
 
+
+
 [tool.setuptools.dynamic]
 version = {attr = "pudding.__version__"}
 
