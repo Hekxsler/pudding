@@ -9,10 +9,11 @@ class Xml(Writer):
     """Writer class for xml output."""
 
     prev_roots: list[Element] = []
-    root_name = "xml"
 
     def __init__(self) -> None:
         """Init for Xml writer class."""
+        if self.root_name is None:
+            self.root_name = "xml"
         self.root = Element(self.root_name)
         self.tree = ElementTree(self.root)
         super().__init__()
@@ -180,7 +181,6 @@ class Xml(Writer):
     def generate_output(self) -> str:
         """Generate output in specified format."""
         root = self.tree.getroot()
-        if root is None:
-            raise ValueError("No root element set.")
-        root.tag = self.root_name
+        if self.root_name is not None:
+            root.tag = self.root_name
         return tostring(root, pretty_print=True).decode()
