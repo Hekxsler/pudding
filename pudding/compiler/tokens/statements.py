@@ -34,7 +34,8 @@ class Statement(Token):
         values = cls.value_re.search(statement.group(0))
         if values is None:
             raise ValueError("No values in statement.")
-        return cls(lineno, name, values.groups())
+        values = tuple([x for x in values.groups() if x is not None])
+        return cls(lineno, name, values)
 
     def execute(self, context: Context) -> PAction:
         """Function for context changing actions."""

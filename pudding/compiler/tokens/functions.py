@@ -52,7 +52,8 @@ class Function(Token):
         args = cls.value_re.search(function.group(0))
         if not args:
             raise ValueError("No args in function.")
-        return cls(lineno, name, args.groups())
+        args = tuple([x for x in args.groups() if x is not None])
+        return cls(lineno, name, args)
 
     def execute(self, context: Context) -> PAction | NoReturn:
         """Function executed by the context.
