@@ -1,5 +1,6 @@
 """Test module for pudding.util."""
 
+from pathlib import Path
 from pudding import convert_file
 
 
@@ -12,9 +13,12 @@ def _same_file(file_1: str, file_2: str) -> bool:
 
 def test_convert_file() -> None:
     """Test convert_file function."""
-    convert_file("./data/test.pud", "./data/input.txt", "./data/result.json", "json")
-    assert _same_file("./data/result.json", "./data/expected.json")
-    convert_file("./data/test.pud", "./data/input.txt", "./data/result.xml", "xml")
-    assert _same_file("./data/result.xml", "./data/expected.xml")
-    convert_file("./data/test.pud", "./data/input.txt", "./data/result.yaml", "yaml")
-    assert _same_file("./data/result.yaml", "./data/expected.yaml")
+    data_dir = Path(__file__).parent / "data"
+    pud_file = data_dir / "test.pud"
+    input_file = data_dir / "input.txt"
+    convert_file(pud_file, input_file, data_dir / "result.json", "json")
+    assert _same_file(str(data_dir / "result.json"), str(data_dir / "expected.json"))
+    convert_file(pud_file, input_file, data_dir / "result.xml", "xml")
+    assert _same_file(str(data_dir / "result.xml"), str(data_dir / "expected.xml"))
+    convert_file(pud_file, input_file, data_dir / "result.yaml", "yaml")
+    assert _same_file(str(data_dir / "result.yaml"), str(data_dir / "expected.yaml"))
