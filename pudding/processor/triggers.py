@@ -24,7 +24,11 @@ class Trigger:
 
 
 class TriggerQueue:
-    """Queue for triggers."""
+    """Queue for triggers.
+
+    :var triggers: Dictionary where the key is a timing and
+        the value a list of triggers.
+    """
 
     triggers: dict[Timing, list[Trigger]] = {}
 

@@ -67,11 +67,10 @@ def _filter_attr(elems: list[JsonType], attribs: dict[str, str]) -> JsonType | N
 class Json(Writer):
     """Writer class for json output."""
 
-    tree: JsonType = {}
-    prev_roots: list[JsonType] = []
-
     def __init__(self) -> None:
         """Init for Json writer class."""
+        self.tree: JsonType = {}
+        self.prev_roots: list[JsonType] = []
         self.root = self.tree
         super().__init__()
 

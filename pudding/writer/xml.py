@@ -8,15 +8,12 @@ from .writer import Writer
 class Xml(Writer):
     """Writer class for xml output."""
 
-    prev_roots: list[Element] = []
-
-    def __init__(self) -> None:
+    def __init__(self, root_name: str = "xml") -> None:
         """Init for Xml writer class."""
-        if self.root_name is None:
-            self.root_name = "xml"
-        self.root = Element(self.root_name)
+        self.prev_roots: list[Element] = []
+        self.root = Element(root_name)
         self.tree = ElementTree(self.root)
-        super().__init__()
+        super().__init__(root_name)
 
     def _find(self, elem: Element, path: str) -> Element | None:
         """Find first matching element at path.

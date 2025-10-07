@@ -8,11 +8,17 @@ from . import NODE_ATTRIBUTE_RE, NODE_RE
 
 
 class Writer:
-    """Base writer class."""
+    """Base writer class.
+    
+    :var attrib_re: Regex for node attributes.
+    :var node_re: Regex for a node path.
+    """
 
     attrib_re = re.compile(NODE_ATTRIBUTE_RE)
     node_re = re.compile(NODE_RE)
-    root_name: str | None = None
+
+    def __init__(self, root_name: str | None = None) -> None:
+        self.root_name = root_name
 
     def _split_path(self, path: str) -> list[tuple[str, ...]]:
         """Split the path."""
