@@ -106,8 +106,8 @@ class Function(Token):
         return self.replace_string_vars(self.get_string(index), context)
 
     def get_repl_opt_string(
-        self, index: int, context: Context, default: _D | None = None
-    ) -> str | _D | None:
+        self, index: int, context: Context, default: _D = None
+    ) -> str | _D:
         """Get a optional string with replaced variables.
 
         :param index: Index of the string in values.
