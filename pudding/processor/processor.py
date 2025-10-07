@@ -75,11 +75,15 @@ class Processor:
         """
         return self.context.trigger(timing)
 
-    def convert(self) -> None:
-        """Transform the content according to the syntax and write it."""
+    def convert(self) -> Writer:
+        """Transform the content according to the syntax.
+        
+        :returns: The writer object with the transformed data.
+        :raises RuntimeError: If no match was found.
+        """
         self.execute_grammar("input")
         if self.reader.eof:
-            return
+            return self.writer
         pos = self.reader.current_pos
         unmatched = repr(self.reader.content[pos : pos + 50])
         msg = f"No match found for {unmatched}..."

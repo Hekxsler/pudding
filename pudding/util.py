@@ -48,9 +48,8 @@ def convert_files(
     for input_file, output_file in zip(input_files, output_files):
         content = open(input_file, "r", encoding=encoding).read()
         context = Context(content, writer_cls)
-        processor = Processor(context, syntax)
-        processor.convert()
-        context.writer.write_to(output_file, encoding)
+        writer = Processor(context, syntax).convert()
+        writer.write_to(output_file, encoding)
 
 
 def convert_file(
