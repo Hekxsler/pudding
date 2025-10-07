@@ -1,21 +1,24 @@
 """Module defining context class."""
 
 from ..compiler.datatypes import Data, Varname
-from .grammar import Grammar
 from ..reader.reader import Reader
 from ..writer.writer import Writer
+from .grammar import Grammar
 from .triggers import Timing, Trigger, TriggerQueue
 
 
 class Context:
-    """Class giving context to current match."""
+    """Class containing context for the processor.
 
-    grammars: dict[str, Grammar] = {}
-    queue: TriggerQueue = TriggerQueue()
-    variables: dict[str, Data] = {}
+    :var grammars: Grammars defined in the syntax.
+    :var queue: Queue for triggers created by enqueued statements.
+    :var variables: Variables defined in the syntax.
+    """
 
     def __init__(self, content: str, writer_cls: type[Writer]) -> None:
-        """Init for Context class."""
+        self.grammars: dict[str, Grammar] = {}
+        self.queue: TriggerQueue = TriggerQueue()
+        self.variables: dict[str, Data] = {}
         self.reader = Reader(content)
         self.writer = writer_cls()
 
@@ -44,7 +47,10 @@ class Context:
         return value
 
     def trigger(self, timing: Timing) -> None:
-        """Trigger a timing."""
+        """Test triggers of a timing.
+
+        :param timing: The timing to trigger.
+        """
         untriggered: list[Trigger] = []
         for trigger in self.queue.get(timing, []):
             if not self.reader.match(trigger.match):
