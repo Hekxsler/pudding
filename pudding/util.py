@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 def convert_files(
-    syntax_file: str,
-    input_files: list[str],
-    output_files: list[str],
+    syntax_file: Path,
+    input_files: list[Path],
+    output_files: list[Path],
     output_format: str,
     encoding: str = "utf-8",
 ) -> None:
@@ -43,20 +43,20 @@ def convert_files(
         case _:
             raise ValueError(f"Unsupported output format {output_format}")
     start = datetime.datetime.now()
-    syntax = Compiler().compile_file(Path(syntax_file))
+    syntax = Compiler().compile_file(syntax_file)
     logger.debug("Compiled syntax in %s", str(datetime.datetime.now() - start))
     for input_file, output_file in zip(input_files, output_files):
         content = open(input_file, "r", encoding=encoding).read()
         context = Context(content, writer_cls)
         processor = Processor(context, syntax)
         processor.convert()
-        context.writer.write_to(Path(output_file), encoding)
+        context.writer.write_to(output_file, encoding)
 
 
 def convert_file(
-    syntax_file: str,
-    input_file: str,
-    output_file: str,
+    syntax_file: Path,
+    input_file: Path,
+    output_file: Path,
     output_format: str,
     encoding: str = "utf-8",
 ) -> None:
