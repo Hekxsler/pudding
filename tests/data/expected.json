@@ -1,5 +1,11 @@
 {
-  "name": "pudding",
-  "version": "1.0",
-  "description": "A test file for conversion."
+    "name": {
+        "#text": "pudding"
+    },
+    "version": {
+        "#text": "1.0"
+    },
+    "description": {
+        "#text": "A test file for conversion."
+    }
 }

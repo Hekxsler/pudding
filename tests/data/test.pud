@@ -1,5 +1,5 @@
 define nl /[\r\n]+/
-define nonl /[^\r\n]/
+define nonl /[^\r\n]+/
 
 
 grammar input:
