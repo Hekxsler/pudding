@@ -91,11 +91,9 @@ class Json(Writer):
             if isinstance(sub_elements, dict):
                 sub_elements = [sub_elements]
             sub_elem = _filter_attr(sub_elements, attribs)
-            if sub_elem is not None:
-                start_elem = sub_elem
-                continue
-            new_elem = _to_json(attribs)
-            start_elem = _add_element(start_elem, tag, new_elem)
+            if sub_elem is None:
+                raise KeyError(f"Element at path {path} does not exist")
+            start_elem = sub_elem
         return start_elem
 
     def _get_or_create_element(self, path: str) -> JsonType:
@@ -113,9 +111,11 @@ class Json(Writer):
             if isinstance(sub_elements, dict):
                 sub_elements = [sub_elements]
             sub_elem = _filter_attr(sub_elements, attribs)
-            if sub_elem is None:
-                raise KeyError(f"Element at path {path} does not exist")
-            start_elem = sub_elem
+            if sub_elem is not None:
+                start_elem = sub_elem
+                continue
+            new_elem = _to_json(attribs)
+            start_elem = _add_element(start_elem, tag, new_elem)
         return start_elem
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
