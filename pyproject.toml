@@ -29,7 +29,7 @@ classifiers = [
 ]
 
 [project.scripts]
-pud = "pud:main"
+pudding = "pudding.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/Hekxsler/pudding"

@@ -7,12 +7,12 @@ import os
 
 from argparse import ArgumentError
 from pathlib import Path
-from pudding import convert_files
+from .util import convert_files
 
 DESCRIPTION = """
 Pudding converts text to a structured format, such as XML, JSON or YAML.
 """
-parser = argparse.ArgumentParser(description=DESCRIPTION)
+parser = argparse.ArgumentParser(prog="pudding", description=DESCRIPTION)
 parser.add_argument("filename", help="The file or files to convert.", nargs="+")
 parser.add_argument(
     "-s",
