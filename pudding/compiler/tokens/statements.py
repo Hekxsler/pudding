@@ -79,7 +79,7 @@ class MultiExpStatement(Statement):
                 continue
             if isinstance(value, Varname):
                 value = context.get_var(value.value)
-            patterns[-1] += rf"({value.value})"
+            patterns[-1] += rf"({value.pattern.pattern})"
         return patterns
 
     def execute(self, context: Context) -> PAction:
