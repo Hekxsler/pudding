@@ -8,5 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Setup PDM
+      uses: pdm-project/setup-pdm@v4
+    - name: Install dependencies
+      run: |
+        pdm install
+        pdm pip install pytest-cov
+    - name: Run tests with coverage
+      run: pdm run pytest --cov=pudding --cov-report=xml
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v2.3.6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: coverage.xml
