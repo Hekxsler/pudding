@@ -13,7 +13,7 @@
       <item>lxml</item>
       <item>pyyaml</item>
     </dependencies>
-    <requires-python>>=3.12</requires-python>
+    <requires-python>&gt;=3.12</requires-python>
     <readme>README.md</readme>
     <license>GPL-3.0-only</license>
     <license-files>
