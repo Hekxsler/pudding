@@ -6,6 +6,7 @@ import logging
 import os
 
 from argparse import ArgumentError
+from pathlib import Path
 from pudding import convert_files
 
 DESCRIPTION = """
@@ -51,14 +52,14 @@ def main() -> None:
         raise ArgumentError(None, f"not a valid input file: {repr(args.syntax)}")
 
     start = datetime.datetime.now()
-    outs: list[str] = []
+    outs: list[Path] = []
     for f in args.filename:
         if not os.path.exists(f):
             raise ArgumentError(None, f"no such file or directory: {repr(f)}")
         if not os.path.isfile(f):
             raise ArgumentError(None, f"not a valid input file: {repr(f)}")
         path, _ = os.path.splitext(f)
-        outs.append(f"{path}.{args.format.lower()}")
+        outs.append(Path(f"{path}.{args.format.lower()}"))
     convert_files(args.syntax, args.filename, outs, args.format)
     logger.debug("Total: %s", str(datetime.datetime.now() - start))
 
