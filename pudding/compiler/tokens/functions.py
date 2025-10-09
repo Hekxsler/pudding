@@ -52,7 +52,7 @@ class Function(Token):
         args_match = cls.value_re.search(function.group(0))
         if not args_match:
             raise ValueError("No args in function.")
-        args = tuple([str(x) if x is not None else "" for x in args_match.groups()])
+        args = tuple([str(x) for x in args_match.groups() if x is not None])
         return cls(lineno, name, args)
 
     def execute(self, context: Context) -> PAction | NoReturn:

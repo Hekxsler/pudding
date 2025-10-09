@@ -34,7 +34,7 @@ class Statement(Token):
         value_match = cls.value_re.search(statement.group(0))
         if value_match is None:
             raise ValueError("No values in statement.")
-        values = tuple([str(x) if x is not None else "" for x in value_match.groups()])
+        values = tuple([str(x) for x in value_match.groups() if x is not None])
         return cls(lineno, name, values)
 
     def execute(self, context: Context) -> PAction:
