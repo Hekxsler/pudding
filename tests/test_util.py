@@ -19,6 +19,7 @@ def test_convert_file_json() -> None:
     convert_file(pud_file, input_file, data_dir / "result.json", "json")
     assert _same_file(str(data_dir / "result.json"), str(data_dir / "expected.json"))
 
+
 def test_convert_file_xml() -> None:
     """Test convert_file function for XML output."""
     data_dir = Path(__file__).parent / "data"
@@ -26,6 +27,7 @@ def test_convert_file_xml() -> None:
     input_file = data_dir / "input.txt"
     convert_file(pud_file, input_file, data_dir / "result.xml", "xml")
     assert _same_file(str(data_dir / "result.xml"), str(data_dir / "expected.xml"))
+
 
 def test_convert_file_yaml() -> None:
     """Test convert_file function for YAML output."""

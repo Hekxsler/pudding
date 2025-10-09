@@ -16,6 +16,11 @@ class Context:
     """
 
     def __init__(self, content: str, writer_cls: type[Writer]) -> None:
+        """Init for Context class.
+
+        :param content: Content of the file to convert.
+        :param writer_cls: Writer class for generating output.
+        """
         self.grammars: dict[str, Grammar] = {}
         self.queue: TriggerQueue = TriggerQueue()
         self.variables: dict[str, Data] = {}

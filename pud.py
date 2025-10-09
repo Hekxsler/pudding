@@ -63,5 +63,6 @@ def main() -> None:
     convert_files(args.syntax, args.filename, outs, args.format)
     logger.debug("Total: %s", str(datetime.datetime.now() - start))
 
+
 if __name__ == "__main__":
     main()

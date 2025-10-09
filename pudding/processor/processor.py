@@ -16,6 +16,7 @@ from .triggers import Timing
 
 logger = logging.getLogger(__name__)
 
+
 class Processor:
     """Class processing tokens."""
 
@@ -80,7 +81,7 @@ class Processor:
 
     def convert(self) -> Writer:
         """Transform the content according to the syntax.
-        
+
         :returns: The writer object with the transformed data.
         :raises RuntimeError: If no match was found.
         """
