@@ -50,6 +50,12 @@ class String(Data):
         """Init for String class."""
         super().__init__(value)
         self.value = value[1:-1]
+    
+    @property
+    def pattern(self) -> Pattern[str]:
+        """Value as a compiled Pattern object."""
+        pattern = re.escape(self.value)
+        return re.compile(pattern)
 
 
 class Regex(Data):
