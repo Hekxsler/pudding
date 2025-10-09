@@ -1,7 +1,10 @@
 """Module defining Reader class."""
 
+import logging
+
 from re import Match, Pattern
 
+logger = logging.getLogger(__name__)
 
 class Reader:
     """Base Reader class.
@@ -34,6 +37,7 @@ class Reader:
         :param regex: The pattern to match.
         :returns: The match or None if it did not match.
         """
+        logger.debug("Trying to match /%s/", regex.pattern)
         if self.eof:
             return None
         self.last_match = regex.match(self.content, self.current_pos)
