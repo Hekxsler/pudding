@@ -180,4 +180,4 @@ class Xml(Writer):
         root = self.tree.getroot()
         if self.root_name is not None:
             root.tag = self.root_name
-        return tostring(root, pretty_print=True).decode()
+        return tostring(root, pretty_print=True, encoding=str)
