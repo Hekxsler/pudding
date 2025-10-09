@@ -1,5 +1,7 @@
 """Module defining processor class."""
 
+import logging
+
 from ..compiler.compiler import Syntax
 from ..compiler.datatypes import Data
 from ..compiler.tokens.functions import Add, Enter, GrammarCall, Open
@@ -12,6 +14,7 @@ from .context import Context
 from .grammar import Grammar, TokenList
 from .triggers import Timing
 
+logger = logging.getLogger(__name__)
 
 class Processor:
     """Class processing tokens."""
@@ -97,6 +100,7 @@ class Processor:
         :param name: Name of the grammar.
         :returns: ProcessingAction of the executed syntax.
         """
+        logger.debug("-> Executing grammar %s", name)
         action = PAction.RESTART
         grammar = self.context.get_grammar(name)
         matched = False
@@ -106,6 +110,7 @@ class Processor:
             action = self.execute_tokens(grammar.tokens)
             if action == PAction.RESTART:
                 matched = True
+        logger.debug("<- Leaving grammar %s", name)
         if matched:
             return PAction.RESTART
         return action
@@ -133,6 +138,7 @@ class Processor:
         action = PAction.CONTINUE
         entered = 0
         for token in syntax:
+            logger.debug("Executing %s", token)
             if isinstance(token, tuple):
                 action = self.execute_condition(token)
             elif isinstance(token, GrammarCall):
