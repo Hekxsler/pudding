@@ -2,7 +2,7 @@
 
 from enum import Enum
 from re import Pattern
-from typing import TypeVar
+from typing import Optional, TypeVar
 
 from ..compiler.tokens.token import Token
 
@@ -67,7 +67,9 @@ class TriggerQueue:
         else:
             self.triggers = {}
 
-    def get(self, timing: Timing, default: _D = None) -> list[Trigger] | _D:
+    def get(
+        self, timing: Timing, default: Optional[_D] = None
+    ) -> Optional[_D] | list[Trigger]:
         """Return list of triggers for a timing.
 
         :param timing: Timing of the triggers.

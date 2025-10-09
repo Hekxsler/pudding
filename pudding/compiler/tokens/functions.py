@@ -1,7 +1,7 @@
 """Module defining functions."""
 
 import re
-from typing import NoReturn, Self, TypeVar
+from typing import NoReturn, Optional, Self, TypeVar
 
 from ..datatypes import Regex, String, Varname
 
@@ -49,10 +49,10 @@ class Function(Token):
         if not function:
             raise ValueError("Statement not in given string.")
         name = function.group(1)
-        args = cls.value_re.search(function.group(0))
-        if not args:
+        args_match = cls.value_re.search(function.group(0))
+        if not args_match:
             raise ValueError("No args in function.")
-        args = tuple([x for x in args.groups() if x is not None])
+        args = tuple([str(x) if x is not None else "" for x in args_match.groups()])
         return cls(lineno, name, args)
 
     def execute(self, context: Context) -> PAction | NoReturn:
@@ -106,8 +106,8 @@ class Function(Token):
         return self.replace_string_vars(self.get_string(index), context)
 
     def get_repl_opt_string(
-        self, index: int, context: Context, default: _D = None
-    ) -> str | _D:
+        self, index: int, context: Context, default: Optional[_D] = None
+    ) -> str | Optional[_D]:
         """Get a optional string with replaced variables.
 
         :param index: Index of the string in values.
@@ -532,7 +532,7 @@ class GrammarCall(Function):
         raise NotImplementedError
 
 
-FUNCTIONS: list[type[Function]] = [
+FUNCTIONS: tuple[type[Function], ...] = (
     Fail,
     Next,
     Return,
@@ -551,4 +551,4 @@ FUNCTIONS: list[type[Function]] = [
     Replace,
     SetRootName,
     GrammarCall,
-]
+)

@@ -2,7 +2,7 @@
 
 from re import Pattern
 from types import UnionType
-from typing import Any, NoReturn, Self, TypeVar
+from typing import Any, NoReturn, Optional, Self, TypeVar
 
 from pudding.processor import PAction
 
@@ -91,7 +91,9 @@ class Token:
         """
         raise NotImplementedError()
 
-    def get_value(self, index: int, default: _D = None) -> _D | Data:
+    def get_value(
+        self, index: int, default: Optional[_D] = None
+    ) -> Optional[_D] | Data:
         """Get a value.
 
         :param index: Index of the value in values tuple.

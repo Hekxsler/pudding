@@ -31,10 +31,10 @@ class Statement(Token):
         if statement is None:
             raise ValueError("Statement not in given string.")
         name = statement.group(1)
-        values = cls.value_re.search(statement.group(0))
-        if values is None:
+        value_match = cls.value_re.search(statement.group(0))
+        if value_match is None:
             raise ValueError("No values in statement.")
-        values = tuple([x for x in values.groups() if x is not None])
+        values = tuple([str(x) if x is not None else "" for x in value_match.groups()])
         return cls(lineno, name, values)
 
     def execute(self, context: Context) -> PAction:
@@ -199,7 +199,7 @@ class IWhen(MultiExpStatement):
         return PAction.CONTINUE
 
 
-STATEMENTS: list[type[Statement]] = [
+STATEMENTS: tuple[type[Statement], ...] = (
     Import,
     Define,
     Grammar,
@@ -208,4 +208,4 @@ STATEMENTS: list[type[Statement]] = [
     Skip,
     IWhen,
     When,
-]
+)
