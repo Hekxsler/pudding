@@ -1,4 +1,4 @@
-<xml>
+<test>
   <project>
     <name>pudding</name>
     <dynamic>
@@ -43,4 +43,4 @@
       <issues>https://github.com/Hekxsler/pudding/issues</issues>
     </urls>
   </project>
-</xml>
+</test>

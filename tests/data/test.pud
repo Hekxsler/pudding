@@ -13,14 +13,16 @@ grammar default:
     skip '#' nonl nl
 
 grammar dict(default):
-    skip ','
+    match ',':
+        do.skip()
     match word ws '=' ws quote string quote:
         out.add_attribute('.', '$0', '$5')
     match '}':
         do.return()
 
 grammar list(default):
-    skip ','
+    match ',':
+        do.next()
     match quote string quote:
         out.create('item', '$1')
     match '{':
@@ -31,7 +33,7 @@ grammar list(default):
 
 grammar section(default):
     match word ws '=' ws quote string quote nl:
-        out.create('$0', '$5')
+        out.add('$0', '$5')
     match word ws '=' ws '[':
         out.open('$0')
         list()
@@ -43,3 +45,4 @@ grammar input(default):
     match '[' word '.' word ']' nl:
         out.enter('$1/$3')
         section()
+    out.set_root_name('test')
