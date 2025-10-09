@@ -8,17 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-
-    - name: Setup PDM
-      uses: pdm-project/setup-pdm@v4
-
-    - name: Install dependencies
-      run: |
-        pdm install
-        pdm pip install types-lxml
-        pdm pip install coveralls
-
-    - name: Run tests
-      run: |
-        coverage run --source=pudding -m pytest tests/
-        coveralls
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v2.3.6
