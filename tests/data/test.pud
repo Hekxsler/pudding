@@ -1,7 +1,45 @@
 define nl /[\r\n]+/
 define nonl /[^\r\n]+/
+define nows /\S+/
+define quote /\"/
+define string /(?:\\\"|[^\"])+/
+define word /[\w-]+/
+define ws /\s+/
 
 
-grammar input:
-    match /\w+/ ':' /\s+/ nonl nl:
-        out.add('$0', '$3')
+grammar default:
+    skip ws
+    skip nl
+    skip '#' nonl nl
+
+grammar dict(default):
+    skip ','
+    match word ws '=' ws quote string quote:
+        out.add_attribute('.', '$0', '$5')
+    match '}':
+        do.return()
+
+grammar list(default):
+    skip ','
+    match quote string quote:
+        out.create('item', '$1')
+    match '{':
+        out.open('item')
+        dict()
+    match ']':
+        do.return()
+
+grammar section(default):
+    match word ws '=' ws quote string quote nl:
+        out.create('$0', '$5')
+    match word ws '=' ws '[':
+        out.open('$0')
+        list()
+
+grammar input(default):
+    match '[' word ']' nl:
+        out.enter('$1')
+        section()
+    match '[' word '.' word ']' nl:
+        out.enter('$1/$3')
+        section()

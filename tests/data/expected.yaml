@@ -1,6 +1,50 @@
-description:
-  '#text': A test file for conversion.
-name:
-  '#text': pudding
-version:
-  '#text': '1.0'
+project:
+  authors:
+    item:
+      '@email': moritz.hekxsler@gmail.com
+      '@name': Moritz Hille
+  classifiers:
+    item:
+    - '#text': 'Development Status :: 4 - Beta'
+    - '#text': 'Programming Language :: Python :: 3.12'
+    - '#text': 'Programming Language :: Python :: 3.13'
+    - '#text': 'Topic :: File Formats'
+    - '#text': 'Topic :: Text Processing'
+    - '#text': 'Topic :: Utilities'
+  dependencies:
+    item:
+    - '#text': argparse
+    - '#text': lxml
+    - '#text': pyyaml
+  description:
+    '#text': Pudding converts text to a structured format, such as XML, JSON or YAML.
+  dynamic:
+    item:
+      '#text': version
+  keywords:
+    item:
+    - '#text': parser
+    - '#text': converter
+    - '#text': text
+    - '#text': xml
+    - '#text': yaml
+    - '#text': json
+  license:
+    '#text': GPL-3.0-only
+  license-files:
+    item:
+      '#text': LICENSE
+  name:
+    '#text': pudding
+  readme:
+    '#text': README.md
+  requires-python:
+    '#text': '>=3.12'
+  scripts:
+    pud:
+      '#text': pud:main
+  urls:
+    homepage:
+      '#text': https://github.com/Hekxsler/pudding
+    issues:
+      '#text': https://github.com/Hekxsler/pudding/issues
