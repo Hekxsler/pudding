@@ -4,7 +4,7 @@ from ..compiler.datatypes import Data, Varname
 from ..reader.reader import Reader
 from ..writer.writer import Writer
 from .grammar import Grammar
-from .triggers import Timing, Trigger, TriggerQueue
+from .triggers import TriggerQueue
 
 
 class Context:
@@ -50,16 +50,3 @@ class Context:
         if isinstance(value, Varname):
             value = self.get_var(value.value)
         return value
-
-    def trigger(self, timing: Timing) -> None:
-        """Test triggers of a timing.
-
-        :param timing: The timing to trigger.
-        """
-        untriggered: list[Trigger] = []
-        for trigger in self.queue.get(timing, []):
-            if not self.reader.match(trigger.match):
-                untriggered.append(trigger)
-                continue
-            trigger.token.execute(self)
-        self.queue[timing] = untriggered

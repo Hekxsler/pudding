@@ -12,7 +12,7 @@ from ..writer.writer import Writer
 from . import PAction
 from .context import Context
 from .grammar import Grammar, TokenList
-from .triggers import Timing
+from .triggers import Timing, Trigger
 
 logger = logging.getLogger(__name__)
 
@@ -72,13 +72,6 @@ class Processor:
         """Alias for the contexts writer."""
         return self.context.writer
 
-    def _trigger(self, timing: Timing) -> None:
-        """Trigger a timing of a trigger queue of the context.
-
-        :param timing: The Timing to trigger.
-        """
-        return self.context.trigger(timing)
-
     def convert(self) -> Writer:
         """Transform the content according to the syntax.
 
@@ -129,11 +122,11 @@ class Processor:
             :param token: Token to execute.
             :returns: ProcessingAction of the executed token.
             """
-            self._trigger(Timing.BEFORE)
+            self.trigger(Timing.BEFORE)
             action = token.execute(self.context)
             if isinstance(token, Add):
-                self._trigger(Timing.ON_ADD)
-            self._trigger(Timing.AFTER)
+                self.trigger(Timing.ON_ADD)
+            self.trigger(Timing.AFTER)
             return action
 
         action = PAction.CONTINUE
@@ -171,3 +164,16 @@ class Processor:
         if sub_action == PAction.EXIT:
             return sub_action
         return action
+
+    def trigger(self, timing: Timing) -> None:
+        """Test triggers of a timing.
+
+        :param timing: The timing to trigger.
+        """
+        untriggered: list[Trigger] = []
+        for trigger in self.context.queue.get(timing, []):
+            if not self.reader.match(trigger.match):
+                untriggered.append(trigger)
+                continue
+            trigger.token.execute(self)
+        self.context.queue[timing] = untriggered
