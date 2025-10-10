@@ -36,10 +36,8 @@ Homepage = "https://github.com/Hekxsler/pudding"
 Issues = "https://github.com/Hekxsler/pudding/issues"
 
 
-
 [tool.setuptools.dynamic]
 version = {attr = "pudding.__version__"}
-
 
 
 [tool.pdm.dev-dependencies]
@@ -79,11 +77,14 @@ test = "pytest {args}"
 typing = "mypy {args} ."
 all = {composite = ["isort", "format", "typing", "lint", "test"]}
 
+
 [tool.black]
 line-length = 88
 
+
 [tool.isort]
 profile = "black"
+
 
 [tool.flake8]
 extend-ignore = [
@@ -104,7 +105,14 @@ docstring-convention = "google"
 max-line-length = 88
 count = true
 
+
 [tool.mypy]
 disallow_untyped_decorators = "true"
 ignore_missing_imports = "true"
 strict = "true"
+
+
+[tool.coverage.report]
+exclude_also = [
+    "raise NotImplementedError",
+]
