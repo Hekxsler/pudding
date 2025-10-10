@@ -94,9 +94,9 @@ class Processor:
         :param name: Name of the grammar.
         :returns: ProcessingAction of the executed syntax.
         """
-        logger.debug("-> Executing grammar %s", name)
         action = PAction.RESTART
         grammar = self.context.get_grammar(name)
+        logger.debug("-> Executing %s", grammar)
         matched = False
         while action == PAction.RESTART:
             if grammar.inherits:
