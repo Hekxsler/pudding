@@ -15,7 +15,13 @@ class Grammar:
         tokens: TokenList,
         inherits: str | None = None,
     ) -> None:
-        """Init of Grammar."""
+        """Init of Grammar.
+        
+        :param lineno: Line number the grammar is defined in.
+        :param name: Name of the grammar.
+        :param tokens: Tokens in this grammar.
+        :param inherits: Name of the inherited grammar or None.
+        """
         self.lineno = lineno
         self.name = name
         self.tokens = tokens
