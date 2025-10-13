@@ -1,8 +1,10 @@
+"""Output function out.remove."""
+
 import re
 
-from ...datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
+from ...datatypes import String
 from .out import Out
 
 

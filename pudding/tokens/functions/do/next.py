@@ -12,8 +12,7 @@ class Next(Do):
 
     Skip the current match and continue with the next match statement without jumping
     back to the top of the current grammar block. This function is rarely used and
-    probably not what you want. Instead, use do.skip() in almost all cases,
-    unless it is for some performance-specific hacks.
+    probably not what you want, unless it is for some performance-specific hacks.
     """
 
     match_re = re.compile(r"(do\.next)\(\)$")

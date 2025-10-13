@@ -1,7 +1,5 @@
 """Grammar call."""
 
-
-
 import re
 from typing import NoReturn
 

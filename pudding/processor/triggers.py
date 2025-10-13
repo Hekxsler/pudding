@@ -48,4 +48,4 @@ class TriggerQueue(dict[Timing, list[Trigger]]):
         if timing:
             del self[timing]
         else:
-            self.triggers = {}
+            self.triggers: dict[Timing, list[Trigger]] = {}
