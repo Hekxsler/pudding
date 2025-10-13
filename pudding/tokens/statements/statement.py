@@ -5,7 +5,7 @@ from typing import Self, TypeVar
 
 from ..util import EXP_VAR
 
-from ..datatypes import Data, Or, Varname, string_to_datatype
+from ...datatypes import Data, Or, Varname, string_to_datatype
 
 from ...processor import PAction
 from ...processor.context import Context

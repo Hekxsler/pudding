@@ -2,7 +2,7 @@
 
 import re
 
-from ...datatypes import String
+from ....datatypes.string import String
 from ....processor import PAction
 from ....processor.context import Context
 from .do import Do

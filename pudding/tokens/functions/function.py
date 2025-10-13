@@ -3,7 +3,7 @@
 import re
 from typing import NoReturn, Optional, TypeVar
 
-from ..datatypes import Data, String
+from ...datatypes import Data, String
 from ..util import STRING_VAR_RE
 from ...processor import PAction
 from ...processor.context import Context

@@ -5,7 +5,7 @@ import re
 from ....processor import PAction
 from ....processor.context import Context
 from ....processor.triggers import Timing, Trigger
-from ...datatypes import Regex, String, Varname
+from ....datatypes import Regex, String, Varname
 from ...util import EXP_VAR
 from ..function import OPTIONAL_STRING
 from .add import Add

@@ -3,8 +3,8 @@
 import re
 from typing import NoReturn
 
+from ...datatypes.varname import Varname
 from ...processor.context import Context
-from ..datatypes import Varname
 from .function import Function
 
 

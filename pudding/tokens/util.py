@@ -1,7 +1,7 @@
 """Utility constants and functions for parsing."""
 
 import re
-from .datatypes import Regex, String, Varname
+from ..datatypes import Regex, String, Varname
 
 INDENTATION_RE = re.compile(r"^(\s|\t)+")
 

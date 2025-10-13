@@ -4,7 +4,7 @@ import re
 
 from ...processor import PAction
 from ...processor.context import Context
-from ..datatypes import Data, Or, Varname
+from ...datatypes import Data, Or, Varname
 from ..util import EXP_VAR
 from .statement import Statement
 

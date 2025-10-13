@@ -4,7 +4,7 @@ import re
 
 from ...processor import PAction
 from ...processor.context import Context
-from ..datatypes import Varname
+from ...datatypes import Varname
 from .statement import Statement
 
 

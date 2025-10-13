@@ -5,7 +5,7 @@ from types import UnionType
 from typing import Any, NoReturn, Optional, Self, TypeVar
 
 from pudding.processor import PAction
-from .datatypes import Data, string_to_datatype
+from ..datatypes import Data, string_to_datatype
 
 
 _D = TypeVar("_D")

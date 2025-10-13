@@ -3,7 +3,7 @@
 import re
 from typing import NoReturn
 
-from ...datatypes import String
+from ....datatypes.string import String
 from ....processor.context import Context
 from .do import Do
 
