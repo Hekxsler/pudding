@@ -52,6 +52,7 @@ def main() -> None:
         raise ArgumentError(None, f"not a valid input file: {repr(args.syntax)}")
 
     start = datetime.datetime.now()
+    ins: list[Path] = []
     outs: list[Path] = []
     for f in args.filename:
         if not os.path.exists(f):
@@ -59,8 +60,9 @@ def main() -> None:
         if not os.path.isfile(f):
             raise ArgumentError(None, f"not a valid input file: {repr(f)}")
         path, _ = os.path.splitext(f)
+        ins.append(Path(f))
         outs.append(Path(f"{path}.{args.format.lower()}"))
-    convert_files(args.syntax, args.filename, outs, args.format)
+    convert_files(Path(args.syntax), ins, outs, args.format)
     logger.debug("Total: %s", str(datetime.datetime.now() - start))
 
 
