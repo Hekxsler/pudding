@@ -1,7 +1,5 @@
 """Base output function class."""
 
-from typing import NoReturn
-
 from ....processor import PAction
 from ....processor.context import Context
 from ..function import Function
@@ -13,6 +11,6 @@ class Out(Function):
     min_args = 1
     max_args = 2
 
-    def execute(self, context: Context) -> PAction | NoReturn:
+    def execute(self, context: Context) -> PAction:
         """Action for output generation functions."""
         raise NotImplementedError()
