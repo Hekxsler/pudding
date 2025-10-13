@@ -29,10 +29,9 @@ class Define(Statement):
                     f"Can not use '|' in define statement. (line {self.lineno})"
                 )
             if isinstance(value, Varname):
-                value = context.get_var(value.value).pattern
+                pattern += context.get_var(value.value).pattern
             else:
-                value = value.pattern.pattern
-            pattern += rf"({value})"
+                pattern += value.pattern.pattern
         return re.compile(pattern)
 
     def execute(self, context: Context) -> PAction:
