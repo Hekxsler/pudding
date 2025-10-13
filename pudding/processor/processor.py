@@ -2,12 +2,15 @@
 
 import logging
 
+from ..tokens.statements.import_ import Import
+
+from ..tokens.statements.define import Define
+
 from ..compiler.compiler import Syntax
-from ..compiler.datatypes import Data
-from ..compiler.tokens.functions import Add, Enter, GrammarCall, Open
-from ..compiler.tokens.statements import Define, Import
-from ..compiler.tokens.token import Token
 from ..reader.reader import Reader
+from ..tokens.datatypes import Data
+from ..tokens.functions import grammar_call, out
+from ..tokens.token import Token
 from ..writer.writer import Writer
 from . import PAction
 from .context import Context
@@ -124,7 +127,7 @@ class Processor:
             """
             self.trigger(Timing.BEFORE)
             action = token.execute(self.context)
-            if isinstance(token, Add):
+            if isinstance(token, out.Add):
                 self.trigger(Timing.ON_ADD)
             self.trigger(Timing.AFTER)
             return action
@@ -135,13 +138,13 @@ class Processor:
             logger.debug("Executing %s", token)
             if isinstance(token, tuple):
                 action = self.execute_condition(token)
-            elif isinstance(token, GrammarCall):
+            elif isinstance(token, grammar_call.GrammarCall):
                 action = self.execute_grammar(token.name)
                 if action == PAction.EXIT:
                     # continue current grammar, if called grammar is exited
                     action = PAction.CONTINUE
             else:
-                if isinstance(token, (Open, Enter)):
+                if isinstance(token, (out.Open, out.Enter)):
                     entered += 1
                 action = execute_token(token)
             if not action == PAction.CONTINUE:

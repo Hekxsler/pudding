@@ -1,21 +1,22 @@
 """Module defining the parser class reading the pud file."""
 
-from collections.abc import Sequence
 import logging
+from collections.abc import Sequence
 from pathlib import Path
 
+from .util import DEFAULT_TOKENS
+
+from ..tokens.statements import Define, FromImport, Import, Grammar as GrammarStmt
+from ..tokens.token import Token
 from ..processor.grammar import Grammar, TokenList
-from .tokens.functions import FUNCTIONS
-from .tokens.statements import Define, Grammar as GrammarStmt, Import, STATEMENTS
-from .tokens.token import Token
-from .util import INDENTATION_RE
+from ..tokens.util import INDENTATION_RE
 
 COMMENT_CHAR = "#"
 INDENT_SPACES = 4
 
 logger = logging.getLogger(__name__)
 
-type Syntax = list[Define | Import | Grammar]
+type Syntax = list[Define | FromImport | Import | Grammar]
 
 
 class Compiler:
@@ -28,7 +29,7 @@ class Compiler:
 
         :param tokens: Token classes needed to compile. If is None use default tokens.
         """
-        default_tokens: Sequence[type[Token]] = FUNCTIONS + STATEMENTS
+        default_tokens: Sequence[type[Token]] = DEFAULT_TOKENS
         if tokens is None:
             tokens = default_tokens
         self.tokens = tokens

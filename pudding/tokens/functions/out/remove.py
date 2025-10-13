@@ -1,0 +1,22 @@
+import re
+
+from ...datatypes import String
+from ....processor import PAction
+from ....processor.context import Context
+from .out import Out
+
+
+class Remove(Out):
+    """Class for `out.remove` function.
+
+    Deletes the last node in the given path.
+    """
+
+    match_re = re.compile(rf"(out\.remove)\({String.regex}\)$")
+    value_re = re.compile(rf"out\.remove\(({String.regex})\)")
+    value_types = (String, String)
+
+    def execute(self, context: Context) -> PAction:
+        """Action for remove function."""
+        context.writer.delete_element(self.get_replaced_string(0, context))
+        return PAction.CONTINUE

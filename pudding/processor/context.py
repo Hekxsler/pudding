@@ -1,6 +1,6 @@
 """Module defining context class."""
 
-from ..compiler.datatypes import Data, Varname
+from ..tokens.datatypes import Data, Varname
 from ..reader.reader import Reader
 from ..writer.writer import Writer
 from .grammar import Grammar

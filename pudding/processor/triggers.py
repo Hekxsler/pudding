@@ -4,7 +4,7 @@ from enum import Enum
 from re import Pattern
 from typing import TypeVar
 
-from ..compiler.tokens.token import Token
+from ..tokens.token import Token
 
 Timing = Enum("Timing", "AFTER BEFORE ON_ADD")
 _D = TypeVar("_D")

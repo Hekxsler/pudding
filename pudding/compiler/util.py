@@ -1,12 +1,35 @@
-"""Utility constants and functions for parsing."""
+"""Utility functions for compiler."""
 
-import re
-from .datatypes import Regex, String, Varname
+from ..tokens.functions.grammar_call import GrammarCall
+from ..tokens.functions import *
+from ..tokens.token import Token
+from ..tokens.statements import *
 
-INDENTATION_RE = re.compile(r"^(\s|\t)+")
-
-STRING_VAR_RE = r"([^\d]?\$(\d+)[^\$]?)"
-# match chars before and after to not match $1 and $10 when replacing $1
-
-EXPRESSION_RE = rf"(?:{Regex.regex}|{String.regex}|\|)"
-EXP_VAR = rf"(?:{EXPRESSION_RE}|{Varname.regex})"
+DEFAULT_TOKENS: tuple[type[Token], ...] = (
+    Fail,
+    Next,
+    Return,
+    Say,
+    Add,
+    AddAttribute,
+    ClearQueue,
+    Create,
+    Enter,
+    EnqueueAfter,
+    EnqueueBefore,
+    EnqueueOnAdd,
+    Open,
+    Remove,
+    Replace,
+    SetRootName,
+    FromImport,
+    Import,
+    Define,
+    Grammar,
+    IMatch,
+    Match,
+    Skip,
+    IWhen,
+    When,
+    GrammarCall,
+)
