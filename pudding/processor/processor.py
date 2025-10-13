@@ -60,10 +60,10 @@ class Processor:
             match obj:
                 case Define():
                     set_var(obj.values[0].value, obj.values[1])
-                case Import():
-                    raise NotImplementedError
                 case Grammar():
                     declare_grammar(obj)
+                case _:
+                    raise RuntimeError(f"Unprocessed statement {obj}.")
 
     @property
     def reader(self) -> Reader:

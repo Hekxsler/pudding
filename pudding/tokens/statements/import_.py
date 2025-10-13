@@ -13,7 +13,7 @@ class FromImport(Statement):
 
     match_re = re.compile(rf"(from) {String.regex} import {String.regex}$")
     value_re = re.compile(rf"from ({String.regex}) import ({String.regex})")
-    value_types = (String , String)
+    value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
         """Action for import statement."""
@@ -34,4 +34,3 @@ class Import(Statement):
         raise SyntaxError(
             f"Import statement not defined at top level in line {self.lineno}"
         )
-

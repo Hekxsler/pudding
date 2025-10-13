@@ -85,6 +85,19 @@ class Compiler:
                 return syntax, i
         return syntax, len(content.splitlines())
 
+    def _import(self, path: str) -> Syntax:
+        """Parse another file to import and return the syntax.
+
+        :param path: Path of the file.
+        """
+        logger.debug("Importing %s...", path)
+        if hasattr(self, "source_path"):
+            base_dir = self.source_path.parent
+        else:
+            raise ImportError("Can not import without a source file.")
+        import_file = base_dir / f"{path}.pud"
+        return self.compile_file(import_file)
+
     def _compile_syntax(self, syntax: TokenList) -> Syntax:
         """Convert some statements into models for better execution.
 
@@ -113,18 +126,22 @@ class Compiler:
             match token:
                 case Define():
                     new_syntax.append(token)
+                case FromImport():
+                    importpath = token.values[0].value
+                    importobj = token.values[1].value
+                    import_syntax = self._import(importpath.replace(".", "/"))
+                    for token in import_syntax:
+                        if isinstance(token, Grammar) and token.name == importobj:
+                            new_syntax.append(token)
+                            break
+                        if isinstance(token, Define) and token.values[0].value == importobj:
+                            new_syntax.append(token)
+                            break
                 case GrammarStmt():
                     new_syntax.append(create_grammar(token, sub_tokens))
                 case Import():
                     importpath = token.values[0].value
-                    logger.debug("Importing %s...", importpath)
-                    filepath = importpath.replace(".", "/")
-                    if hasattr(self, "source_path"):
-                        base_dir = self.source_path.parent
-                    else:
-                        raise ImportError("Can not import without a source file.")
-                    import_file = base_dir / f"{filepath}.pud"
-                    new_syntax.extend(self.compile_file(import_file))
+                    new_syntax.extend(self._import(importpath.replace(".", "/")))
                 case _:
                     raise SyntaxError(
                         f"Invalid statement outside grammar in line {token.lineno}"
