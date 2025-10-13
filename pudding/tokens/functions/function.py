@@ -53,13 +53,16 @@ class Function(Token):
         :returns: The string with replaced values or None if string or last_match of
         context is None.
         """
+        new_string = string.value
+        string_vars = re.findall(STRING_VAR_RE, string.value)
+        if len(string_vars) == 0:
+            return new_string
         if context.reader.last_match is None:
             raise RuntimeError(
-                "cannot replace variables, because last regex did not match"
+                "cannot replace variables, because no expression matched yet"
             )
-        new_string = string.value
         matches = context.reader.last_match.groups()
-        for replace, i in re.findall(STRING_VAR_RE, string.value):
+        for replace, i in string_vars:
             assert isinstance(replace, str)
             if int(i) > len(matches):
                 msg = "ERROR: Not enough matches to replace variables in line"
