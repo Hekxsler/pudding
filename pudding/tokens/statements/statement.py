@@ -5,7 +5,7 @@ from typing import Self, TypeVar
 
 from ..util import EXP_VAR
 
-from ..datatypes import Data, Or, Varname
+from ..datatypes import Data, Or, Varname, string_to_datatype
 
 from ...processor import PAction
 from ...processor.context import Context
@@ -16,22 +16,6 @@ _T = TypeVar("_T", bound=tuple[Data, ...])
 
 class Statement(Token):
     """Base class for a statement."""
-
-    @classmethod
-    def from_string(cls, string: str, lineno: int) -> Self:
-        """Create Statement object from string.
-
-        :param string: String containing the statement.
-        """
-        statement = cls.match_re.search(string)
-        if statement is None:
-            raise ValueError("Statement not in given string.")
-        name = statement.group(1)
-        value_match = cls.value_re.search(statement.group(0))
-        if value_match is None:
-            raise ValueError("No values in statement.")
-        values = tuple([str(x) for x in value_match.groups() if x is not None])
-        return cls(lineno, name, values)
 
     def execute(self, context: Context) -> PAction:
         """Function for context changing actions."""
@@ -64,7 +48,16 @@ class MultiExpStatement(Statement):
         if value_string is None:
             raise ValueError("No values in statement.")
         values = re.findall(rf"{EXP_VAR}", value_string.group(1))
-        return cls(lineno, name, tuple(values))
+        converted: list[Data] = []
+        for value in values:
+            try:
+                data = string_to_datatype(value)
+            except TypeError as e:
+                raise TypeError(
+                    f"ERROR: Invalid data type {repr(value)} in line {lineno}"
+                ) from e
+            converted.append(data)
+        return cls(lineno, name, tuple(converted))
 
     def get_patterns(self, context: Context) -> list[str]:
         """Returns the combined patterns as a string.

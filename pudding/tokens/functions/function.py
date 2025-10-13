@@ -1,9 +1,9 @@
 """Module defining functions."""
 
 import re
-from typing import NoReturn, Optional, Self, TypeVar
+from typing import NoReturn, Optional, TypeVar
 
-from ..datatypes import String
+from ..datatypes import Data, String
 from ..util import STRING_VAR_RE
 from ...processor import PAction
 from ...processor.context import Context
@@ -23,7 +23,7 @@ class Function(Token):
     min_args = 0
     max_args = 0
 
-    def __init__(self, lineno: int, name: str, values: tuple[str, ...]) -> None:
+    def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init for Function class.
 
         :param lineno: Line number in .pud file.
@@ -37,22 +37,6 @@ class Function(Token):
         if len(values) > self.max_args:
             raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
         super().__init__(lineno, name, values)
-
-    @classmethod
-    def from_string(cls, string: str, lineno: int) -> Self:
-        """Create Function object from string.
-
-        :param string: String containing the function.
-        """
-        function = cls.match_re.search(string)
-        if not function:
-            raise ValueError("Statement not in given string.")
-        name = function.group(1)
-        args_match = cls.value_re.search(function.group(0))
-        if not args_match:
-            raise ValueError("No args in function.")
-        args = tuple([str(x) for x in args_match.groups() if x is not None])
-        return cls(lineno, name, args)
 
     def execute(self, context: Context) -> PAction | NoReturn:
         """Function executed by the context.

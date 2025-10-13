@@ -28,7 +28,7 @@ class Token:
     value_re: Pattern[str]
     value_types: tuple[type | UnionType, ...]
 
-    def __init__(self, lineno: int, name: str, values: tuple[str, ...]) -> None:
+    def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init function for Token class.
 
         :param lineno: Line number.
@@ -37,16 +37,7 @@ class Token:
         """
         self.lineno = lineno
         self.name = name
-        converted: list[Data] = []
-        for value in values:
-            try:
-                data = string_to_datatype(value)
-            except TypeError as e:
-                raise TypeError(
-                    f"ERROR: Invalid data type {repr(value)} in line {lineno}"
-                ) from e
-            converted.append(data)
-        self.values = self._check_value_types(tuple(converted))
+        self.values = self._check_value_types(values)
 
     def _check_value_types(self, values: _T) -> _T:
         """Check if values are of the correct type.
@@ -73,7 +64,24 @@ class Token:
         :param string: String containing the function.
         :param lineno: Line number of the token.
         """
-        raise NotImplementedError()
+        token_match = cls.match_re.search(string)
+        if token_match is None:
+            raise ValueError("Token not in given string.")
+        name = token_match.group(1)
+        value_match = cls.value_re.search(token_match.group(0))
+        if value_match is None:
+            raise ValueError("No values in token.")
+        values = tuple([str(x) for x in value_match.groups() if x is not None])
+        converted: list[Data] = []
+        for value in values:
+            try:
+                data = string_to_datatype(value)
+            except TypeError as e:
+                raise TypeError(
+                    f"ERROR: Invalid data type {repr(value)} in line {lineno}"
+                ) from e
+            converted.append(data)
+        return cls(lineno, name, tuple(converted))
 
     @classmethod
     def matches(cls, string: str) -> bool:
