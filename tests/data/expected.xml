@@ -43,4 +43,10 @@
       <issues>https://github.com/Hekxsler/pudding/issues</issues>
     </urls>
   </project>
+  <before>test</before>
+  <enqueue name="test">
+    <start/>
+    <onadd>value</onadd>
+    <after>test</after>
+  </enqueue>
 </test>

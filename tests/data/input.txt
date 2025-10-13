@@ -27,6 +27,13 @@ classifiers = [
 [project.scripts]
 pud = "pud:main"
 
+enqueue test
+before
+start
+onadd
+after
+end
+
 [project.urls]
 Homepage = "https://github.com/Hekxsler/pudding"
 Issues = "https://github.com/Hekxsler/pudding/issues"

@@ -4,7 +4,7 @@ from 'me2' import 'string'
 define nows /\S+/
 define quote /\"/
 define word /[\w-]+/
-
+define enqueue_test /enqueue test[\r\n]+/
 
 grammar dict(default):
     skip ','
@@ -31,6 +31,12 @@ grammar section(default):
         out.open('$0')
         list()
 
+grammar enqueue_test(default):
+    match 'start' nl:
+        out.add('$0')
+    match 'end' nl:
+        do.return()
+
 grammar input(default):
     match '[' word ']' nl:
         out.enter('$1')
@@ -38,4 +44,11 @@ grammar input(default):
     match '[' word '.' word ']' nl:
         out.enter('$1/$3')
         section()
+    match enqueue_test:
+        out.enqueue_before(/before/, 'before', 'test')
+        out.enqueue_after(/after/, 'after', 'test')
+        out.enqueue_on_add(/onadd/, 'onadd', 'value')
+        out.enter('enqueue?name="test"')
+        enqueue_test()
+        out.clear_queue()
     out.set_root_name('test')

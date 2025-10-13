@@ -101,5 +101,18 @@
                 "#text": "https://github.com/Hekxsler/pudding/issues"
             }
         }
+    },
+    "before": {
+        "#text": "test"
+    },
+    "enqueue": {
+        "@name": "test",
+        "start": {},
+        "onadd": {
+            "#text": "value"
+        },
+        "after": {
+            "#text": "test"
+        }
     }
 }
