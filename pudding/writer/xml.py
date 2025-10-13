@@ -122,10 +122,9 @@ class Xml(Writer):
         :returns: The added/modified SubElement.
         """
         elem = self._get_or_create_element(path, self.root)
-        text = elem.text
-        if text is None:
-            text = ""
-        elem.text = f"{text}{value}"
+        text = elem.text or ""
+        if value is not None:
+            elem.text = f"{text}{value}"
         return elem
 
     def enter_path(self, path: str, value: str | None = None) -> None:

@@ -148,7 +148,8 @@ class Json(Writer):
         """
         elem = self._get_or_create_element(path)
         text = elem.get("#text", "")
-        elem["#text"] = f"{text}{value}"
+        if value is not None:
+            elem["#text"] = f"{text}{value}"
         return elem
 
     def enter_path(self, path: str, value: str | None = None) -> None:
