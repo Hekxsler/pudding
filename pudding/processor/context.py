@@ -1,6 +1,7 @@
 """Module defining context class."""
 
-from ..tokens.datatypes import Data, Varname
+from re import Pattern
+
 from ..reader.reader import Reader
 from ..writer.writer import Writer
 from .grammar import Grammar
@@ -23,7 +24,7 @@ class Context:
         """
         self.grammars: dict[str, Grammar] = {}
         self.queue: TriggerQueue = TriggerQueue()
-        self.variables: dict[str, Data] = {}
+        self.variables: dict[str, Pattern[str]] = {}
         self.reader = Reader(content)
         self.writer = writer_cls()
 
@@ -38,7 +39,7 @@ class Context:
             raise SyntaxError(f'Grammar "{name}" is not defined.')
         return grammar
 
-    def get_var(self, name: str) -> Data:
+    def get_var(self, name: str) -> Pattern[str]:
         """Get a variable by name.
 
         :param name: Name of the variable to retrieve.
@@ -47,6 +48,4 @@ class Context:
         value = self.variables.get(name)
         if not value:
             raise NameError(f'Variable "{name}" is not defined.')
-        if isinstance(value, Varname):
-            value = self.get_var(value.value)
         return value

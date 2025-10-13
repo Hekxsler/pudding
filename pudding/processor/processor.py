@@ -2,14 +2,10 @@
 
 import logging
 
-from ..tokens.statements.import_ import Import
-
-from ..tokens.statements.define import Define
-
 from ..compiler.compiler import Syntax
 from ..reader.reader import Reader
-from ..tokens.datatypes import Data
 from ..tokens.functions import grammar_call, out
+from ..tokens.statements.define import Define
 from ..tokens.token import Token
 from ..writer.writer import Writer
 from . import PAction
@@ -48,18 +44,10 @@ class Processor:
             detail = f'Grammar "{grammar.name}" already exists in line {grammar.lineno}'
             raise SyntaxError(f"{msg}\n{detail}")
 
-        def set_var(name: str, value: Data) -> None:
-            """Set a variable with a value in the context.
-
-            :param name: Name of the variable.
-            :param value: Value as a DataType object.
-            """
-            self.context.variables[name] = value
-
         for obj in syntax:
             match obj:
                 case Define():
-                    set_var(obj.values[0].value, obj.values[1])
+                    obj.execute(self.context)
                 case Grammar():
                     declare_grammar(obj)
                 case _:
