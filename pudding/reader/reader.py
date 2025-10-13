@@ -4,6 +4,8 @@ import logging
 
 from re import Match, Pattern
 
+from ..processor.triggers import Trigger
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,3 +56,11 @@ class Reader:
         if match is not None:
             self.current_pos += len(match.group(0))
         return match
+
+    def test_trigger(self, trigger: Trigger) -> bool:
+        """Test if a trigger matches.
+
+        :param trigger: The trigger object.
+        :returns: Boolean if trigger matches.
+        """
+        return trigger.match.match(self.content, self.current_pos) is not None

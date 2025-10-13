@@ -22,6 +22,10 @@ class Trigger:
         self.match = match
         self.token = token
 
+    def __repr__(self) -> str:
+        cls = self.__class__.__name__
+        return f"<{cls} match=/{self.match.pattern}/ token={self.token}>"
+
 
 class TriggerQueue(dict[Timing, list[Trigger]]):
     """Queue for triggers.
