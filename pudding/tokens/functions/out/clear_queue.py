@@ -19,6 +19,7 @@ class ClearQueue(Out):
 
     match_re = re.compile(r"(out\.clear_queue)\(\)$")
     value_re = re.compile(r"out\.clear_queue\(\)")
+    value_types = tuple()
 
     def execute(self, context: Context) -> PAction:
         """Action for clear_queue function."""
