@@ -1,10 +1,8 @@
 """Module defining functions."""
 
-import re
 from typing import NoReturn, Optional, TypeVar
 
 from ...datatypes import Data, String
-from ..util import STRING_VAR_RE
 from ...processor import PAction
 from ...processor.context import Context
 from ..token import Token
@@ -45,32 +43,6 @@ class Function(Token):
         """
         raise NotImplementedError()
 
-    def replace_string_vars(self, string: String, context: Context) -> str:
-        """Replace variables in a string with the last matched values.
-
-        :param string: String to replace vars in.
-        :param context: The current context.
-        :returns: The string with replaced values or None if string or last_match of
-        context is None.
-        """
-        new_string = string.value
-        string_vars = re.findall(STRING_VAR_RE, string.value)
-        if len(string_vars) == 0:
-            return new_string
-        if context.reader.last_match is None:
-            raise RuntimeError(
-                "cannot replace variables, because no expression matched yet"
-            )
-        matches = context.reader.last_match.groups()
-        for replace, i in string_vars:
-            assert isinstance(replace, str)
-            if int(i) > len(matches):
-                msg = "ERROR: Not enough matches to replace variables in line"
-                raise SyntaxError(f"{msg} {self.lineno}")
-            value = replace.replace(f"${i}", matches[int(i)])
-            new_string = re.sub(re.escape(replace), value, new_string)
-        return new_string
-
     def get_string(self, index: int) -> String:
         """Get String object in values.
 
@@ -89,7 +61,7 @@ class Function(Token):
         :param index: Index of the string in values.
         :param context: Current context object.
         """
-        return self.replace_string_vars(self.get_string(index), context)
+        return context.replace_string_vars(self.get_string(index))
 
     def get_repl_opt_string(
         self, index: int, context: Context, default: Optional[_D] = None

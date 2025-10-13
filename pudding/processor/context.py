@@ -1,11 +1,15 @@
 """Module defining context class."""
 
-from re import Pattern
+import re
 
+from ..datatypes.string import String
 from ..reader.reader import Reader
 from ..writer.writer import Writer
 from .grammar import Grammar
 from .triggers import TriggerQueue
+
+STRING_VAR_RE = r"([^\d]?\$(\d+)[^\$]?)"
+# match chars before and after to not match $1 and $10 when replacing $1
 
 
 class Context:
@@ -24,7 +28,7 @@ class Context:
         """
         self.grammars: dict[str, Grammar] = {}
         self.queue: TriggerQueue = TriggerQueue()
-        self.variables: dict[str, Pattern[str]] = {}
+        self.variables: dict[str, re.Pattern[str]] = {}
         self.reader = Reader(content)
         self.writer = writer_cls()
 
@@ -39,7 +43,7 @@ class Context:
             raise SyntaxError(f'Grammar "{name}" is not defined.')
         return grammar
 
-    def get_var(self, name: str) -> Pattern[str]:
+    def get_var(self, name: str) -> re.Pattern[str]:
         """Get a variable by name.
 
         :param name: Name of the variable to retrieve.
@@ -49,3 +53,27 @@ class Context:
         if not value:
             raise NameError(f'Variable "{name}" is not defined.')
         return value
+
+    def replace_string_vars(self, string: String) -> str:
+        """Replace variables in a string with the last matched values.
+
+        :param string: String to replace vars in.
+        :param context: The current context.
+        :returns: The string with replaced values.
+        """
+        string_vars = re.findall(STRING_VAR_RE, string.value)
+        if len(string_vars) == 0:
+            return string.value
+        if self.reader.last_match is None:
+            raise RuntimeError(
+                "Can not replace variables, because no expression matched yet."
+            )
+        new_string = string.value
+        matches = self.reader.last_match.groups()
+        for replace, i in string_vars:
+            assert isinstance(replace, str)
+            if int(i) > len(matches):
+                raise IndexError(f"Not enough matches to replace variable '${i}'.")
+            value = replace.replace(f"${i}", matches[int(i)])
+            new_string = re.sub(re.escape(replace), value, new_string)
+        return new_string
