@@ -13,8 +13,7 @@ grammar default:
     skip '#' nonl nl
 
 grammar dict(default):
-    match ',':
-        do.skip()
+    skip ','
     match word ws '=' ws quote string quote:
         out.add_attribute('.', '$0', '$5')
     match '}':
