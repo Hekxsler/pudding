@@ -35,8 +35,6 @@ Or directly import the Compiler, Context and Processor classes and create your o
 
 See files in tests/data folder.
 
-## License
-GPL-3.0-only
 
 ## Links
 - [GitHub](https://github.com/Hekxsler/pudding)
