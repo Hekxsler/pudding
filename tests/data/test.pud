@@ -1,16 +1,10 @@
-define nl /[\r\n]+/
-define nonl /[^\r\n]+/
+import 'import_me'
+from 'me2' import 'string'
+
 define nows /\S+/
 define quote /\"/
-define string /(?:\\\"|[^\"])+/
 define word /[\w-]+/
-define ws /\s+/
 
-
-grammar default:
-    skip ws
-    skip nl
-    skip '#' nonl nl
 
 grammar dict(default):
     skip ','

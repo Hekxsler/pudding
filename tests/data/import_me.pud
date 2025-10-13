@@ -1,0 +1,8 @@
+define nl /[\r\n]+/
+define nonl /[^\r\n]+/
+define ws /\s+/
+
+grammar default:
+    skip ws
+    skip nl
+    skip '#' nonl nl
