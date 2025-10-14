@@ -101,7 +101,7 @@ extend-exclude = [
     "build",
     "dist",
 ]
-docstring-convention = "sphinx"
+docstring-convention = "pep257"
 max-line-length = 88
 count = true
 
