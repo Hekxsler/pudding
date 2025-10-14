@@ -101,7 +101,7 @@ extend-exclude = [
     "build",
     "dist",
 ]
-docstring-convention = "google"
+docstring-convention = "sphinx"
 max-line-length = 88
 count = true
 
@@ -114,5 +114,6 @@ strict = "true"
 
 [tool.coverage.report]
 exclude_also = [
+    "def __repr__",
     "raise NotImplementedError",
 ]
