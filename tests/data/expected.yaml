@@ -1,10 +1,10 @@
 before:
-  '#text': before
+  '#text': this
 enqueue:
   '@name': test
-  after: {}
-  onadd:
-    '#text': onadd
+  after:
+    '#text': that
+  onadd: {}
   start: {}
 project:
   authors:
