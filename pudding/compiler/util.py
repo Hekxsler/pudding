@@ -29,6 +29,7 @@ DEFAULT_TOKENS: tuple[type[Token], ...] = (
     stmt.IMatch,
     stmt.Match,
     stmt.Skip,
+    stmt.ISkip,
     stmt.IWhen,
     stmt.When,
     GrammarCall,
