@@ -205,7 +205,7 @@ class Processor:
         """
         untriggered: list[Trigger] = []
         for trigger in self.context.queue.get(timing, []):
-            if not self.reader.test_trigger(trigger):
+            if not self.reader.would_match(trigger.match):
                 untriggered.append(trigger)
                 continue
             logger.debug("Triggered trigger %s", trigger)
