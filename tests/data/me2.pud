@@ -1,1 +1,8 @@
 define string /(?:\\\"|[^\"])+/
+
+
+grammar enqueue_test(default):
+    match 'start' nl:
+        out.add('$0')
+    match 'end' nl:
+        do.return()

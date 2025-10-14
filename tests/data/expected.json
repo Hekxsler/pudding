@@ -103,16 +103,14 @@
         }
     },
     "before": {
-        "#text": "test"
+        "#text": "this"
     },
     "enqueue": {
         "@name": "test",
         "start": {},
-        "onadd": {
-            "#text": "value"
-        },
+        "onadd": {},
         "after": {
-            "#text": "test"
+            "#text": "that"
         }
     }
 }

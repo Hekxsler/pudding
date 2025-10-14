@@ -28,10 +28,10 @@ classifiers = [
 pud = "pud:main"
 
 enqueue test
-before
+before this
 start
 onadd
-after
+after that
 end
 
 [project.urls]
