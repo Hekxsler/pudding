@@ -20,4 +20,4 @@ class Next(Do):
 
     def execute(self, context: Context) -> PAction:
         """Action for next function."""
-        return PAction.CONTINUE
+        return PAction.NEXT

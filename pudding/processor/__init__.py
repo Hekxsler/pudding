@@ -7,5 +7,7 @@ class PAction(Enum):
     """Processing action."""
 
     CONTINUE = 0
-    EXIT = 1
-    RESTART = 2
+    ENTER = 1
+    EXIT = 2
+    NEXT = 3
+    RESTART = 4

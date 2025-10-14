@@ -80,80 +80,122 @@ class Processor:
         )
 
     def execute_grammar(self, name: str) -> PAction:
-        """Execute a grammars own and inherited statements.
+        """Execute a grammar by name.
+
+        Execute tokens of a grammar with the given name. If a inherited grammar
+        exists, it will be executed first.
 
         :param name: Name of the grammar.
-        :returns: ProcessingAction of the executed syntax.
+        :returns: PAction.RESTART if grammar restarted at least once
+            else PAction.CONTINUE.
         """
-        action = PAction.RESTART
         grammar = self.context.get_grammar(name)
         logger.debug("-> Executing %s", grammar)
-        matched = False
+        action = PAction.RESTART
+        restarts: int = 0
         while action == PAction.RESTART:
+            restarts += 1
             if grammar.inherits:
                 self.execute_grammar(grammar.inherits)
-            action = self.execute_tokens(grammar.tokens)
-            if action == PAction.RESTART:
-                matched = True
+            action = self._execute_grammar(grammar)
         logger.debug("<- Leaving grammar %s", name)
-        if matched:
+        if restarts > 1:
             return PAction.RESTART
+        return PAction.CONTINUE
+
+    def execute_condition(self, token: tuple[Token, TokenList]) -> PAction:
+        """Execute a condition.
+
+        The condition token will return PAction.ENTER if sub tokens should be
+        executed. Otherwise the condition is not met and sub tokens not executed.
+        If all sub tokens have been executed, restart the grammar unless another
+        PAction than CONTINUE is requested.
+
+        :param token: Tuple with condition and tokens to execute.
+        :returns: ProcessingAction.
+        """
+        condition, sub_tokens = token
+        action = condition.execute(self.context)
+        if not action == PAction.ENTER:
+            return action
+        sub_action = self._execute_tokens(sub_tokens)
+        if sub_action == PAction.CONTINUE:
+            return PAction.RESTART
+        return sub_action
+
+    def execute_token(self, token: Token) -> PAction:
+        """Execute a token.
+
+        Execute the token and trigger Timings before and after the execution.
+
+        :param token: Token to execute.
+        :returns: PAction of the executed token.
+        """
+        self.trigger(Timing.BEFORE)
+        action = token.execute(self.context)
+        if isinstance(token, out.Add):
+            self.trigger(Timing.ON_ADD)
+        self.trigger(Timing.AFTER)
         return action
 
-    def execute_tokens(self, syntax: TokenList) -> PAction:
-        """Execute a given syntax.
+    def _execute_grammar(self, grammar: Grammar) -> PAction:
+        """Execute tokens of a grammar.
 
-        :param syntax: List of Tokens to execute.
-        :returns: ProcessingAction of the last executed token.
+        Opened and entered writer paths are left at the end of the grammar.
+        PAction.NEXT is treated as PAction.CONTINUE so the next token of
+        the grammar is executed.
+
+        :param syntax: Grammar to execute.
+        :returns: PAction of the last executed token.
         """
-
-        def execute_token(token: Token) -> PAction:
-            """Execute a token.
-
-            :param token: Token to execute.
-            :returns: ProcessingAction of the executed token.
-            """
-            self.trigger(Timing.BEFORE)
-            action = token.execute(self.context)
-            if isinstance(token, out.Add):
-                self.trigger(Timing.ON_ADD)
-            self.trigger(Timing.AFTER)
-            return action
-
-        action = PAction.CONTINUE
+        action = PAction.EXIT
         entered = 0
-        for token in syntax:
+        for token in grammar.tokens:
             logger.debug("Executing %s", token)
-            if isinstance(token, tuple):
-                action = self.execute_condition(token)
-            elif isinstance(token, grammar_call.GrammarCall):
-                action = self.execute_grammar(token.name)
-                if action == PAction.EXIT:
-                    # continue current grammar, if called grammar is exited
-                    action = PAction.CONTINUE
-            else:
-                if isinstance(token, (out.Open, out.Enter)):
+            match token:
+                case tuple():
+                    action = self.execute_condition(token)
+                case grammar_call.GrammarCall():
+                    action = self.execute_grammar(token.name)
+                case out.Open() | out.Enter():
                     entered += 1
-                action = execute_token(token)
-            if not action == PAction.CONTINUE:
+                    action = self.execute_token(token)
+                case _:
+                    action = self.execute_token(token)
+            if action not in (PAction.CONTINUE, PAction.NEXT):
                 break
         for _ in range(entered):
             self.writer.leave_path()
         return action
 
-    def execute_condition(self, token: tuple[Token, TokenList]) -> PAction:
-        """Execute a condition.
+    def _execute_tokens(self, tokens: TokenList) -> PAction:
+        """Execute a TokenList.
 
-        :param token: Tuple with condition and tokens to execute.
-        :returns: ProcessingAction of the executed condition.
+        Opened and entered writer paths are left at the end of the grammar.
+        If a token returns not PAction.CONTINUE, stop executing and return
+        the last PAction.
+
+        :param syntax: List of Tokens to execute.
+        :returns: PAction of the last executed token.
         """
-        condition, sub_tokens = token
-        action = condition.execute(self.context)
-        if not action == PAction.RESTART:
-            return action
-        sub_action = self.execute_tokens(sub_tokens)
-        if sub_action == PAction.EXIT:
-            return sub_action
+        action = PAction.CONTINUE
+        entered = 0
+        for token in tokens:
+            logger.debug("Executing %s", token)
+            match token:
+                case tuple():
+                    action = self.execute_condition(token)
+                case grammar_call.GrammarCall():
+                    action = self.execute_grammar(token.name)
+                case out.Open() | out.Enter():
+                    entered += 1
+                    action = self.execute_token(token)
+                case _:
+                    action = self.execute_token(token)
+            if action != PAction.CONTINUE:
+                break
+        for _ in range(entered):
+            self.writer.leave_path()
         return action
 
     def trigger(self, timing: Timing) -> None:

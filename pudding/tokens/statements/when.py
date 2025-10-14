@@ -19,8 +19,8 @@ class When(MultiExpStatement):
         for pattern in self.get_patterns(context):
             regex = re.compile(pattern)
             if context.reader.find(regex):
-                return PAction.RESTART
-        return PAction.CONTINUE
+                return PAction.ENTER
+        return PAction.NEXT
 
 
 class IWhen(MultiExpStatement):
@@ -34,5 +34,5 @@ class IWhen(MultiExpStatement):
         for pattern in self.get_patterns(context):
             regex = re.compile(pattern, re.IGNORECASE)
             if context.reader.find(regex):
-                return PAction.RESTART
-        return PAction.CONTINUE
+                return PAction.ENTER
+        return PAction.NEXT
