@@ -4,11 +4,11 @@ This is a minimal, sensible default config that reads project metadata
 from the package where possible. It aims to be portable for local
 documentation builds and CI.
 """
+
 import importlib
 import os
 import sys
 from typing import Any
-
 
 # -- Path setup --------------------------------------------------------------
 # Add project root so autodoc can import the package.
@@ -20,7 +20,9 @@ sys.path.insert(0, ROOT)
 try:
     project_module = importlib.import_module("pudding")
     project = getattr(project_module, "__name__", "pudding")
-    author = ", ".join([a.get("name") or "" for a in getattr(project_module, "__authors__", [])]) or getattr(project_module, "__author__", "Moritz Hille")
+    author = ", ".join(
+        [a.get("name") or "" for a in getattr(project_module, "__authors__", [])]
+    ) or getattr(project_module, "__author__", "Moritz Hille")
     try:
         release = getattr(project_module, "__version__")
     except Exception:
@@ -38,6 +40,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx_rtd_theme",
 ]
 
 templates_path = ["_templates"]
@@ -63,12 +66,18 @@ autodoc_member_order = "bysource"
 
 
 # -- Options for HTML output -------------------------------------------------
-html_theme = os.environ.get("SPHINX_THEME", "alabaster")
+html_theme = os.environ.get("SPHINX_THEME", "sphinx_rtd_theme")
 html_static_path = ["_static"]
 
 
 # -- Helpful defaults -------------------------------------------------------
-html_logo = "_static/pudding-logo.jpg" if os.path.exists(os.path.join(os.path.dirname(__file__), "_static", "pudding-logo.jpg")) else None
+html_logo = (
+    "_static/pudding-logo.jpg"
+    if os.path.exists(
+        os.path.join(os.path.dirname(__file__), "_static", "pudding-logo.jpg")
+    )
+    else None
+)
 
 
 def setup(app: Any) -> None:  # pragma: no cover - trivial glue
