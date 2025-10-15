@@ -4,9 +4,6 @@ This is a minimal, sensible default config that reads project metadata
 from the package where possible. It aims to be portable for local
 documentation builds and CI.
 """
-
-from __future__ import annotations
-
 import importlib
 import os
 import sys
@@ -39,11 +36,27 @@ except Exception:
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "myst_parser",
     "sphinx.ext.viewcode",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns: list[str] = ["_build", "Thumbs.db", ".DS_Store"]
+
+# Allow Markdown as source. The MyST parser will handle `.md` files.
+# `root_doc` is the Sphinx 4+ name for the master document; set both
+# for compatibility with older Sphinx versions.
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "markdown",
+}
+root_doc = "index"
+master_doc = "index"
+
+# Optional MyST settings (small, safe defaults)
+myst_enable_extensions = [
+    "deflist",
+]
 
 autodoc_typehints = "description"
 autodoc_member_order = "bysource"
