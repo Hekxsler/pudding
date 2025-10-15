@@ -34,9 +34,9 @@ except Exception:
 
 # -- General configuration ---------------------------------------------------
 extensions = [
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "myst_parser",
     "sphinx.ext.viewcode",
 ]
 
