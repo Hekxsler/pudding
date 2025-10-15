@@ -20,4 +20,6 @@ sphinx:
 python:
    install:
     - method: pip
-      path: myst-parser
+      path: .
+      extra_requirements:
+         - myst-parser
