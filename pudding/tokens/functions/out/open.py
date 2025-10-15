@@ -22,7 +22,7 @@ class Open(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Always create and enter a node.
+        """Create and enter a node.
 
         :param context: Current context object.
         :returns: PAction.CONTINUE

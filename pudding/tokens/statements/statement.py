@@ -70,14 +70,14 @@ class MultiExpStatement(Statement):
         :returns: List of regex patterns.
         """
         patterns = [r""]
-        for value in self.values:
-            if isinstance(value, Or):
+        for data in self.values:
+            if isinstance(data, Or):
                 patterns.append(r"")
                 continue
-            if isinstance(value, Varname):
-                value = context.get_var(value.value)
+            if isinstance(data, Varname):
+                value = context.get_var(data.value)
             else:
-                value = value.pattern
+                value = data.pattern
             patterns[-1] += rf"({value.pattern})"
         return patterns
 

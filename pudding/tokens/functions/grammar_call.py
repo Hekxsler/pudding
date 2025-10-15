@@ -20,7 +20,7 @@ class GrammarCall(Function):
 
     def execute(self, context: Context) -> NoReturn:
         """Execute this token.
-        
+
         :param context: Current context object.
         :raises RuntimeError: This token can not be executed.
         """

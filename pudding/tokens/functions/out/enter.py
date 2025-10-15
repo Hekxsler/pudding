@@ -22,7 +22,7 @@ class Enter(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Create and enter a node.
+        """Enter a node and create it if it does not exist.
 
         :param context: Current context object.
         :returns: PAction.CONTINUE

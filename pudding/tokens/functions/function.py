@@ -38,7 +38,7 @@ class Function(Token):
 
     def execute(self, context: Context) -> PAction | NoReturn:
         """Execute this token.
-        
+
         :param context: Current context object.
         :returns: Returns PAction for processor class.
         """

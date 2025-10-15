@@ -17,7 +17,7 @@ class Define(Statement):
     value_types = (Varname, Data)
 
     def get_pattern(self, context: Context) -> re.Pattern[str]:
-        """Returns the combined patterns as a string.
+        """Return the combined patterns as a string.
 
         :param context: Context to resolve variables.
         :returns: Regex pattern.

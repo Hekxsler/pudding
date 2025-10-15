@@ -13,7 +13,7 @@ class Out(Function):
 
     def execute(self, context: Context) -> PAction:
         """Execute this token.
-        
+
         :param context: Current context object.
         :raises NotImplementedError: Abstract method
         """
