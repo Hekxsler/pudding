@@ -1,5 +1,4 @@
 # Pudding
-[![Build Status](https://travis-ci.org/Hekxsler/pudding.svg?branch=master)](https://travis-ci.org/Hekxsler/pudding)
 [![Coverage Status](https://coveralls.io/repos/github/Hekxsler/pudding/badge.svg?branch=master)](https://coveralls.io/github/Hekxsler/pudding?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pudding/badge/?version=latest)](http://pudding.readthedocs.io/en/latest/?badge=latest)
 
@@ -34,8 +33,3 @@ Or directly import the Compiler, Context and Processor classes and create your o
 ## Example
 
 See files in tests/data folder.
-
-
-## Links
-- [GitHub](https://github.com/Hekxsler/pudding)
-- [Documentation](http://pudding.readthedocs.io/en/latest/)
