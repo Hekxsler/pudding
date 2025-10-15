@@ -113,7 +113,7 @@ class Xml(Writer):
         return new
 
     def add_element(self, path: str, value: str | None = None) -> Element:
-        """Adds an element if it not already exists.
+        """Add an element if it not already exists.
 
         Otherwise it appends the string to the already existing element.
 

@@ -37,9 +37,10 @@ class Function(Token):
         super().__init__(lineno, name, values)
 
     def execute(self, context: Context) -> PAction | NoReturn:
-        """Function executed by the context.
-
-        :param context: The current context instance.
+        """Execute this token.
+        
+        :param context: Current context object.
+        :returns: Returns PAction for processor class.
         """
         raise NotImplementedError()
 

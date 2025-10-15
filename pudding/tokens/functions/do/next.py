@@ -19,5 +19,9 @@ class Next(Do):
     value_re = re.compile(r"do\.next\(\)")
 
     def execute(self, context: Context) -> PAction:
-        """Action for next function."""
+        """Continue with the next token of the grammar.
+
+        :param context: Current context object.
+        :returns: Returns PAction.NEXT for processor class.
+        """
         return PAction.NEXT

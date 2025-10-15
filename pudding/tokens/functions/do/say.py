@@ -1,6 +1,7 @@
 """Control function do.say."""
 
 import re
+import sys
 
 from ....datatypes.string import String
 from ....processor import PAction
@@ -22,6 +23,10 @@ class Say(Do):
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:
-        """Action for say function."""
-        print(self.get_replaced_string(0, context))
+        """Print to stdout.
+
+        :param context: Current context object.
+        :returns: Returns PAction.CONTINUE for processor class.
+        """
+        sys.stdout.write(self.get_replaced_string(0, context))
         return PAction.CONTINUE

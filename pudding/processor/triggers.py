@@ -23,6 +23,7 @@ class Trigger:
         self.token = token
 
     def __repr__(self) -> str:
+        """Return string representation of this object."""
         cls = self.__class__.__name__
         return f"<{cls} match=/{self.match.pattern}/ token={self.token}>"
 

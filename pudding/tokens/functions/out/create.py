@@ -24,7 +24,11 @@ class Create(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Action for create function."""
+        """Create an element always.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         context.writer.create_element(
             self.get_replaced_string(0, context),
             self.get_repl_opt_string(1, context),

@@ -16,5 +16,9 @@ class Grammar(Statement):
     value_types = (Varname, Varname)
 
     def execute(self, context: Context) -> PAction:
-        """Action for grammar statement."""
+        """Execute this token.
+
+        :param context: Current context object.
+        :raises SyntaxError: Can not be executed.
+        """
         raise SyntaxError(f"Grammar not defined at top level in line {self.lineno}")

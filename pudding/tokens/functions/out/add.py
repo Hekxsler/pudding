@@ -21,7 +21,11 @@ class Add(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Action for add function."""
+        """Add an element.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         path = self.get_replaced_string(0, context)
         value = self.get_repl_opt_string(1, context)
         context.writer.add_element(path, value)

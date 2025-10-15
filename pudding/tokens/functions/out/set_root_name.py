@@ -20,7 +20,11 @@ class SetRootName(Out):
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:
-        """Action for set_root_name function."""
+        """Set tag of root element.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         if isinstance(context.writer, Xml):
             context.writer.root_name = self.get_string(0).value
         return PAction.CONTINUE

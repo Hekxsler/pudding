@@ -19,6 +19,10 @@ class Remove(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Action for remove function."""
+        """Delete an element.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         context.writer.delete_element(self.get_replaced_string(0, context))
         return PAction.CONTINUE

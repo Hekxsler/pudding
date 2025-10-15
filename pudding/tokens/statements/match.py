@@ -15,7 +15,11 @@ class Match(MultiExpStatement):
     value_re = re.compile(rf"match((?: {EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
-        """Action for match statement."""
+        """Match a pattern to the content ahead.
+
+        :param context: Current context object.
+        :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
+        """
         for pattern in self.get_patterns(context):
             regex = re.compile(pattern)
             if context.reader.match(regex):
@@ -30,7 +34,11 @@ class IMatch(MultiExpStatement):
     value_re = re.compile(rf"imatch((?: {EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
-        """Action for imatch statement."""
+        """Match a pattern to the content ahead (case-insensitive).
+
+        :param context: Current context object.
+        :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
+        """
         for pattern in self.get_patterns(context):
             regex = re.compile(pattern, re.IGNORECASE)
             if context.reader.match(regex):

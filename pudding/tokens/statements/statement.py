@@ -18,7 +18,11 @@ class Statement(Token):
     """Base class for a statement."""
 
     def execute(self, context: Context) -> PAction:
-        """Function for context changing actions."""
+        """Execute this token.
+
+        :param context: Current context object.
+        :returns: PAction for processor class.
+        """
         raise NotImplementedError()
 
 
@@ -60,7 +64,7 @@ class MultiExpStatement(Statement):
         return cls(lineno, name, tuple(converted))
 
     def get_patterns(self, context: Context) -> list[str]:
-        """Returns the combined patterns as a string.
+        """Return the combined patterns as a string.
 
         :param context: Context to resolve variables.
         :returns: List of regex patterns.
@@ -78,5 +82,9 @@ class MultiExpStatement(Statement):
         return patterns
 
     def execute(self, context: Context) -> PAction:
-        """Function for context changing actions."""
+        """Execute this token.
+
+        :param context: Current context object.
+        :returns: PAction for processor class.
+        """
         raise NotImplementedError()

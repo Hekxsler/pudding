@@ -18,5 +18,9 @@ class Return(Do):
     value_re = re.compile(r"do\.return\(\)")
 
     def execute(self, context: Context) -> PAction:
-        """Action for return function."""
+        """Immediately leave the current grammar.
+
+        :param context: Current context object.
+        :returns: Returns PAction.EXIT for processor class.
+        """
         return PAction.EXIT

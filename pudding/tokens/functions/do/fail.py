@@ -11,8 +11,7 @@ from .do import Do
 class Fail(Do):
     """Class for `do.fail` function.
 
-    Immediately terminates parsing with an error. Takes exactly one argument
-    with a string printed to stdout on execution.
+    Takes exactly one argument with a string printed to stdout on execution.
     """
 
     min_args = 1
@@ -23,5 +22,9 @@ class Fail(Do):
     value_types = (String,)
 
     def execute(self, context: Context) -> NoReturn:
-        """Action of fail function."""
+        """Immediately terminate parsing with an error.
+
+        :param context: Current context object.
+        :raises RuntimeError: Error with given message.
+        """
         raise RuntimeError(self.get_replaced_string(0, context))

@@ -22,7 +22,11 @@ class Open(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Action for open function."""
+        """Always create and enter a node.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         context.writer.open_path(
             self.get_replaced_string(0, context), self.get_repl_opt_string(1, context)
         )

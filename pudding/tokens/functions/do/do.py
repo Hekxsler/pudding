@@ -13,5 +13,9 @@ class Do(Function):
     value_types = tuple()
 
     def execute(self, context: Context) -> PAction | NoReturn:
-        """Action for control functions."""
+        """Execute this token.
+        
+        :param context: Current context object.
+        :returns: Returns PAction for processor class.
+        """
         raise NotImplementedError()

@@ -1,7 +1,6 @@
 """Module defining Reader class."""
 
 import logging
-
 from re import Match, Pattern
 
 logger = logging.getLogger(__name__)
@@ -61,7 +60,7 @@ class Reader:
 
     def match(self, regex: Pattern[str]) -> Match[str] | None:
         """Try matching a regex to the content ahead and advance.
-        
+
         If the pattern matches the current_pos is advanced by the length of the match.
 
         :param regex: The pattern to match.

@@ -15,7 +15,11 @@ class When(MultiExpStatement):
     value_re = re.compile(rf"when((?: {EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
-        """Action for when statement."""
+        """Search a pattern to the content ahead.
+
+        :param context: Current context object.
+        :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
+        """
         for pattern in self.get_patterns(context):
             regex = re.compile(pattern)
             if context.reader.find(regex):
@@ -30,7 +34,11 @@ class IWhen(MultiExpStatement):
     value_re = re.compile(rf"iwhen((?: {EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
-        """Action for when statement."""
+        """Search a pattern to the content ahead (case-insensitive).
+
+        :param context: Current context object.
+        :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
+        """
         for pattern in self.get_patterns(context):
             regex = re.compile(pattern, re.IGNORECASE)
             if context.reader.find(regex):

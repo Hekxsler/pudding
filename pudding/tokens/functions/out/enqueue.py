@@ -42,7 +42,7 @@ class EnqueueAfter(Enqueue):
     """Class for `out.enqueue_after` function.
 
     Like out.add(), but is executed after the given regular expression
-    matches the input and the next match statement was processed.
+    matches the input and the next token was processed.
     """
 
     match_re = re.compile(
@@ -53,7 +53,11 @@ class EnqueueAfter(Enqueue):
     )
 
     def execute(self, context: Context) -> PAction:
-        """Action for enqueue_after function."""
+        """Enqueue token after execution.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         self.add_trigger(context, Timing.AFTER)
         return PAction.CONTINUE
 
@@ -73,7 +77,11 @@ class EnqueueBefore(Enqueue):
     )
 
     def execute(self, context: Context) -> PAction:
-        """Action for enqueue_before function."""
+        """Enqueue token before execution.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         self.add_trigger(context, Timing.BEFORE)
         return PAction.CONTINUE
 
@@ -93,6 +101,10 @@ class EnqueueOnAdd(Enqueue):
     )
 
     def execute(self, context: Context) -> PAction:
-        """Action for enqueue_on_add function."""
+        """Enqueue token on execution of out.add().
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         self.add_trigger(context, Timing.ON_ADD)
         return PAction.CONTINUE

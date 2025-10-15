@@ -19,5 +19,9 @@ class GrammarCall(Function):
     value_types = (Varname,)
 
     def execute(self, context: Context) -> NoReturn:
-        """Action for a grammar call."""
+        """Execute this token.
+        
+        :param context: Current context object.
+        :raises RuntimeError: This token can not be executed.
+        """
         raise RuntimeError

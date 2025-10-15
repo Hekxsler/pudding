@@ -16,7 +16,11 @@ class FromImport(Statement):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Action for import statement."""
+        """Execute this token.
+
+        :param context: Current context object.
+        :raises SyntaxError: Can not be executed.
+        """
         raise SyntaxError(
             f"Import statement not defined at top level in line {self.lineno}"
         )
@@ -30,7 +34,11 @@ class Import(Statement):
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:
-        """Action for import statement."""
+        """Execute this token.
+
+        :param context: Current context object.
+        :raises SyntaxError: Can not be executed.
+        """
         raise SyntaxError(
             f"Import statement not defined at top level in line {self.lineno}"
         )

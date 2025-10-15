@@ -24,15 +24,15 @@ class Data:
         return self.value
 
     def __repr__(self) -> str:
-        """String representation of a Data object."""
+        """Return string representation of this object."""
         return f"<{self.__class__.__name__} value={repr(self.value)}>"
 
     @classmethod
     def compile_re(cls) -> re.Pattern[str]:
-        """Regex as a compiled Pattern object."""
+        """Return regex as a compiled Pattern object."""
         return re.compile(cls.regex)
 
     @property
     def pattern(self) -> re.Pattern[str]:
-        """Value as a compiled Pattern object."""
+        """Return value as a compiled Pattern object."""
         return re.compile(self.value)

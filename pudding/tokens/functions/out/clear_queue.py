@@ -22,6 +22,10 @@ class ClearQueue(Out):
     value_types = tuple()
 
     def execute(self, context: Context) -> PAction:
-        """Action for clear_queue function."""
+        """Clear enqueued tokens.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         context.queue.clear_triggers()
         return PAction.CONTINUE

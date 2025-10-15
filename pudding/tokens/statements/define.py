@@ -35,6 +35,10 @@ class Define(Statement):
         return re.compile(pattern)
 
     def execute(self, context: Context) -> PAction:
-        """Action for define statement."""
+        """Set a variable.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         context.variables[self.values[0].value] = self.get_pattern(context)
         return PAction.CONTINUE

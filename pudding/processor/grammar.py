@@ -16,7 +16,7 @@ class Grammar:
         inherits: str | None = None,
     ) -> None:
         """Init of Grammar.
-        
+
         :param lineno: Line number the grammar is defined in.
         :param name: Name of the grammar.
         :param tokens: Tokens in this grammar.
@@ -28,7 +28,7 @@ class Grammar:
         self.inherits = inherits
 
     def __repr__(self) -> str:
-        """String representation of a Grammar object."""
+        """Return string representation of this object."""
         name = self.__class__.__name__
         tokens = [token for token in self.tokens]
         return f"<{name} {self.name}({self.inherits}) {tokens}>"

@@ -54,7 +54,7 @@ class Token:
         return values
 
     def __repr__(self) -> str:
-        """String representation of a token."""
+        """Return string representation."""
         return f"<{self.lineno}, {self.name}, {self.values}>"
 
     @classmethod
@@ -85,17 +85,18 @@ class Token:
 
     @classmethod
     def matches(cls, string: str) -> bool:
-        """Returns true if statement exists in the given string.
+        """Return bool if statement exists in the given string.
 
         :param string: String to search in.
+        :returns: True if it exists.
         """
         return cls.match_re.search(string) is not None
 
     def execute(self, context: Any) -> PAction | NoReturn:
-        """Execution function of this token.
+        """Execute this token.
 
         :param context: Context object.
-        :type context: Context
+        :returns: PAction for processor class.
         """
         raise NotImplementedError()
 

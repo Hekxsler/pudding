@@ -12,5 +12,9 @@ class Out(Function):
     max_args = 2
 
     def execute(self, context: Context) -> PAction:
-        """Action for output generation functions."""
+        """Execute this token.
+        
+        :param context: Current context object.
+        :raises NotImplementedError: Abstract method
+        """
         raise NotImplementedError()

@@ -139,7 +139,7 @@ class Json(Writer):
         return _add_element(elem, tag, new)
 
     def add_element(self, path: str, value: str | None = None) -> JsonType:
-        """Adds an element if it not already exists.
+        """Add an element if it not already exists.
 
         Otherwise it appends the string to the already existing element.
 

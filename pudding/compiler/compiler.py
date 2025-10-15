@@ -4,12 +4,13 @@ import logging
 from collections.abc import Sequence
 from pathlib import Path
 
-from .util import DEFAULT_TOKENS
-
-from ..tokens.statements import Define, FromImport, Import, Grammar as GrammarStmt
-from ..tokens.token import Token
 from ..processor.grammar import Grammar, TokenList
+from ..tokens.statements import Define, FromImport
+from ..tokens.statements import Grammar as GrammarStmt
+from ..tokens.statements import Import
+from ..tokens.token import Token
 from ..tokens.util import INDENTATION_RE
+from .util import DEFAULT_TOKENS
 
 COMMENT_CHAR = "#"
 INDENT_SPACES = 4
@@ -86,9 +87,9 @@ class Compiler:
         return syntax, len(content.splitlines())
 
     def _import(self, path: str) -> Syntax:
-        """Parse another file to import and return the syntax.
+        """Parse the syntax from another file.
 
-        :param path: Path of the file.
+        :param path: Path of the file to import.
         """
         logger.debug("Importing %s...", path)
         if hasattr(self, "source_path"):
@@ -96,12 +97,33 @@ class Compiler:
         else:
             raise ImportError("Can not import without a source file.")
         import_file = base_dir / f"{path}.pud"
-        return self.compile_file(import_file)
+        try:
+            return self.compile_file(import_file)
+        except FileNotFoundError as e:
+            raise ImportError(f"No file {import_file}") from e
+
+    def _from_import(self, importobj: str, importpath: str) -> Define | Grammar:
+        """Get grammar or define statement from another file.
+
+        :param importobj: Name of the grammar or variable to import.
+        :param importpath: Path of the .pud file.
+        :returns: The grammar or define statement.
+        :raises ImportError: If no grammar or variable exists with the given name.
+        """
+        for token in self._import(importpath):
+            if isinstance(token, Grammar) and token.name == importobj:
+                return token
+            if isinstance(token, Define) and token.values[0].value == importobj:
+                return token
+        raise ImportError(
+            f"No grammar or variable with name '{importobj}' in {importpath}.pud"
+        )
 
     def _compile_syntax(self, syntax: TokenList) -> Syntax:
         """Convert some statements into models for better execution.
 
         :param syntax: Syntax to convert.
+        :returns: The converted Syntax.
         """
 
         def create_grammar(
@@ -129,14 +151,9 @@ class Compiler:
                 case FromImport():
                     importpath = token.values[0].value
                     importobj = token.values[1].value
-                    import_syntax = self._import(importpath.replace(".", "/"))
-                    for token in import_syntax:
-                        if isinstance(token, Grammar) and token.name == importobj:
-                            new_syntax.append(token)
-                            break
-                        if isinstance(token, Define) and token.values[0].value == importobj:
-                            new_syntax.append(token)
-                            break
+                    new_syntax.append(
+                        self._from_import(importobj, importpath.replace(".", "/"))
+                    )
                 case GrammarStmt():
                     new_syntax.append(create_grammar(token, sub_tokens))
                 case Import():

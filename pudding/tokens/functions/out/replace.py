@@ -20,7 +20,11 @@ class Replace(Out):
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
-        """Action for replace function."""
+        """Replace text of an element.
+
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
+        """
         context.writer.replace_element(
             self.get_replaced_string(0, context), self.get_repl_opt_string(1, context)
         )
