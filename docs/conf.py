@@ -70,16 +70,6 @@ html_theme = os.environ.get("SPHINX_THEME", "sphinx_rtd_theme")
 html_static_path = ["_static"]
 
 
-# -- Helpful defaults -------------------------------------------------------
-html_logo = (
-    "_static/pudding-logo.jpg"
-    if os.path.exists(
-        os.path.join(os.path.dirname(__file__), "_static", "pudding-logo.jpg")
-    )
-    else None
-)
-
-
 def setup(app: Any) -> None:  # pragma: no cover - trivial glue
     """Sphinx setup hook.
 
