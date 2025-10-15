@@ -53,6 +53,11 @@ lint = [
     "types-requests",
     "pip"
 ]
+docs = [
+    "sphinx",
+    "myst-parser",
+    "furo",
+]
 refactor = [
     "rope",
 ]
