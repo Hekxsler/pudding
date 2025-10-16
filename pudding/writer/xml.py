@@ -1,6 +1,6 @@
 """Module defining xml writer class."""
 
-from lxml.etree import Element, ElementTree, SubElement, tostring
+from lxml.etree import Element, ElementTree, SubElement, tostring, XPathEvaluator
 
 from .writer import Writer
 
@@ -13,6 +13,7 @@ class Xml(Writer):
         self.prev_roots: list[Element] = []
         self.root = Element(root_name)
         self.tree = ElementTree(self.root)
+        self.evaluator = XPathEvaluator(self.tree)
         super().__init__(root_name)
 
     def _find(self, elem: Element, path: str) -> Element | None:
@@ -22,12 +23,11 @@ class Xml(Writer):
         :param path: Path to another element.
         :returns: The first element found or none if it does not exist.
         """
+        if path in ["", "."]:
+            return elem
         xpath = self._to_xpath(path)
-        # Workaround for lxml.find not working with xpath attributes
-        try:
-            return elem.xpath(xpath)[0]
-        except IndexError:
-            return None
+        # Workaround for lxml.find not working with multiple attributes
+        return next(iter(self.evaluator(xpath)), None)
 
     def _get_element(self, path: str) -> Element:
         """Get first Element at given path.
@@ -137,6 +137,7 @@ class Xml(Writer):
         elem.text = value
         self.prev_roots.append(self.root)
         self.root = elem
+        self.evaluator = XPathEvaluator(elem)
 
     def open_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path if they do not already exist.
@@ -149,10 +150,12 @@ class Xml(Writer):
         elem = self.create_element(path, value)
         self.prev_roots.append(self.root)
         self.root = elem
+        self.evaluator = XPathEvaluator(elem)
 
     def leave_path(self) -> None:
         """Set the current root object to the previous one."""
         self.root = self.prev_roots.pop()
+        self.evaluator = XPathEvaluator(self.root)
 
     def delete_element(self, path: str) -> None:
         """Delete an element.
