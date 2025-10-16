@@ -152,13 +152,13 @@ class Compiler:
                     importpath = token.values[0].value
                     importobj = token.values[1].value
                     new_syntax.append(
-                        self._from_import(importobj, importpath.replace(".", "/"))
+                        self._from_import(importobj, importpath)
                     )
                 case GrammarStmt():
                     new_syntax.append(create_grammar(token, sub_tokens))
                 case Import():
                     importpath = token.values[0].value
-                    new_syntax.extend(self._import(importpath.replace(".", "/")))
+                    new_syntax.extend(self._import(importpath))
                 case _:
                     raise SyntaxError(
                         f"Invalid statement outside grammar in line {token.lineno}"
