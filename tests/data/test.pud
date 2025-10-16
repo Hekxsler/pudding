@@ -48,4 +48,8 @@ grammar input(default):
         out.enter('enqueue?name="test"')
         enqueue_test()
         out.clear_queue()
+    match 'add_attribute' ws word '=' word ' to ' word:
+        out.add_attribute('$6', '$2', '$4')
+    match 'remove_tag' ws word ' from ' word ' with attribute ' word '=' word:
+        out.remove('$4?$6="$8"/$2')
     out.set_root_name('test')

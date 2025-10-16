@@ -7,6 +7,7 @@ enqueue:
   onadd: {}
   start: {}
 project:
+  '@name': pudding
   authors:
     item:
       '@email': moritz.hekxsler@gmail.com
@@ -42,8 +43,6 @@ project:
   license-files:
     item:
       '#text': LICENSE
-  name:
-    '#text': pudding
   readme:
     '#text': README.md
   requires-python:

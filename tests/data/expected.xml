@@ -1,6 +1,5 @@
 <test>
-  <project>
-    <name>pudding</name>
+  <project name="pudding">
     <dynamic>
       <item>version</item>
     </dynamic>

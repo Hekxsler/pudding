@@ -1,8 +1,5 @@
 {
     "project": {
-        "name": {
-            "#text": "pudding"
-        },
         "dynamic": {
             "item": {
                 "#text": "version"
@@ -100,7 +97,8 @@
             "issues": {
                 "#text": "https://github.com/Hekxsler/pudding/issues"
             }
-        }
+        },
+        "@name": "pudding"
     },
     "before": {
         "#text": "this"
