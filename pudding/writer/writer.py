@@ -68,18 +68,23 @@ class Node:
 
         :param path: Path to the node.
         """
-        if path in ["", "."]:
+        if path == ".":
             return self
         root = self
-        next_path = split_path(path)[0]
-        tag, attribs = parse_node_path(next_path[0])
-        for child in root.children:
-            if not child.name == tag:
-                continue
-            if not child.attribs == attribs:
-                continue
-            return child.find(path.lstrip(next_path[0]))
-        return None
+        for node_path in split_path(path):
+            tag, attribs = parse_node_path(node_path[0])
+            found = False
+            for child in root.children:
+                if not child.name == tag:
+                    continue
+                if not child.attribs == attribs:
+                    continue
+                root = child
+                found = True
+                break
+            if not found:
+                return None
+        return root
 
     def set(self, name: str, value: str) -> None:
         """Set an attribute of this node.
