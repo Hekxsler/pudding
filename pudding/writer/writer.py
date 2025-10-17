@@ -68,7 +68,7 @@ class Node:
 
         :param path: Path to the node.
         """
-        if path == ".":
+        if path in ["", "."]:
             return self
         root = self
         next_path = split_path(path)[0]
