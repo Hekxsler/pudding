@@ -1,8 +1,6 @@
 """Module defining xml writer class."""
 
-from pathlib import Path
 from lxml import etree
-from lxml.builder import E
 
 from .writer import Writer, Node
 
@@ -137,11 +135,11 @@ class Xml(Writer):
         elem.text = value
 
     def serialize_node(self, node: Node) -> etree.Element:
-        if node.text:
-            value = [node.text]
-        else:
-            value = [self.serialize_node(child) for child in node.children]
-        return E(node.name, *value, **node.attribs)
+        root = etree.Element(node.name, node.attribs)
+        root.text = node.text
+        for child in node.children:
+            root.append(self.serialize_node(child))
+        return root
 
     def generate_output(self) -> str:
         """Generate output in specified format."""
