@@ -1,5 +1,6 @@
 """Module defining xml writer class."""
 
+from pathlib import Path
 from lxml.etree import Element, ElementTree, SubElement, tostring, XPathEvaluator
 
 from .writer import Writer
@@ -183,3 +184,13 @@ class Xml(Writer):
         if self.root_name is not None:
             root.tag = self.root_name
         return tostring(root, pretty_print=True, encoding=str)
+
+    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
+        """Write generated output to file.
+
+        :param file_path: Path of the file to write to.
+        """
+        root = self.tree.getroot()
+        if self.root_name is not None:
+            root.tag = self.root_name
+        self.tree.write(file_path, encoding=encoding, pretty_print=True, xml_declaration=False)
