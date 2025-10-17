@@ -1,9 +1,10 @@
 """Module defining xml writer class."""
 
 from pathlib import Path
-from lxml.etree import Element, ElementTree, SubElement, tostring, XPathEvaluator
+from lxml import etree
+from lxml.builder import E
 
-from .writer import Writer
+from .writer import Writer, Node
 
 
 class Xml(Writer):
@@ -11,43 +12,28 @@ class Xml(Writer):
 
     def __init__(self, root_name: str = "xml") -> None:
         """Init for Xml writer class."""
-        self.prev_roots: list[Element] = []
-        self.root = Element(root_name)
-        self.tree = ElementTree(self.root)
-        self.evaluator = XPathEvaluator(self.tree)
+        self.prev_roots: list[Node] = []
+        self.root = Node(root_name)
         super().__init__(root_name)
 
-    def _find(self, elem: Element, path: str) -> Element | None:
-        """Find first matching element at path.
-
-        :param elem: Element to search from.
-        :param path: Path to another element.
-        :returns: The first element found or none if it does not exist.
-        """
-        if path in ["", "."]:
-            return elem
-        xpath = self._to_xpath(path)
-        # Workaround for lxml.find not working with multiple attributes
-        return next(iter(self.evaluator(xpath)), None)
-
-    def _get_element(self, path: str) -> Element:
-        """Get first Element at given path.
+    def _get_element(self, path: str) -> Node:
+        """Get first Node at given path.
 
         :param path: Path from root element.
-        :returns: Element at the given path.
+        :returns: Node at the given path.
         :raises ValueError: If no element is found.
         """
-        elem = self._find(self.root, path)
+        elem = self.root.find(path)
         if elem is None:
-            raise ValueError(f"Element at path {path} does not exist")
+            raise ValueError(f"Node at path {path} does not exist")
         return elem
 
-    def _get_or_create_element(self, path: str, root: Element) -> Element:
-        """Get first Element at given path or create it if it does not exist.
+    def _get_or_create_element(self, path: str, root: Node) -> Node:
+        """Get first Node at given path or create it if it does not exist.
 
         :param xpath: Path from root element.
-        :param root: Element to start from.
-        :returns: Element at the given path.
+        :param root: Node to start from.
+        :returns: Node at the given path.
         """
         if path in ["", "."]:
             return root
@@ -57,31 +43,11 @@ class Xml(Writer):
             for sub_path in sub_paths[1:]:
                 root = self._get_or_create_element(sub_path[0].lstrip("/"), root)
             return root
-        elem = self._find(root, path)
+        elem = self.root.find(path)
         if elem is not None:
             return elem
         name, attribs = self._parse_node(path)
-        return SubElement(root, name, attribs)
-
-    def _to_xpath(self, path: str) -> str:
-        """Convert path to an xpath."""
-        for node in super().node_re.findall(path):
-            tag = node[2].replace(" ", "-")
-            if not node[3]:
-                path = path.replace(node[0], f"{node[1]}{tag}[not(@*)]")
-                # match only nodes without attributes
-                continue
-            attributes = super().attrib_re.findall(node[3])
-            if len(attributes) == 1:
-                attribs = f'[@{attributes[0][1]}="{attributes[0][2]}" and count(@*)=1]'
-            else:
-                attribs = f'[@{attributes[0][1]}="{attributes[0][2]}"'
-                for attribute in attributes:
-                    value = attribute[2].replace('"', '\\"')
-                    attribs += f' and @{attribute[1]}="{value}"'
-                attribs += f" and count(@*)={len(attributes)}]"
-            path = path.replace(node[0], f"{node[1]}{tag}{attribs}")
-        return path
+        return self.root.add_child(name, attribs)
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
         """Add an attribute to an element.
@@ -93,27 +59,25 @@ class Xml(Writer):
         elem = self._get_element(path)
         elem.set(name, value)
 
-    def create_element(self, path: str, value: str | None = None) -> Element:
+    def create_element(self, path: str, value: str | None = None) -> Node:
         """Add an element and always create the last element in the path.
 
         :param path: Path of the element.
         :param value: Value of the element or None if it has no value.
         :returns: The created SubElement.
         """
-        elem = self._find(self.root, path)
+        elem = self.root.find(path)
         if elem is None:
             new = self._get_or_create_element(path, self.root)
         else:
-            parent = elem.getparent()
-            if parent is None:
-                parent = self.tree.getroot()
-            node = self._split_path(path)[-1][0]
-            name, attribs = self._parse_node(node)
-            new = SubElement(parent, name, attribs)
+            parent_path = "".join(path[0] for path in self._split_path(path)[:-1])
+            parent = self._get_or_create_element(parent_path, self.root)
+            name, attribs = self._parse_node(self._split_path(path)[-1][0])
+            new = parent.add_child(name, attribs)
         new.text = value
         return new
 
-    def add_element(self, path: str, value: str | None = None) -> Element:
+    def add_element(self, path: str, value: str | None = None) -> Node:
         """Add an element if it not already exists.
 
         Otherwise it appends the string to the already existing element.
@@ -138,7 +102,6 @@ class Xml(Writer):
         elem.text = value
         self.prev_roots.append(self.root)
         self.root = elem
-        self.evaluator = XPathEvaluator(elem)
 
     def open_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path if they do not already exist.
@@ -151,12 +114,10 @@ class Xml(Writer):
         elem = self.create_element(path, value)
         self.prev_roots.append(self.root)
         self.root = elem
-        self.evaluator = XPathEvaluator(elem)
 
     def leave_path(self) -> None:
         """Set the current root object to the previous one."""
         self.root = self.prev_roots.pop()
-        self.evaluator = XPathEvaluator(self.root)
 
     def delete_element(self, path: str) -> None:
         """Delete an element.
@@ -164,10 +125,7 @@ class Xml(Writer):
         :param path: Path of the element.
         """
         elem = self._get_element(path)
-        parent = elem.getparent()
-        if parent is None:
-            raise ValueError("Cannot delete root element.")
-        parent.remove(elem)
+        del elem
 
     def replace_element(self, path: str, value: str | None = None) -> None:
         """Replace an element.
@@ -178,19 +136,16 @@ class Xml(Writer):
         elem = self._get_element(path)
         elem.text = value
 
+    def serialize_node(self, node: Node) -> etree.Element:
+        if node.text:
+            value = [node.text]
+        else:
+            value = [self.serialize_node(child) for child in node.children]
+        return E(node.name, *value, **node.attribs)
+
     def generate_output(self) -> str:
         """Generate output in specified format."""
-        root = self.tree.getroot()
         if self.root_name is not None:
-            root.tag = self.root_name
-        return tostring(root, pretty_print=True, encoding=str)
-
-    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
-        """Write generated output to file.
-
-        :param file_path: Path of the file to write to.
-        """
-        root = self.tree.getroot()
-        if self.root_name is not None:
-            root.tag = self.root_name
-        self.tree.write(file_path, encoding=encoding, pretty_print=True, xml_declaration=False)
+            self.root.name = self.root_name
+        tree = self.serialize_node(self.root)
+        return etree.tostring(tree, pretty_print=True, encoding=str)
