@@ -1,5 +1,6 @@
 """Module defining xml writer class."""
 
+from pathlib import Path
 from lxml import etree
 
 from .writer import Writer, Node
@@ -147,3 +148,15 @@ class Xml(Writer):
             self.root.name = self.root_name
         tree = self.serialize_node(self.root)
         return etree.tostring(tree, pretty_print=True, encoding=str)
+
+    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
+        """Write generated output to file.
+
+        :param file_path: Path of the file to write to.
+        """
+        if self.root_name is not None:
+            self.root.name = self.root_name
+        tree = etree.ElementTree(self.serialize_node(self.root))
+        return tree.write(
+            file_path, encoding=encoding, pretty_print=True, xml_declaration=False
+        )
