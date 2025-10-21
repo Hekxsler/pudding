@@ -20,9 +20,9 @@ class Match(MultiExpStatement):
         :param context: Current context object.
         :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
         """
-        for pattern in self.get_patterns(context):
-            regex = re.compile(pattern)
-            if context.reader.match(regex):
+        patterns = (re.compile(p) for p in self.get_patterns(context))
+        for pattern in patterns:
+            if context.reader.match(pattern):
                 return PAction.ENTER
         return PAction.NEXT
 
