@@ -3,13 +3,11 @@
 import re
 from typing import Self, TypeVar
 
-from ..util import EXP_VAR
-
 from ...datatypes import Data, Or, Varname, string_to_datatype
-
 from ...processor import PAction
 from ...processor.context import Context
 from ..token import Token
+from ..util import EXP_VAR
 
 _T = TypeVar("_T", bound=tuple[Data, ...])
 
@@ -67,7 +65,7 @@ class MultiExpStatement(Statement):
         """Return the combined patterns as a string.
 
         :param context: Context to resolve variables.
-        :returns: List of regex patterns.
+        :returns: List of regex patterns, where each element is a possible pattern.
         """
         patterns = [r""]
         for data in self.values:

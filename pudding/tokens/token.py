@@ -46,8 +46,8 @@ class Token:
         :returns: The given tuple.
         :raises TypeError: If value is not the correct data type.
         """
-        for value, _type in zip(values, self.value_types):
-            if isinstance(value, _type):
+        for value, value_type in zip(values, self.value_types):
+            if isinstance(value, value_type):
                 continue
             msg = f"Invalid argument of type {value.__class__.__name__}"
             raise TypeError(f"{msg} in line {self.lineno}")
