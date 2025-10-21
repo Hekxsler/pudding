@@ -1,19 +1,21 @@
-"""Module defining xml writer class."""
+"""Module defining base writer class."""
 
 from pathlib import Path
-from lxml import etree
 
-from .writer import Writer, Node
+from ..node import Node, parse_node_path, split_path
 
+class Writer:
+    """Base writer class.
 
-class Xml(Writer):
-    """Writer class for xml output."""
+    :var attrib_re: Regex for node attributes.
+    :var node_re: Regex for a node path.
+    """
 
-    def __init__(self, root_name: str = "xml") -> None:
+    def __init__(self, root_name: str = "root") -> None:
         """Init for Xml writer class."""
         self.prev_roots: list[Node] = []
         self.root = Node(root_name)
-        super().__init__(root_name)
+        self.root_name = root_name
 
     def _get_element(self, path: str) -> Node:
         """Get first Node at given path.
@@ -36,7 +38,7 @@ class Xml(Writer):
         """
         if path in ["", "."]:
             return root
-        sub_paths = self._split_path(path)
+        sub_paths = split_path(path)
         if len(sub_paths) > 1:
             root = self._get_or_create_element(sub_paths[0][0], root)
             for sub_path in sub_paths[1:]:
@@ -45,7 +47,7 @@ class Xml(Writer):
         elem = self.root.find(path)
         if elem is not None:
             return elem
-        name, attribs = self._parse_node(path)
+        name, attribs = parse_node_path(path)
         return self.root.add_child(name, attribs)
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
@@ -69,9 +71,9 @@ class Xml(Writer):
         if elem is None:
             new = self._get_or_create_element(path, self.root)
         else:
-            parent_path = "".join(path[0] for path in self._split_path(path)[:-1])
+            parent_path = "".join(path[0] for path in split_path(path)[:-1])
             parent = self._get_or_create_element(parent_path, self.root)
-            name, attribs = self._parse_node(self._split_path(path)[-1][0])
+            name, attribs = parse_node_path(split_path(path)[-1][0])
             new = parent.add_child(name, attribs)
         new.text = value
         return new
@@ -135,28 +137,18 @@ class Xml(Writer):
         elem = self._get_element(path)
         elem.text = value
 
-    def serialize_node(self, node: Node) -> etree.Element:
-        root = etree.Element(node.name, node.attribs)
-        root.text = node.text
-        for child in node.children:
-            root.append(self.serialize_node(child))
-        return root
-
     def generate_output(self) -> str:
         """Generate output in specified format."""
-        if self.root_name is not None:
-            self.root.name = self.root_name
-        tree = self.serialize_node(self.root)
-        return etree.tostring(tree, pretty_print=True, encoding=str)
+        raise NotImplementedError
+
+    def print_output(self) -> None:
+        """Print output to stdout."""
+        print(self.generate_output())
 
     def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
         """Write generated output to file.
 
         :param file_path: Path of the file to write to.
         """
-        if self.root_name is not None:
-            self.root.name = self.root_name
-        tree = etree.ElementTree(self.serialize_node(self.root))
-        return tree.write(
-            file_path, encoding=encoding, pretty_print=True, xml_declaration=False
-        )
+        with open(file_path, "w", encoding=encoding) as f:
+            f.write(self.generate_output())

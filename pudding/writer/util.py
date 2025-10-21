@@ -1,9 +1,9 @@
 """Utility functions for writer package."""
 
-from .yaml import Yaml
-from .xml import Xml
-from .json import Json
-from .writer import Writer
+from .writers.json import Json
+from .writers.writer import Writer
+from .writers.xml import Xml
+from .writers.yaml import Yaml
 
 
 def get_writer_from_format(format: str) -> type[Writer]:

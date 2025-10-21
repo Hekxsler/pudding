@@ -7,7 +7,7 @@ from ..reader.reader import Reader
 from ..tokens.functions import grammar_call, out
 from ..tokens.statements.define import Define
 from ..tokens.token import Token
-from ..writer.writer import Writer
+from ..writer import Writer
 from . import PAction
 from .context import Context
 from .grammar import Grammar, TokenList

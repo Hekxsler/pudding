@@ -4,7 +4,7 @@ import re
 
 from ..datatypes.string import String
 from ..reader.reader import Reader
-from ..writer.writer import Writer
+from ..writer import Writer
 from .grammar import Grammar
 from .triggers import TriggerQueue
 
