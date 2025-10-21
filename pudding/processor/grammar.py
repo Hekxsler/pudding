@@ -1,12 +1,18 @@
 """Module for Grammar class."""
 
+from typing import Iterator
 from ..tokens.token import Token
 
 type TokenList = list[Token | tuple[Token, TokenList]]
 
-
 class Grammar:
-    """Class representing a grammar."""
+    """Class representing a grammar.
+    
+    :var lineno: Line number the grammar is defined in.
+    :var name: Name of the grammar.
+    :var tokens: Tokens in this grammar.
+    :var inherits: Name of the inherited grammar or None.
+    """
 
     def __init__(
         self,
@@ -26,6 +32,10 @@ class Grammar:
         self.name = name
         self.tokens = tokens
         self.inherits = inherits
+    
+    def iter_tokens(self) -> Iterator[Token | tuple[Token, TokenList]]:
+        """Return iterator for tokens."""
+        return self.tokens.__iter__()
 
     def __repr__(self) -> str:
         """Return string representation of this object."""
