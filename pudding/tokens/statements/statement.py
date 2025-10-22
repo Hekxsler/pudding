@@ -4,6 +4,10 @@ import re
 from re import RegexFlag as ReFlag
 from typing import Generator, Self, TypeVar
 
+from ...datatypes.regex import Regex
+
+from ...datatypes.string import String
+
 from ...datatypes import Data, Or, Varname, string_to_datatype
 from ...processor import PAction
 from ...processor.context import Context
@@ -73,15 +77,15 @@ class MultiExpStatement(Statement):
         """
         pattern = r""
         for data in self.values.__iter__():
+            if isinstance(data, (String, Regex)):
+                value = data.pattern
+                pattern += rf"({value.pattern})"
+            if isinstance(data, Varname):
+                value = context.get_var(data.value)
+                pattern += rf"({value.pattern})"
             if isinstance(data, Or):
                 yield re.compile(pattern, re_flag)
                 pattern = r""
-                continue
-            if isinstance(data, Varname):
-                value = context.get_var(data.value)
-            else:
-                value = data.pattern
-            pattern += rf"({value.pattern})"
         yield re.compile(pattern, re_flag)
 
     def execute(self, context: Context) -> PAction:
