@@ -80,10 +80,10 @@ class MultiExpStatement(Statement):
             if isinstance(data, (String, Regex)):
                 value = data.pattern
                 pattern += rf"({value.pattern})"
-            if isinstance(data, Varname):
+            elif isinstance(data, Varname):
                 value = context.get_var(data.value)
                 pattern += rf"({value.pattern})"
-            if isinstance(data, Or):
+            elif isinstance(data, Or):
                 yield re.compile(pattern, re_flag)
                 pattern = r""
         yield re.compile(pattern, re_flag)
