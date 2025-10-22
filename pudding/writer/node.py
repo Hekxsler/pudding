@@ -3,39 +3,12 @@
 import re
 from typing import Iterator, Self
 
-ATTRIBUTE_RE = re.compile(r"([?&]([\w\-\_]+)=\"((?:\\\"|[^\"])+)\")")
-NODE_RE = re.compile(rf"((\.?\/?)([\w\-\_ ]+)({ATTRIBUTE_RE}*))")
-
-
-def split_path(path: str) -> list[tuple[str, str, str, str]]:
-    """Split the path into nodes.
-
-    :param path: Path to split.
-    :returns: List of node matches as a tuple.
-        E.g. [(full_nodepath, [./]*, tag, attributes), ...]
-    """
-    return NODE_RE.findall(path)
-
-
-def parse_node_path(path: str) -> tuple[str, dict[str, str]]:
-    """Read tag name and attributes from an node.
-
-    :param path: Path node to parse.
-    :returns: Tuple with name as string and attributes as a dict.
-    """
-    attributes: dict[str, str] = {}
-    path = path.lstrip("./")
-    for attribute in ATTRIBUTE_RE.findall(path):
-        attributes[attribute[1]] = attribute[2]
-        path = path.replace(attribute[0], "")
-    if "/" in path:
-        raise ValueError("Given path is not a node.")
-    path = path.replace(" ", "-")
-    return path.casefold(), attributes
-
 
 class Node:
     """Class representing a node."""
+
+    attribute_re = re.compile(r"([?&]([\w\-\_]+)=\"((?:\\\"|[^\"])+)\")")
+    node_re = re.compile(rf"((?:(\.)|(\/?)([\w\-\_ ]+)({attribute_re.pattern}*)))")
 
     def __init__(
         self, name: str, attributes: dict[str, str] = {}, text: str | None = None
@@ -50,6 +23,43 @@ class Node:
         self.attribs = attributes
         self.children: list[Self] = []
         self.text = text
+
+    @classmethod
+    def from_path(cls, path: str, text: str | None = None) -> Self:
+        """Parse node object from path.
+
+        :param path: Node path of the object.
+        :param text: Text of the created node object.
+        :returns Node: The created node object.
+        """
+        return cls(*cls.parse_node_path(path), text)
+
+    @classmethod
+    def parse_node_path(cls, path: str) -> tuple[str, dict[str, str]]:
+        """Read tag name and attributes from an node.
+
+        :param path: Path node to parse.
+        :returns: Tuple with name as string and attributes as a dict.
+        """
+        attributes: dict[str, str] = {}
+        path = path.lstrip("./")
+        for attribute in cls.attribute_re.findall(path):
+            attributes[attribute[1]] = attribute[2]
+            path = path.replace(attribute[0], "")
+        if "/" in path:
+            raise ValueError(f"Path {path} contains more than one node.")
+        path = path.replace(" ", "-")
+        return path.casefold(), attributes
+
+    @classmethod
+    def split_path(cls, path: str) -> list[tuple[str, str, str, str]]:
+        """Split the path into nodes.
+
+        :param path: Path to split.
+        :returns: List of node matches as a tuple.
+            E.g. [(full_nodepath, [./]*, tag, attributes), ...]
+        """
+        return cls.node_re.findall(path)
 
     def iter_children(self) -> Iterator[Self]:
         """Return iterator of childrens."""
