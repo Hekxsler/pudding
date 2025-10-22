@@ -1,7 +1,8 @@
 """Module defining statements."""
 
 import re
-from typing import Self, TypeVar
+from re import RegexFlag as ReFlag
+from typing import Generator, Self, TypeVar
 
 from ...datatypes import Data, Or, Varname, string_to_datatype
 from ...processor import PAction
@@ -61,23 +62,27 @@ class MultiExpStatement(Statement):
             converted.append(data)
         return cls(lineno, name, tuple(converted))
 
-    def get_patterns(self, context: Context) -> list[str]:
+    def get_compiled_patterns(
+        self, context: Context, re_flag: ReFlag = ReFlag.NOFLAG
+    ) -> Generator[re.Pattern[str], None, None]:
         """Return the combined patterns as a string.
 
         :param context: Context to resolve variables.
+        :param re_flag: Regex flag when compiling expression.
         :returns: List of regex patterns, where each element is a possible pattern.
         """
-        patterns = [r""]
-        for data in self.values:
+        pattern = r""
+        for data in self.values.__iter__():
             if isinstance(data, Or):
-                patterns.append(r"")
+                yield re.compile(pattern, re_flag)
+                pattern = r""
                 continue
             if isinstance(data, Varname):
                 value = context.get_var(data.value)
             else:
                 value = data.pattern
-            patterns[-1] += rf"({value.pattern})"
-        return patterns
+            pattern += rf"({value.pattern})"
+        yield re.compile(pattern, re_flag)
 
     def execute(self, context: Context) -> PAction:
         """Execute this token.
