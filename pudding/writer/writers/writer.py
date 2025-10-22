@@ -2,7 +2,12 @@
 
 from pathlib import Path
 
-from ..node import Node, parse_node_path, split_path
+from ..node import Node
+
+
+class InvalidPathError(Exception):
+    """Error for invalid paths."""
+
 
 class Writer:
     """Base writer class.
@@ -38,7 +43,7 @@ class Writer:
         """
         if path in ["", "."]:
             return root
-        sub_paths = split_path(path)
+        sub_paths = Node.split_path(path)
         if len(sub_paths) > 1:
             root = self._get_or_create_element(sub_paths[0][0], root)
             for sub_path in sub_paths[1:]:
@@ -47,8 +52,9 @@ class Writer:
         elem = self.root.find(path)
         if elem is not None:
             return elem
-        name, attribs = parse_node_path(path)
-        return self.root.add_child(name, attribs)
+        new = Node.from_path(path)
+        self.root.add_child(new)
+        return new
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
         """Add an attribute to an element.
@@ -70,12 +76,21 @@ class Writer:
         elem = self.root.find(path)
         if elem is None:
             new = self._get_or_create_element(path, self.root)
+            new.text = value
+            return new
+        paths = Node.split_path(path)
+        if len(paths) == 0:
+            raise InvalidPathError(f"Invalid path {repr(path)}.")
+        if len(paths) == 1:
+            parent = self.root
+            child_node = paths[0][0]
         else:
-            parent_path = "".join(path[0] for path in split_path(path)[:-1])
+            *parent_paths, child_path = paths
+            parent_path = "".join((path[0] for path in parent_paths))
             parent = self._get_or_create_element(parent_path, self.root)
-            name, attribs = parse_node_path(split_path(path)[-1][0])
-            new = parent.add_child(name, attribs)
-        new.text = value
+            child_node = child_path[0]
+        new = Node.from_path(child_node, value)
+        parent.add_child(new)
         return new
 
     def add_element(self, path: str, value: str | None = None) -> Node:

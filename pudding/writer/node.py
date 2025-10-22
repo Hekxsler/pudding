@@ -65,27 +65,28 @@ class Node:
         """Return iterator of childrens."""
         return self.children.__iter__()
 
-    def add_child(self, name: str, attributes: dict[str, str] = {}) -> Self:
+    def add_child(self, node: Self) -> None:
         """Create a child node of this node.
 
         :param name: Name of the child node.
         :param attributes: Attributes of the child node.
         :returns: The child node.
         """
-        child = self.__class__(name, attributes)
-        self.children.append(child)
-        return child
+        return self.children.append(node)
 
     def find(self, path: str) -> Self | None:
         """Find a child in the given path.
 
         :param path: Path to the node.
+        :returns: The node or None if it does not exist.
         """
         if path == ".":
             return self
+        if len(self.children) == 0:
+            return None
         root = self
-        for node_path in split_path(path):
-            tag, attribs = parse_node_path(node_path[0])
+        for node_path in self.split_path(path):
+            tag, attribs = self.parse_node_path(node_path[0])
             found = False
             for child in root.iter_children():
                 if child.name != tag:
@@ -113,3 +114,6 @@ class Node:
         :param name: Name of the attribute.
         """
         self.attribs.get(name, default)
+
+    def __repr__(self) -> str:
+        return f"<Node name={repr(self.name)} {self.attribs} children={self.children}"
