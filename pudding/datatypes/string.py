@@ -14,13 +14,9 @@ class String(Data):
         """Init for String class."""
         super().__init__(value)
         self.value = value[1:-1]
-        self._compiled_pattern: re.Pattern[str] | None = None
 
     @property
     def pattern(self) -> re.Pattern[str]:
         """Value as a compiled Pattern object."""
-        # cache compiled pattern per instance to avoid repeatedly compiling
-        if self._compiled_pattern is None:
-            pattern = re.escape(self.value)
-            self._compiled_pattern = re.compile(pattern)
-        return self._compiled_pattern
+        pattern = re.escape(self.value)
+        return re.compile(pattern)

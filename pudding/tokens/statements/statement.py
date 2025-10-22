@@ -75,35 +75,8 @@ class MultiExpStatement(Statement):
         :param re_flag: Regex flag when compiling expression.
         :returns: List of regex patterns, where each element is a possible pattern.
         """
-        # If the pattern does not depend on runtime variables (Varname), cache
-        # the compiled patterns per-instance to avoid re-compiling millions of
-        # times for large inputs.
-        contains_varname = any(isinstance(d, Varname) for d in self.values)
-        if not contains_varname:
-            cache = getattr(self, "_compiled_patterns", None)
-            if cache is None:
-                # build once and store compiled patterns for default flags
-                patterns: list[re.Pattern[str]] = []
-                buf = r""
-                for data in self.values:
-                    if isinstance(data, (String, Regex)):
-                        value = data.pattern
-                        buf += rf"({value.pattern})"
-                    elif isinstance(data, Or):
-                        patterns.append(re.compile(buf, re_flag))
-                        buf = r""
-                patterns.append(re.compile(buf, re_flag))
-                self._compiled_patterns = {re_flag: tuple(patterns)}
-                for p in patterns:
-                    yield p
-            else:
-                for p in cache.get(re_flag, ()):  # type: ignore[attr-defined]
-                    yield p
-            return
-
-        # fallback: pattern depends on Varname -> compile each time using context
         pattern = r""
-        for data in self.values:
+        for data in self.values.__iter__():
             if isinstance(data, (String, Regex)):
                 value = data.pattern
                 pattern += rf"({value.pattern})"
