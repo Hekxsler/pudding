@@ -2,7 +2,7 @@
 
 import json
 
-from .writer import Writer
+from .writer import BufferedWriter
 from ..node import Node
 
 type JsonType = dict[str, JsonType | list[JsonType] | str]
@@ -22,7 +22,7 @@ def _to_json(node: Node) -> JsonType:
     return elem
 
 
-class Json(Writer):
+class Json(BufferedWriter):
     """Writer class for json output."""
 
     def serialize_node(self, node: Node) -> JsonType:

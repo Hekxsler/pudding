@@ -1,12 +1,9 @@
 """Module defining base writer class."""
 
 from pathlib import Path
+from typing import Any
 
 from ..node import Node
-
-
-class InvalidPathError(Exception):
-    """Error for invalid paths."""
 
 
 class Writer:
@@ -17,7 +14,100 @@ class Writer:
     """
 
     def __init__(self, root_name: str = "root") -> None:
-        """Init for Xml writer class."""
+        """Init for writer class."""
+        self.root_name = root_name
+
+    def add_attribute(self, path: str, name: str, value: str) -> None:
+        """Add an attribute to an element.
+
+        :param path: Path of the element.
+        :param name: Name of the attribute.
+        :param value: Value of the attribute.
+        """
+        raise NotImplementedError
+
+    def create_element(self, path: str, value: str | None = None) -> Any:
+        """Add an element to the current node.
+
+        :param path: Path of the element.
+        :param value: Value of the element or None if it has no value.
+        :returns: The created element.
+        """
+        raise NotImplementedError
+
+    def add_element(self, path: str, value: str | None = None) -> Any:
+        """Add an element if it not already exists.
+
+        Otherwise it appends the string to the already existing element.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        :returns: The created element.
+        """
+        raise NotImplementedError
+
+    def enter_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        raise NotImplementedError
+
+    def open_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        Always creates the last node.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        raise NotImplementedError
+
+    def leave_path(self) -> None:
+        """Leave the previously entered path."""
+        raise NotImplementedError
+
+    def delete_element(self, path: str) -> None:
+        """Delete an element.
+
+        :param path: Path of the element.
+        """
+        raise NotImplementedError
+
+    def replace_element(self, path: str, value: str | None = None) -> None:
+        """Replace an element.
+
+        :param path: Path of the element.
+        :param value: Value of the replaced element or None if it has no value.
+        """
+        raise NotImplementedError
+
+    def generate_output(self) -> str:
+        """Generate output in specified format."""
+        raise NotImplementedError
+
+    def print_output(self) -> None:
+        """Print output to stdout."""
+        print(self.generate_output())
+
+    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
+        """Write generated output to file.
+
+        :param file_path: Path of the file to write to.
+        """
+        with open(file_path, "w", encoding=encoding) as f:
+            f.write(self.generate_output())
+
+
+class BufferedWriter(Writer):
+    """Base writer class for buffered output.
+
+    :var attrib_re: Regex for node attributes.
+    :var node_re: Regex for a node path.
+    """
+
+    def __init__(self, root_name: str = "root") -> None:
         self.prev_roots: list[Node] = []
         self.root = Node(root_name)
         self.root_name = root_name
@@ -80,7 +170,7 @@ class Writer:
             return new
         paths = Node.split_path(path)
         if len(paths) == 0:
-            raise InvalidPathError(f"Invalid path {repr(path)}.")
+            raise ValueError(f"Invalid path {repr(path)}.")
         if len(paths) == 1:
             parent = self.root
             child_node = paths[0][0]
@@ -151,19 +241,3 @@ class Writer:
         """
         elem = self._get_element(path)
         elem.text = value
-
-    def generate_output(self) -> str:
-        """Generate output in specified format."""
-        raise NotImplementedError
-
-    def print_output(self) -> None:
-        """Print output to stdout."""
-        print(self.generate_output())
-
-    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
-        """Write generated output to file.
-
-        :param file_path: Path of the file to write to.
-        """
-        with open(file_path, "w", encoding=encoding) as f:
-            f.write(self.generate_output())
