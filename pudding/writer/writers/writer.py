@@ -13,8 +13,12 @@ class Writer:
     :var node_re: Regex for a node path.
     """
 
-    def __init__(self, root_name: str = "root") -> None:
+    def __init__(
+        self, file_path: Path, root_name: str = "root", encoding: str = "utf-8"
+    ) -> None:
         """Init for writer class."""
+        self.encoding = encoding
+        self.file_path = file_path
         self.root_name = root_name
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
@@ -91,12 +95,12 @@ class Writer:
         """Print output to stdout."""
         print(self.generate_output())
 
-    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
+    def write_output(self) -> None:
         """Write generated output to file.
 
         :param file_path: Path of the file to write to.
         """
-        with open(file_path, "w", encoding=encoding) as f:
+        with open(self.file_path, "w", encoding=self.encoding) as f:
             f.write(self.generate_output())
 
 
@@ -107,8 +111,8 @@ class BufferedWriter(Writer):
     :var node_re: Regex for a node path.
     """
 
-    def __init__(self, root_name: str = "root") -> None:
-        super().__init__(root_name)
+    def __init__(self, file_path: Path, root_name: str = "root", encoding: str = "utf-8") -> None:
+        super().__init__(file_path, root_name, encoding)
         self.prev_roots: list[Node] = []
         self.root = Node(root_name)
 

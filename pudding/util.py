@@ -37,9 +37,9 @@ def convert_files(
     writer_cls = get_writer_from_format(output_format)
     for input_file, output_file in zip(input_files, output_files):
         content = open(input_file, "r", encoding=encoding).read()
-        context = Context(content, writer_cls)
+        context = Context(content, writer_cls(output_file, encoding=encoding))
         writer = Processor(context, syntax).convert()
-        writer.write_to(output_file, encoding)
+        writer.write_output()
 
 
 def convert_file(
@@ -73,6 +73,6 @@ def convert_string(syntax: str, input: str, output_format: str) -> str:
     compiler = Compiler().compile(syntax)
     logger.debug("Compiled syntax in %s", str(datetime.datetime.now() - start))
     writer_cls = get_writer_from_format(output_format)
-    context = Context(input, writer_cls)
+    context = Context(input, writer_cls(Path()))
     writer = Processor(context, compiler).convert()
     return writer.generate_output()

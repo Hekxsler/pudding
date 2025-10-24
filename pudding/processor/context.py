@@ -22,7 +22,7 @@ class Context:
     :var variables: Variables defined in the syntax.
     """
 
-    def __init__(self, content: str, writer_cls: type[Writer]) -> None:
+    def __init__(self, content: str, writer: Writer) -> None:
         """Init for Context class.
 
         :param content: Content of the file to convert.
@@ -32,7 +32,7 @@ class Context:
         self.queue: TriggerQueue = TriggerQueue()
         self.variables: dict[str, str] = {}
         self.reader = Reader(content)
-        self.writer = writer_cls()
+        self.writer = writer
 
     def get_grammar(self, name: str) -> Grammar:
         """Get a grammar by name.

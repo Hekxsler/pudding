@@ -13,15 +13,28 @@ class SliXml(Writer):
     """Writer class for slim xml output."""
 
     def __init__(
-        self, file: Path, encoding: str = "utf-8", root_name: str = "xml"
+        self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
     ) -> None:
-        self.file = open(file, "rw", encoding=encoding)
+        """Init for SliXml class."""
+        super().__init__(file_path, root_name, encoding)
+        self.indent = 0
+        self.file = open(file_path, "w", encoding=encoding)
         self.prev_roots: list[str] = []
-        super().__init__(root_name)
+        self.prev_indents: list[int] = []
+    
+    def _writeline(self, line: str) -> None:
+        """Write line with indent to output."""
+        self.file.write(f"{'  '*self.indent}{line}\n")
 
-    def _to_tag(self, name: str, attributes: dict[str, str], value: str | None = None, open: bool = False) -> str:
+    def _to_tag(
+        self,
+        name: str,
+        attributes: dict[str, str],
+        value: str | None = None,
+        open: bool = False,
+    ) -> str:
         """Create an xml tag.
-        
+
         :param name: Name of the tag.
         :param attributes: Attributes of the tag.
         :param value: Text of this tag.
@@ -48,15 +61,15 @@ class SliXml(Writer):
         paths = Node.split_path(path)
         if len(paths) == 1:
             name, attribs = Node.parse_node_path(paths[0][0])
-            self.file.write(self._to_tag(name, attribs, value))
+            self._writeline(self._to_tag(name, attribs, value))
             return
         for node in paths[:-1]:
             name, attribs = Node.parse_node_path(node[0])
-            self.file.write(self._to_tag(name, attribs, open=True))
+            self._writeline(self._to_tag(name, attribs, open=True))
         name, attribs = Node.parse_node_path(paths[-1][0])
-        self.file.write(self._to_tag(name, attribs, value))
+        self._writeline(self._to_tag(name, attribs, value))
         for node in reversed(paths[:-1]):
-            self.file.write(f"<{node[2]}/>")
+            self._writeline(f"<{node[2]}/>")
 
     def add_element(self, path: str, value: str | None = None) -> Any:
         """Add an element if it not already exists.
@@ -69,7 +82,6 @@ class SliXml(Writer):
         """
         return self.create_element(path, value)
 
-
     def enter_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path if they do not already exist.
 
@@ -78,9 +90,11 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         for node in paths:
+            self.prev_indents.append(self.indent)
             name, attribs = Node.parse_node_path(node[0])
             self.prev_roots.append(name)
-            self.file.write(self._to_tag(name, attribs, open=True))
+            self._writeline(self._to_tag(name, attribs, open=True))
+            self.indent += 1
 
     def open_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path if they do not already exist.
@@ -94,8 +108,9 @@ class SliXml(Writer):
 
     def leave_path(self) -> None:
         """Leave the previously entered path."""
+        self.indent = self.prev_indents.pop()
         closing_tag = self.prev_roots.pop()
-        self.file.write(f"<{closing_tag}/>")
+        self._writeline(f"<{closing_tag}/>")
 
     def delete_element(self, path: str) -> None:
         """Delete an element.
@@ -120,7 +135,7 @@ class SliXml(Writer):
         """Print output to stdout."""
         raise NotImplementedError
 
-    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
+    def write_to(self, encoding: str = "utf-8") -> None:
         """Write generated output to file.
 
         :param file_path: Path of the file to write to.
@@ -131,8 +146,10 @@ class SliXml(Writer):
 class Xml(BufferedWriter):
     """Writer class for xml output."""
 
-    def __init__(self, root_name: str = "xml") -> None:
-        super().__init__(root_name)
+    def __init__(
+        self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
+    ) -> None:
+        super().__init__(file_path, root_name, encoding)
 
     def serialize_node(self, node: Node) -> etree.Element:
         root = etree.Element(node.name, node.attribs)
@@ -147,7 +164,7 @@ class Xml(BufferedWriter):
         tree = self.serialize_node(self.root)
         return etree.tostring(tree, pretty_print=True, encoding=str)
 
-    def write_to(self, file_path: Path, encoding: str = "utf-8") -> None:
+    def write_to(self, encoding: str = "utf-8") -> None:
         """Write generated output to file.
 
         :param file_path: Path of the file to write to.
@@ -155,5 +172,5 @@ class Xml(BufferedWriter):
         self.root.name = self.root_name
         tree = etree.ElementTree(self.serialize_node(self.root))
         return tree.write(
-            file_path, encoding=encoding, pretty_print=True, xml_declaration=False
+            self.file_path, encoding=encoding, pretty_print=True, xml_declaration=False
         )

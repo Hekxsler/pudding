@@ -25,7 +25,7 @@ parser.add_argument(
 parser.add_argument(
     "-f",
     "--format",
-    choices=["xml", "json", "yaml", "none"],
+    choices=["slixml", "xml", "json", "yaml", "none"],
     default="xml",
     help="The output format.",
     metavar="FORMAT",
