@@ -1,6 +1,6 @@
 """Module defining functions."""
 
-from typing import NoReturn, Optional, TypeVar
+from typing import NoReturn, TypeVar
 
 from ...datatypes import Data, String
 from ...processor import PAction
@@ -54,27 +54,4 @@ class Function(Token):
         value = self.values[index]
         if isinstance(value, String):
             return value
-        raise TypeError("Value is not a string.")
-
-    def get_replaced_string(self, index: int, context: Context) -> str:
-        """Get a string from values with replaced variables.
-
-        :param index: Index of the string in values.
-        :param context: Current context object.
-        """
-        return context.replace_string_vars(self.get_string(index))
-
-    def get_repl_opt_string(
-        self, index: int, context: Context, default: Optional[_D] = None
-    ) -> str | Optional[_D]:
-        """Get a optional string with replaced variables.
-
-        :param index: Index of the string in values.
-        :param context: Current context object.
-        :param default: Default value to return if string does not exist.
-        :return: The replaced string or default value if index is invalid.
-        """
-        try:
-            return self.get_replaced_string(index, context)
-        except IndexError:
-            return default
+        raise TypeError(f"Value {repr(value)} is not a string. (line {self.lineno})")

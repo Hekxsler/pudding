@@ -80,4 +80,5 @@ class Reader:
         :param trigger: The trigger object.
         :returns: Boolean if trigger matches.
         """
+        logger.debug(f"Testing match /{regex.pattern}/")
         return regex.match(self.content, self.current_pos) is not None

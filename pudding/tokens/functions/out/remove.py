@@ -16,7 +16,7 @@ class Remove(Out):
 
     match_re = re.compile(rf"(out\.remove)\({String.regex}\)$")
     value_re = re.compile(rf"out\.remove\(({String.regex})\)")
-    value_types = (String, String)
+    value_types = (String,)
 
     def execute(self, context: Context) -> PAction:
         """Delete an element.
@@ -24,5 +24,5 @@ class Remove(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        context.writer.delete_element(self.get_replaced_string(0, context))
+        context.writer.delete_element(context.replace_string_vars(self.get_string(0)))
         return PAction.CONTINUE

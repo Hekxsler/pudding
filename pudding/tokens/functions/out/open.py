@@ -27,7 +27,10 @@ class Open(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
+        value = None
+        if self.get_value(1):
+            value = context.replace_string_vars(self.get_string(1))
         context.writer.open_path(
-            self.get_replaced_string(0, context), self.get_repl_opt_string(1, context)
+            context.replace_string_vars(self.get_string(0)), value
         )
         return PAction.CONTINUE

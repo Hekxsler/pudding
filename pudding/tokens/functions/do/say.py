@@ -28,5 +28,5 @@ class Say(Do):
         :param context: Current context object.
         :returns: Returns PAction.CONTINUE for processor class.
         """
-        sys.stdout.write(self.get_replaced_string(0, context))
+        sys.stdout.write(context.replace_string_vars(self.get_string(0)))
         return PAction.CONTINUE

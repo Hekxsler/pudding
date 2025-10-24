@@ -57,14 +57,27 @@ class MultiExpStatement(Statement):
         values = re.findall(rf"{EXP_VAR}", value_string.group(1))
         converted: list[Data] = []
         for value in values:
-            try:
-                data = string_to_datatype(value)
-            except TypeError as e:
-                raise TypeError(
-                    f"ERROR: Invalid data type {repr(value)} in line {lineno}"
-                ) from e
+            data = string_to_datatype(value, lineno)
             converted.append(data)
         return cls(lineno, name, tuple(converted))
+
+    def get_patterns(self, context: Context) -> Generator[str, None, None]:
+        """Return the combined patterns as a string.
+
+        :param context: Context to resolve variables.
+        :param re_flag: Regex flag when compiling expression.
+        :returns: List of regex patterns, where each element is a possible pattern.
+        """
+        pattern = r""
+        for data in self.values:
+            if isinstance(data, (String, Regex)):
+                pattern += rf"({data.re_pattern})"
+            elif isinstance(data, Varname):
+                pattern += rf"({context.get_var(data)})"
+            elif isinstance(data, Or):
+                yield pattern
+                pattern = r""
+        yield pattern
 
     def get_compiled_patterns(
         self, context: Context, re_flag: ReFlag = ReFlag.NOFLAG
@@ -75,18 +88,8 @@ class MultiExpStatement(Statement):
         :param re_flag: Regex flag when compiling expression.
         :returns: List of regex patterns, where each element is a possible pattern.
         """
-        pattern = r""
-        for data in self.values.__iter__():
-            if isinstance(data, (String, Regex)):
-                value = data.pattern
-                pattern += rf"({value.pattern})"
-            if isinstance(data, Varname):
-                value = context.get_var(data.value)
-                pattern += rf"({value.pattern})"
-            if isinstance(data, Or):
-                yield re.compile(pattern, re_flag)
-                pattern = r""
-        yield re.compile(pattern, re_flag)
+        for pattern in self.get_patterns(context):
+            yield re.compile(pattern, re_flag)
 
     def execute(self, context: Context) -> PAction:
         """Execute this token.

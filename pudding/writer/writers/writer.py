@@ -108,9 +108,9 @@ class BufferedWriter(Writer):
     """
 
     def __init__(self, root_name: str = "root") -> None:
+        super().__init__(root_name)
         self.prev_roots: list[Node] = []
         self.root = Node(root_name)
-        self.root_name = root_name
 
     def _get_element(self, path: str) -> Node:
         """Get first Node at given path.
@@ -121,7 +121,7 @@ class BufferedWriter(Writer):
         """
         elem = self.root.find(path)
         if elem is None:
-            raise ValueError(f"Node at path {path} does not exist")
+            raise ValueError(f"Node at path {repr(path)} does not exist")
         return elem
 
     def _get_or_create_element(self, path: str, root: Node) -> Node:

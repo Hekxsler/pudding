@@ -27,4 +27,4 @@ class Fail(Do):
         :param context: Current context object.
         :raises RuntimeError: Error with given message.
         """
-        raise RuntimeError(self.get_replaced_string(0, context))
+        raise RuntimeError(context.replace_string_vars(self.get_string(0)))

@@ -32,8 +32,8 @@ class AddAttribute(Out):
         :returns: PAction.CONTINUE
         """
         context.writer.add_attribute(
-            self.get_replaced_string(0, context),
-            self.get_replaced_string(1, context),
-            self.get_replaced_string(2, context),
+            context.replace_string_vars(self.get_string(0)),
+            context.replace_string_vars(self.get_string(1)),
+            context.replace_string_vars(self.get_string(2)),
         )
         return PAction.CONTINUE
