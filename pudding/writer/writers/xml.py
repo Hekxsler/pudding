@@ -1,5 +1,6 @@
 """Module defining xml writer class."""
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -17,14 +18,31 @@ class SliXml(Writer):
     ) -> None:
         """Init for SliXml class."""
         super().__init__(file_path, root_name, encoding)
-        self.indent = 0
+        self.last_open = True
+        self.last_indent = 0
+        self.indent = 1
         self.file = open(file_path, "w", encoding=encoding)
+        self.last_node: Node = Node(root_name)
         self.prev_roots: list[str] = []
         self.prev_indents: list[int] = []
-    
+
+    def _writenode(self, node: Node, open: bool = False) -> None:
+        """Write node to file."""
+        self._writeline(
+            self._to_tag(
+                self.last_node.name,
+                self.last_node.attribs,
+                self.last_node.text,
+                open=self.last_open
+            )
+        )
+        self.last_indent = self.indent
+        self.last_node = node
+        self.last_open = open
+
     def _writeline(self, line: str) -> None:
         """Write line with indent to output."""
-        self.file.write(f"{'  '*self.indent}{line}\n")
+        self.file.write(f"{'  '*self.last_indent}{line}\n")
 
     def _to_tag(
         self,
@@ -49,7 +67,9 @@ class SliXml(Writer):
         return f"{xml}{'/'*(not open)}>"
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
-        raise NotImplementedError
+        if path != ".":
+            raise NotImplementedError
+        self.last_node.attribs[name] = value
 
     def create_element(self, path: str, value: str | None = None) -> Any:
         """Add an element to the current node.
@@ -60,16 +80,13 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         if len(paths) == 1:
-            name, attribs = Node.parse_node_path(paths[0][0])
-            self._writeline(self._to_tag(name, attribs, value))
+            self._writenode(Node.from_path(paths[0][0], value))
             return
         for node in paths[:-1]:
-            name, attribs = Node.parse_node_path(node[0])
-            self._writeline(self._to_tag(name, attribs, open=True))
-        name, attribs = Node.parse_node_path(paths[-1][0])
-        self._writeline(self._to_tag(name, attribs, value))
+            self._writenode(Node.from_path(node[0], value), True)
+        self._writenode(Node.from_path(paths[-1][0], value))
         for node in reversed(paths[:-1]):
-            self._writeline(f"<{node[2]}/>")
+            self._writenode(Node.from_path(node[2], value))
 
     def add_element(self, path: str, value: str | None = None) -> Any:
         """Add an element if it not already exists.
@@ -90,10 +107,10 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         for node in paths:
-            self.prev_indents.append(self.indent)
             name, attribs = Node.parse_node_path(node[0])
+            self._writenode(Node(name, attribs, value), open=True)
             self.prev_roots.append(name)
-            self._writeline(self._to_tag(name, attribs, open=True))
+            self.prev_indents.append(self.indent)
             self.indent += 1
 
     def open_path(self, path: str, value: str | None = None) -> None:
@@ -110,37 +127,7 @@ class SliXml(Writer):
         """Leave the previously entered path."""
         self.indent = self.prev_indents.pop()
         closing_tag = self.prev_roots.pop()
-        self._writeline(f"<{closing_tag}/>")
-
-    def delete_element(self, path: str) -> None:
-        """Delete an element.
-
-        :param path: Path of the element.
-        """
-        raise NotImplementedError
-
-    def replace_element(self, path: str, value: str | None = None) -> None:
-        """Replace an element.
-
-        :param path: Path of the element.
-        :param value: Value of the replaced element or None if it has no value.
-        """
-        raise NotImplementedError
-
-    def generate_output(self) -> str:
-        """Generate output in specified format."""
-        raise NotImplementedError
-
-    def print_output(self) -> None:
-        """Print output to stdout."""
-        raise NotImplementedError
-
-    def write_to(self, encoding: str = "utf-8") -> None:
-        """Write generated output to file.
-
-        :param file_path: Path of the file to write to.
-        """
-        raise NotImplementedError
+        self._writenode(Node(closing_tag))
 
 
 class Xml(BufferedWriter):
