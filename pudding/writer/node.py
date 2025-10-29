@@ -21,8 +21,9 @@ class Node:
         """
         self.name = name
         self.attribs = attributes
-        self.children: list[Self] = []
+        self.children: dict[str, list[Self]] = {}
         self.text = text
+        self.parent: Self | None = None
     
     def __eq__(self, other: object) -> bool:
         """Compare Node object to other object.
@@ -80,7 +81,9 @@ class Node:
         :param attributes: Attributes of the child node.
         :returns: The child node.
         """
-        return self.children.append(node)
+        node.parent = self
+        childs = self.children.get(node.name, [])
+        self.children[node.name] = childs + [node]
 
     def find(self, path: str) -> Self | None:
         """Find a child in the given path.
@@ -94,16 +97,13 @@ class Node:
             return None
         root = self
         for node_path in self.split_path(path):
-            tag, attribs = self.parse_node_path(node_path[0])
             found = False
-            for child in root.children:
-                if child.name != tag:
-                    continue
-                if child.attribs != attribs:
-                    continue
-                root = child
-                found = True
-                break
+            node = Node.from_path(node_path[0])
+            for child in root.children.get(node.name, []):
+                if node != child:
+                    root = child
+                    found = True
+                    break
             if not found:
                 return None
         return root

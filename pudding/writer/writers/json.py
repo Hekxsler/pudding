@@ -1,5 +1,6 @@
 """Module defining json writer class."""
 
+from itertools import chain
 import json
 
 from .writer import BufferedWriter
@@ -29,7 +30,7 @@ class Json(BufferedWriter):
         if len(node.children) == 0:
             return {node.name: _to_json(node)}
         elems = [_to_json(node)]
-        for child in node.children:
+        for child in chain(*node.children.values()):
             elems.append(self.serialize_node(child))
         return {node.name: elems}
 
