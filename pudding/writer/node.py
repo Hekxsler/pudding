@@ -23,6 +23,18 @@ class Node:
         self.attribs = attributes
         self.children: list[Self] = []
         self.text = text
+    
+    def __eq__(self, other: object) -> bool:
+        """Compare Node object to other object.
+        
+        To equal only name and attributes have to be the same.
+        Text and children of the nodes are ignored.
+        """
+        if not isinstance(other, Node):
+            return False
+        if self.name == other.name and self.attribs == other.attribs:
+            return True
+        return False
 
     @classmethod
     def from_path(cls, path: str, text: str | None = None) -> Self:
@@ -109,7 +121,7 @@ class Node:
 
         :param name: Name of the attribute.
         """
-        self.attribs.get(name, default)
+        return self.attribs.get(name, default)
 
     def __repr__(self) -> str:
         return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
