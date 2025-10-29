@@ -58,7 +58,7 @@ class Compiler:
     def _parse_syntax(
         self, content: str, indent: int = 0, skip_to: int = 0
     ) -> tuple[TokenList, int]:
-        """Produce syntax list object from syntax file content.
+        """Produce syntax list from syntax file content.
 
         :param content: Content of the file to compile.
         :param indent: Indentation level to start from.

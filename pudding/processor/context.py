@@ -75,12 +75,12 @@ class Context:
             )
         new_string = string.value
         matches = self.reader.last_match.groups()
-        for replace, i in string_vars:
+        for replace, number in string_vars:
             assert isinstance(replace, str)
-            if int(i) >= len(matches):
+            if int(number) >= len(matches):
                 raise IndexError(
-                    f"Not enough matches in {matches} to replace variable '${i}'."
+                    f"Not enough matches in {matches} to replace variable '${number}'."
                 )
-            value = replace.replace(f"${i}", matches[int(i)])
-            new_string = re.sub(re.escape(replace), value, new_string)
+            replacement = replace.replace(f"${number}", matches[int(number)], 1)
+            new_string = re.sub(re.escape(replace), replacement, new_string, 1)
         return new_string
