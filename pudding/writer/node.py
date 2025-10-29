@@ -98,12 +98,15 @@ class Node:
         root = self
         for node_path in self.split_path(path):
             found = False
-            node = Node.from_path(node_path[0])
-            for child in root.children.get(node.name, []):
-                if node == child:
-                    root = child
-                    found = True
-                    break
+            tag, attribs = self.parse_node_path(node_path[0])
+            for child in root.children.get(tag, []):
+                if tag != child.name:
+                    continue
+                if attribs != child.attribs:
+                    continue
+                root = child
+                found = True
+                break
             if not found:
                 return None
         return root
