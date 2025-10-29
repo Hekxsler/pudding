@@ -164,8 +164,7 @@ class Processor:
                     action = self.execute_token(token)
             if action not in (PAction.CONTINUE, PAction.NEXT):
                 break
-        for _ in range(entered):
-            self.writer.leave_path()
+        self.writer.leave_paths(entered)
         return action
 
     def _execute_tokens(self, tokens: TokenList) -> PAction:
@@ -194,8 +193,7 @@ class Processor:
                     action = self.execute_token(token)
             if action != PAction.CONTINUE:
                 break
-        for _ in range(entered):
-            self.writer.leave_path()
+        self.writer.leave_paths(entered)
         return action
 
     def trigger(self, timing: Timing) -> None:

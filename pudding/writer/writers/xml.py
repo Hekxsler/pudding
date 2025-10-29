@@ -128,11 +128,13 @@ class SliXml(Writer):
         """
         return self.enter_path(path, value)
 
-    def leave_path(self) -> None:
+    def leave_paths(self, amount: int = 1) -> None:
         """Leave the previously entered path."""
-        self.indent = self.prev_indents.pop()
-        closing_tag = self.prev_roots.pop()
-        self._writenode(Node(closing_tag))
+        self.indent = self.prev_indents[-amount]
+        for _ in range(amount):
+            self.prev_indents.pop()
+            closing_tag = self.prev_roots.pop()
+            self._writenode(Node(closing_tag))
 
 
 class Xml(BufferedWriter):

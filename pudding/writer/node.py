@@ -116,4 +116,4 @@ class Node:
         self.attribs.get(name, default)
 
     def __repr__(self) -> str:
-        return f"<Node name={repr(self.name)} {self.attribs} children={self.children}"
+        return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"

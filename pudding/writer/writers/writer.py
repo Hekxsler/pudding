@@ -68,8 +68,11 @@ class Writer:
         """
         raise NotImplementedError
 
-    def leave_path(self) -> None:
-        """Leave the previously entered path."""
+    def leave_paths(self, amount: int = 1) -> None:
+        """Leave the previously entered path.
+        
+        :param amount: Number of paths to leave.
+        """
         raise NotImplementedError
 
     def delete_element(self, path: str) -> None:
@@ -225,9 +228,14 @@ class BufferedWriter(Writer):
         self.prev_roots.append(self.root)
         self.root = elem
 
-    def leave_path(self) -> None:
-        """Set the current root object to the previous one."""
-        self.root = self.prev_roots.pop()
+    def leave_paths(self, amount: int = 1) -> None:
+        """Set the current root object to the previous one.
+        
+        :param amount: Amount of paths to leave.
+        """
+        if amount > 0:
+            self.root = self.prev_roots[-amount]
+            del self.prev_roots[-amount:]
 
     def delete_element(self, path: str) -> None:
         """Delete an element.
