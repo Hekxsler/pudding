@@ -1,13 +1,11 @@
 """Module defining xml writer class."""
 
-import re
 from pathlib import Path
-from typing import Any
 
 from lxml import etree
 
 from ..node import Node
-from .writer import Writer, BufferedWriter
+from .writer import BufferedWriter, Writer
 
 
 class SliXml(Writer):
@@ -33,7 +31,7 @@ class SliXml(Writer):
                 self.last_node.name,
                 self.last_node.attribs,
                 self.last_node.text,
-                open=self.last_open
+                open=self.last_open,
             )
         )
         self.last_indent = self.indent
@@ -68,15 +66,15 @@ class SliXml(Writer):
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
         if path != ".":
-            raise NotImplementedError
+            msg = "Can only edit current tag when using slixml writer."
+            raise ValueError(f"Invalid path {repr(path)}. {msg}")
         self.last_node.attribs[name] = value
 
-    def create_element(self, path: str, value: str | None = None) -> Any:
+    def create_element(self, path: str, value: str | None = None) -> None:
         """Add an element to the current node.
 
         :param path: Path of the element.
         :param value: Value of the element or None if it has no value.
-        :returns: The created element.
         """
         paths = Node.split_path(path)
         if len(paths) == 1:
@@ -88,16 +86,23 @@ class SliXml(Writer):
         for node in reversed(paths[:-1]):
             self._writenode(Node.from_path(node[2], value))
 
-    def add_element(self, path: str, value: str | None = None) -> Any:
+    def add_element(self, path: str, value: str | None = None) -> None:
         """Add an element if it not already exists.
 
         Otherwise it appends the string to the already existing element.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
-        :returns: The created element.
         """
-        return self.create_element(path, value)
+        if self.last_node == Node.from_path(path):
+            if not value:
+                return
+            if not self.last_node.text:
+                self.last_node.text = value
+            else:
+                self.last_node.text += value
+        else:
+            self.create_element(path, value)
 
     def enter_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path if they do not already exist.
