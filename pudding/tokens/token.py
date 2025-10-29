@@ -73,12 +73,8 @@ class Token:
         value_match = cls.value_re.search(token_match.group(0))
         if value_match is None:
             raise ValueError("No values in token.")
-        values = tuple([str(x) for x in value_match.groups() if x is not None])
-        converted: list[Data] = []
-        for value in values:
-            data = string_to_datatype(value, lineno)
-            converted.append(data)
-        return cls(lineno, name, tuple(converted))
+        values = (str(x) for x in value_match.groups() if x is not None)
+        return cls(lineno, name, tuple((string_to_datatype(v, lineno) for v in values)))
 
     @classmethod
     def matches(cls, string: str) -> bool:
