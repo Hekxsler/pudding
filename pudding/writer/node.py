@@ -100,7 +100,7 @@ class Node:
             found = False
             node = Node.from_path(node_path[0])
             for child in root.children.get(node.name, []):
-                if node != child:
+                if node == child:
                     root = child
                     found = True
                     break
