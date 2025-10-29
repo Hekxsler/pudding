@@ -24,14 +24,18 @@ class Node:
         self.children: dict[str, list[Self]] = {}
         self.text = text
         self.parent: Self | None = None
-    
-    def _compare_node(self, node: Self) -> bool:
-        """Return True if given node has the same name and attributes."""
-        if self.name != node.name:
+
+    def __eq__(self, other: object) -> bool:
+        """Compare Node object to other object.
+
+        To equal only name and attributes have to be the same.
+        Text and children of the nodes are ignored.
+        """
+        if not isinstance(other, Node):
             return False
-        if self.attribs != node.attribs:
-            return False
-        return True
+        if self.name == other.name and self.attribs == other.attribs:
+            return True
+        return False
 
     @classmethod
     def from_path(cls, path: str, text: str | None = None) -> Self:
@@ -92,11 +96,19 @@ class Node:
         if len(self.children) == 0:
             return None
         root = self
-        for node_path in self.split_path(path):
-            node = Node.from_path(node_path[0])
-            childs = filter(node._compare_node, root.children.get(node.name, []))
-            root = next(childs, None)
-            if root is None:
+        for tag, attribs in (
+            self.parse_node_path(path[0]) for path in self.split_path(path)
+        ):
+            found = False
+            for child in root.children.get(tag, []):
+                if tag != child.name:
+                    continue
+                if attribs != child.attribs:
+                    continue
+                root = child
+                found = True
+                break
+            if not found:
                 return None
         return root
 

@@ -113,9 +113,9 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         for node in paths:
-            name, attribs = Node.parse_node_path(node[0])
-            self._writenode(Node(name, attribs, value), open=True)
-            self.prev_roots.append(name)
+            node = Node.from_path(node[0], value)
+            self._writenode(node, open=True)
+            self.prev_roots.append(node.name)
             self.prev_indents.append(self.indent)
             self.indent += 1
 
