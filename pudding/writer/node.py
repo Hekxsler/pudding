@@ -96,9 +96,8 @@ class Node:
         if len(self.children) == 0:
             return None
         root = self
-        for tag, attribs in (
-            self.parse_node_path(path[0]) for path in self.split_path(path)
-        ):
+        parse = self.parse_node_path
+        for tag, attribs in (parse(path[0]) for path in self.split_path(path)):
             found = False
             for child in root.children.get(tag, []):
                 if tag != child.name:
