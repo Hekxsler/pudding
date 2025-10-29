@@ -1,7 +1,7 @@
 """Node class for caching generated output."""
 
 import re
-from typing import Iterator, Self
+from typing import Self
 
 
 class Node:
@@ -61,10 +61,6 @@ class Node:
         """
         return cls.node_re.findall(path)
 
-    def iter_children(self) -> Iterator[Self]:
-        """Return iterator of childrens."""
-        return self.children.__iter__()
-
     def add_child(self, node: Self) -> None:
         """Create a child node of this node.
 
@@ -88,7 +84,7 @@ class Node:
         for node_path in self.split_path(path):
             tag, attribs = self.parse_node_path(node_path[0])
             found = False
-            for child in root.iter_children():
+            for child in root.children:
                 if child.name != tag:
                     continue
                 if child.attribs != attribs:
