@@ -1,14 +1,9 @@
 """Module defining functions."""
 
-from typing import NoReturn, TypeVar
-
 from ...datatypes import Data, String
-from ...processor import PAction
-from ...processor.context import Context
 from ..token import Token
 
 OPTIONAL_STRING = rf"(?:\, *({String.regex}))?"
-_D = TypeVar("_D")
 
 
 class Function(Token):
@@ -35,14 +30,6 @@ class Function(Token):
         if len(values) > self.max_args:
             raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
         super().__init__(lineno, name, values)
-
-    def execute(self, context: Context) -> PAction | NoReturn:
-        """Execute this token.
-
-        :param context: Current context object.
-        :returns: Returns PAction for processor class.
-        """
-        raise NotImplementedError()
 
     def get_string(self, index: int) -> String:
         """Get String object in values.
