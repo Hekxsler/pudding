@@ -20,8 +20,9 @@ class When(MultiExpStatement):
         :param context: Current context object.
         :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
         """
+        find = context.reader.find
         for pattern in self.get_compiled_patterns(context):
-            if context.reader.find(pattern):
+            if find(pattern):
                 return PAction.ENTER
         return PAction.NEXT
 
@@ -38,7 +39,8 @@ class IWhen(MultiExpStatement):
         :param context: Current context object.
         :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
         """
+        find = context.reader.find
         for pattern in self.get_compiled_patterns(context, re.RegexFlag.IGNORECASE):
-            if context.reader.find(pattern):
+            if find(pattern):
                 return PAction.ENTER
         return PAction.NEXT
