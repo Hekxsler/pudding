@@ -1,6 +1,5 @@
 """Module defining xml writer class."""
 
-from itertools import chain
 from pathlib import Path
 
 from lxml import etree
@@ -149,7 +148,7 @@ class Xml(BufferedWriter):
     def serialize_node(self, node: Node) -> etree.Element:
         root = etree.Element(node.name, node.attribs)
         root.text = node.text
-        for child in chain(*node.children.values()):
+        for child in node.get_sorted_children():
             root.append(self.serialize_node(child))
         return root
 

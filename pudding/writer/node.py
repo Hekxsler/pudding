@@ -1,5 +1,6 @@
 """Node class for caching generated output."""
 
+from itertools import chain
 import re
 from typing import Self
 
@@ -36,6 +37,9 @@ class Node:
         if self.name == other.name and self.attribs == other.attribs:
             return True
         return False
+
+    def __repr__(self) -> str:
+        return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
 
     @classmethod
     def from_path(cls, path: str, text: str | None = None) -> Self:
@@ -126,5 +130,7 @@ class Node:
         """
         return self.attribs.get(name, default)
 
-    def __repr__(self) -> str:
-        return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
+    def get_sorted_children(self) -> list[Self]:
+        """Return a list of children sorted by name."""
+        childs = chain(*self.children.values())
+        return sorted(childs, key=lambda x: x.name)
