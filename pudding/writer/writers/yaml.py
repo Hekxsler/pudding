@@ -9,7 +9,7 @@ class Yaml(Json):
 
     def generate_output(self) -> str:
         """Generate output in specified format."""
-        if self.root_name != "root":
-            self.root.name = self.root_name
-        tree: JsonType | list[JsonType] = self.serialize_node(self.root)
-        return yaml.dump(tree)
+        base: JsonType = {}
+        for child in self.root.get_sorted_children():
+            base = self.serialize_node(child, base)
+        return yaml.dump(base)
