@@ -176,19 +176,18 @@ class BufferedWriter(Writer):
             new.text = value
             return new
         paths = Node.split_path(path)
-        if len(paths) == 0:
-            raise ValueError(f"Invalid path {repr(path)}.")
-        if len(paths) == 1:
-            parent = self.root
-            child_node = paths[0][0]
-        else:
-            *parent_paths, child_path = paths
-            parent_path = "".join((path[0] for path in parent_paths))
-            parent = self._get_or_create_element(parent_path, self.root)
-            child_node = child_path[0]
-        new = Node.from_path(child_node, value)
-        parent.add_child(new)
-        return new
+        match len(paths):
+            case 0:
+                raise ValueError(f"Invalid path {repr(path)}.")
+            case 1:
+                parent = self.root
+                child_node = paths[0][0]
+            case _:
+                *parent_paths, child_path = paths
+                parent_path = "".join((path[0] for path in parent_paths))
+                parent = self._get_or_create_element(parent_path, self.root)
+                child_node = child_path[0]
+        return parent.add_child(child_node, value)
 
     def add_element(self, path: str, value: str | None = None) -> Node:
         """Add an element if it not already exists.

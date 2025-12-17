@@ -24,12 +24,12 @@ class Function(Token):
         :param values: Values of the arguments.
         :raises SyntaxError:
         """
+        if self.min_args <= len(values) <= self.max_args:
+            return super().__init__(lineno, name, values)
         err_msg = f"Expected {self.min_args} but got {len(values)}"
         if len(values) < self.min_args:
             raise SyntaxError(f"Missing arguments in line {lineno}. {err_msg}")
-        if len(values) > self.max_args:
-            raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
-        super().__init__(lineno, name, values)
+        raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
 
     def get_string(self, index: int) -> String:
         """Get String object in values.
