@@ -138,20 +138,19 @@ class BufferedWriter(Writer):
         :param root: Node to start from.
         :returns: Node at the given path.
         """
-        if path in ["", "."]:
+        if path == ".":
             return root
-        sub_paths = Node.split_path(path)
-        if len(sub_paths) > 1:
-            root = self._get_or_create_element(sub_paths[0][0], root)
-            for sub_path in sub_paths[1:]:
-                root = self._get_or_create_element(sub_path[0].lstrip("/"), root)
-            return root
-        elem = self.root.find(path)
+        elem = root.find(path)
         if elem is not None:
             return elem
-        new = Node.from_path(path)
-        self.root.add_child(new)
-        return new
+        target = root
+        for node_path, _, _, _ in Node.split_path(path):
+            elem = target.find(node_path)
+            if elem is not None:
+                target = elem
+            else:
+                target = target.add_child(node_path)
+        return target
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
         """Add an attribute to an element.
@@ -160,8 +159,7 @@ class BufferedWriter(Writer):
         :param name: Name of the attribute.
         :param value: Value of the attribute.
         """
-        elem = self._get_element(path)
-        elem.set(name, value)
+        self._get_element(path).set(name, value)
 
     def create_element(self, path: str, value: str | None = None) -> Node:
         """Add an element and always create the last element in the path.
@@ -242,6 +240,9 @@ class BufferedWriter(Writer):
         :param path: Path of the element.
         """
         elem = self._get_element(path)
+        parent = elem.parent
+        if parent:
+            parent.children.get(elem.node_path, []).remove(elem)
         del elem
 
     def replace_element(self, path: str, value: str | None = None) -> None:

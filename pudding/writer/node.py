@@ -9,7 +9,7 @@ class Node:
     """Class representing a node."""
 
     attribute_re = re.compile(r"([?&]([\w\-\_]+)=\"((?:\\\"|[^\"])+)\")")
-    node_re = re.compile(rf"((?:(\.)|(\/?)([\w\-\_ ]+)({attribute_re.pattern}*)))")
+    node_re = re.compile(r"(([./]?)([\w\-\_ ]+)((?:[?&][\w\-\_]+=\"(?:\\\"|[^\"])+\")*))")
 
     def __init__(
         self, name: str, attributes: dict[str, str] = {}, text: str | None = None
@@ -78,16 +78,26 @@ class Node:
         """
         return cls.node_re.findall(path)
 
-    def add_child(self, node: Self) -> None:
+    @property
+    def node_path(self) -> str:
+        """Return node as path."""
+        attributes = "?"
+        for k, v in self.attribs.items():
+            attributes += f'{k}="{v}"&'
+        return f"{self.name}{attributes[:-1]}"
+
+    def add_child(self, node_path: str, text: str | None = None) -> Self:
         """Create a child node of this node.
 
-        :param name: Name of the child node.
-        :param attributes: Attributes of the child node.
-        :returns: The child node.
+        :param node_path: Path of the node to add.
+        :returns Node: The created and added node.
         """
+        node_path = node_path.lstrip("./")
+        node = self.from_path(node_path, text)
         node.parent = self
-        childs = self.children.get(node.name, [])
-        self.children[node.name] = childs + [node]
+        childs = self.children.get(node_path, [])
+        self.children[node_path] = childs + [node]
+        return node
 
     def find(self, path: str) -> Self | None:
         """Find a child in the given path.
@@ -97,21 +107,15 @@ class Node:
         """
         if path == ".":
             return self
-        if len(self.children) == 0:
+        if not self.children:
             return None
         root = self
-        parse = self.parse_node_path
-        for tag, attribs in (parse(path[0]) for path in self.split_path(path)):
-            found = False
-            for child in root.children.get(tag, []):
-                if tag != child.name:
-                    continue
-                if attribs != child.attribs:
-                    continue
-                root = child
-                found = True
-                break
-            if not found:
+        for node_path in (path[0] for path in self.split_path(path)):
+            childs = root.children.get(node_path.lstrip("./"), [])
+            if childs:
+                root = childs[0]
+                continue
+            else:
                 return None
         return root
 
@@ -121,7 +125,13 @@ class Node:
         :param name: Name of the attribute.
         :param value: Value of the attribute.
         """
+        if self.parent:
+            child_list = self.parent.children.get(self.node_path, [])
+            child_list.remove(self)
         self.attribs[name] = value
+        if self.parent:
+            child_list = self.parent.children.get(self.node_path, [])
+            self.parent.children[self.node_path] = child_list + [self]
 
     def get(self, name: str, default: None = None) -> str | None:
         """Get an attribute of this node.
