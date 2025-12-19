@@ -17,14 +17,14 @@ class SliXml(Writer):
         """Init for SliXml class."""
         super().__init__(file_path, root_name, encoding)
         self.last_open = True
+        self.last_closing = False
         self.last_indent = 0
         self.indent = 1
         self.file = open(file_path, "w", encoding=encoding)
         self.last_node: Node = Node(root_name)
-        self.prev_roots: list[str] = []
-        self.prev_indents: list[int] = []
+        self.prev_roots: list[str] = [root_name]
 
-    def _writenode(self, node: Node, open: bool = False) -> None:
+    def _writenode(self, node: Node, open: bool = False, closing: bool = False) -> None:
         """Write node to file."""
         self._writeline(
             self._to_tag(
@@ -32,11 +32,13 @@ class SliXml(Writer):
                 self.last_node.attribs,
                 self.last_node.text,
                 open=self.last_open,
+                closing=self.last_closing,
             )
         )
         self.last_indent = self.indent
         self.last_node = node
         self.last_open = open
+        self.last_closing = closing
 
     def _writeline(self, line: str) -> None:
         """Write line with indent to output."""
@@ -48,6 +50,7 @@ class SliXml(Writer):
         attributes: dict[str, str],
         value: str | None = None,
         open: bool = False,
+        closing: bool = False,
     ) -> str:
         """Create an xml tag.
 
@@ -59,17 +62,10 @@ class SliXml(Writer):
         """
         tag = name.casefold()
         attribs = [f' {k}="{v}"' for k, v in attributes.items()]
-        xml = f"<{tag}{''.join(attribs)}"
+        xml = f"{tag}{''.join(attribs)}"
         if value is not None:
-            return f"{xml}>{value}<{tag}/>"
-        return f"{xml}{'/'*(not open)}>"
-
-    def add_attribute(self, path: str, name: str, value: str) -> None:
-        """Add attribute to current element."""
-        if path != ".":
-            msg = "Can only edit current element when using slixml writer."
-            raise ValueError(f"Invalid path {repr(path)}. {msg}")
-        self.last_node.attribs[name] = value
+            return f"<{xml}>{value}</{tag}>"
+        return f"<{'/'*(closing)}{xml}{'/'*(not open and not closing)}>"
 
     def create_element(self, path: str, value: str | None = None) -> None:
         """Add an element to the current node.
@@ -78,14 +74,18 @@ class SliXml(Writer):
         :param value: Value of the element or None if it has no value.
         """
         paths = Node.split_path(path)
-        if len(paths) == 1:
-            self._writenode(Node.from_path(paths[0][0], value))
-            return
-        for node in paths[:-1]:
-            self._writenode(Node.from_path(node[0], value), True)
-        self._writenode(Node.from_path(paths[-1][0], value))
-        for node in reversed(paths[:-1]):
-            self._writenode(Node.from_path(node[2], value))
+        match len(paths):
+            case 0:
+                raise ValueError(f"Invalid path {repr(path)}.")
+            case 1:
+                node = Node.from_path(paths[0][0], value)
+                self._writenode(node)
+            case _:
+                for node in paths[:-1]:
+                    self._writenode(Node.from_path(node[0], value), True)
+                self._writenode(Node.from_path(paths[-1][0], value))
+                for node in reversed(paths[:-1]):
+                    self._writenode(Node.from_path(node[2], value))
 
     def add_element(self, path: str, value: str | None = None) -> None:
         """Add an element if its not the current element.
@@ -113,11 +113,10 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         for node_path, _, _, _ in paths:
-            node = Node.from_path(node_path, value)
-            self._writenode(node, open=True)
-            self.prev_roots.append(node.name)
-            self.prev_indents.append(self.indent)
+            self._writenode(Node.from_path(node_path), open=True)
             self.indent += 1
+        self.last_node.text = value
+        self.prev_roots.append("/".join([p[2] for p in paths]))
 
     def open_path(self, path: str, value: str | None = None) -> None:
         """Enter a node and create elements in the path.
@@ -131,13 +130,17 @@ class SliXml(Writer):
 
     def leave_paths(self, amount: int = 1) -> None:
         """Leave the previously entered path."""
-        if amount == 0:
-            return
-        self.indent = self.prev_indents[-amount]
         for _ in range(amount):
-            self.prev_indents.pop()
-            closing_tag = self.prev_roots.pop()
-            self._writenode(Node(closing_tag))
+            last_root = self.prev_roots.pop()
+            for node in reversed(last_root.split("/")):
+                self.indent -= 1
+                self._writenode(Node(node), closing=True)
+
+    def write_output(self) -> None:
+        """Write last open nodes to file."""
+        self.leave_paths(len(self.prev_roots))
+        # write last node again because it buffers the last node
+        self._writenode(self.last_node, closing=True)
 
 
 class Xml(BufferedWriter):
