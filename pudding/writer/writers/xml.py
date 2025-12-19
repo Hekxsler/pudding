@@ -112,7 +112,7 @@ class SliXml(Writer):
         :param value: Value of the element or None if it has no value.
         """
         paths = Node.split_path(path)
-        for node_path, _, _ ,_ in paths:
+        for node_path, _, _, _ in paths:
             node = Node.from_path(node_path, value)
             self._writenode(node, open=True)
             self.prev_roots.append(node.name)
@@ -131,6 +131,8 @@ class SliXml(Writer):
 
     def leave_paths(self, amount: int = 1) -> None:
         """Leave the previously entered path."""
+        if amount == 0:
+            return
         self.indent = self.prev_indents[-amount]
         for _ in range(amount):
             self.prev_indents.pop()
