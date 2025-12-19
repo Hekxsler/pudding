@@ -34,7 +34,7 @@ class Node:
         To equal only name and attributes have to be the same.
         Text and children of the nodes are ignored.
         """
-        if not isinstance(other, Node):
+        if not isinstance(other, self.__class__):
             return False
         if self.name == other.name and self.attribs == other.attribs:
             return True
@@ -122,7 +122,7 @@ class Node:
                 return None
         return root
 
-    def set(self, name: str, value: str) -> None:
+    def set(self: Self, name: str, value: str) -> None:
         """Set an attribute of this node.
 
         :param name: Name of the attribute.

@@ -112,8 +112,8 @@ class SliXml(Writer):
         :param value: Value of the element or None if it has no value.
         """
         paths = Node.split_path(path)
-        for node in paths:
-            node = Node.from_path(node[0], value)
+        for node_path, _, _ ,_ in paths:
+            node = Node.from_path(node_path, value)
             self._writenode(node, open=True)
             self.prev_roots.append(node.name)
             self.prev_indents.append(self.indent)
