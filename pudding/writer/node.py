@@ -79,7 +79,22 @@ class Node:
         :returns: List of node matches as a tuple.
             E.g. [(full_nodepath, [./]*, tag, attributes), ...]
         """
-        return cls.node_re.findall(path)
+        if "/" not in path:
+            matches = cls.node_re.fullmatch(path)
+            if matches:
+                return [
+                    (
+                        matches.group(1),
+                        matches.group(2),
+                        matches.group(3),
+                        matches.group(4),
+                    )
+                ]
+        else:
+            matches = cls.node_re.findall(path)
+            if matches:
+                return matches
+        raise ValueError(f"Invalid path {repr(path)}.")
 
     @property
     def node_path(self) -> str:
