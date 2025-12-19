@@ -16,7 +16,7 @@ class SliXml(Writer):
     ) -> None:
         """Init for SliXml class."""
         super().__init__(file_path, root_name, encoding)
-        self.last_open = True
+        self.last_single = False
         self.last_closing = False
         self.last_indent = 0
         self.indent = 1
@@ -24,20 +24,20 @@ class SliXml(Writer):
         self.last_node: Node = Node(root_name)
         self.prev_roots: list[str] = [root_name]
 
-    def _writenode(self, node: Node, open: bool = False, closing: bool = False) -> None:
+    def _writenode(self, node: Node, single: bool = False, closing: bool = False) -> None:
         """Write node to file."""
         self._writeline(
             self._to_tag(
                 self.last_node.name,
                 self.last_node.attribs,
                 self.last_node.text,
-                open=self.last_open,
+                single=self.last_single,
                 closing=self.last_closing,
             )
         )
         self.last_indent = self.indent
         self.last_node = node
-        self.last_open = open
+        self.last_single = single
         self.last_closing = closing
 
     def _writeline(self, line: str) -> None:
@@ -49,7 +49,7 @@ class SliXml(Writer):
         name: str,
         attributes: dict[str, str],
         value: str | None = None,
-        open: bool = False,
+        single: bool = False,
         closing: bool = False,
     ) -> str:
         """Create an xml tag.
@@ -65,7 +65,7 @@ class SliXml(Writer):
         xml = f"{tag}{''.join(attribs)}"
         if value is not None:
             return f"<{xml}>{value}</{tag}>"
-        return f"<{'/'*(closing)}{xml}{'/'*(not open and not closing)}>"
+        return f"<{'/'*(closing)}{xml}{'/'*(single and not closing)}>"
 
     def create_element(self, path: str, value: str | None = None) -> None:
         """Add an element to the current node.
@@ -79,13 +79,13 @@ class SliXml(Writer):
                 raise ValueError(f"Invalid path {repr(path)}.")
             case 1:
                 node = Node.from_path(paths[0][0], value)
-                self._writenode(node)
+                self._writenode(node, single=True)
             case _:
                 for node in paths[:-1]:
-                    self._writenode(Node.from_path(node[0], value), True)
-                self._writenode(Node.from_path(paths[-1][0], value))
+                    self._writenode(Node.from_path(node[0], value))
+                self._writenode(Node.from_path(paths[-1][0], value), single=True)
                 for node in reversed(paths[:-1]):
-                    self._writenode(Node.from_path(node[2], value))
+                    self._writenode(Node.from_path(node[2], value), closing=True)
 
     def add_element(self, path: str, value: str | None = None) -> None:
         """Add an element if its not the current element.
@@ -113,7 +113,7 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         for node_path, _, _, _ in paths:
-            self._writenode(Node.from_path(node_path), open=True)
+            self._writenode(Node.from_path(node_path))
             self.indent += 1
         self.last_node.text = value
         self.prev_roots.append("/".join([p[2] for p in paths]))
