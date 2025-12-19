@@ -150,7 +150,7 @@ class Processor:
         """
         action = PAction.EXIT
         entered = 0
-        for token in grammar.iter_tokens():
+        for token in grammar.tokens:
             logger.debug("Executing %s", token)
             match token:
                 case tuple():
