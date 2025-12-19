@@ -65,8 +65,9 @@ class SliXml(Writer):
         return f"{xml}{'/'*(not open)}>"
 
     def add_attribute(self, path: str, name: str, value: str) -> None:
+        """Add attribute to current element."""
         if path != ".":
-            msg = "Can only edit current tag when using slixml writer."
+            msg = "Can only edit current element when using slixml writer."
             raise ValueError(f"Invalid path {repr(path)}. {msg}")
         self.last_node.attribs[name] = value
 
@@ -87,7 +88,7 @@ class SliXml(Writer):
             self._writenode(Node.from_path(node[2], value))
 
     def add_element(self, path: str, value: str | None = None) -> None:
-        """Add an element if it not already exists.
+        """Add an element if its not the current element.
 
         Otherwise it appends the string to the already existing element.
 
@@ -105,7 +106,7 @@ class SliXml(Writer):
             self.create_element(path, value)
 
     def enter_path(self, path: str, value: str | None = None) -> None:
-        """Enter a node and create elements in the path if they do not already exist.
+        """Enter a node and create elements in the path.
 
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
@@ -119,7 +120,7 @@ class SliXml(Writer):
             self.indent += 1
 
     def open_path(self, path: str, value: str | None = None) -> None:
-        """Enter a node and create elements in the path if they do not already exist.
+        """Enter a node and create elements in the path.
 
         Always creates the last node.
 
@@ -143,9 +144,11 @@ class Xml(BufferedWriter):
     def __init__(
         self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
     ) -> None:
+        """Init buffered xml writer."""
         super().__init__(file_path, root_name, encoding)
 
     def serialize_node(self, node: Node) -> etree.Element:
+        """Convert node object to etree element."""
         root = etree.Element(node.name, node.attribs)
         root.text = node.text
         for child in node.get_sorted_children():

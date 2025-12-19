@@ -22,6 +22,5 @@ def string_to_datatype(string: str, line: int) -> Data:
     for cls in DATATYPES:
         if re.fullmatch(cls.regex, string):
             return cls(line, string)
-    raise TypeError(
-        f"Unknown type of value {repr(string)} in line {line}, must be a string, regex or varname."
-    )
+    msg = f"Unknown type of value {repr(string)} in line {line}"
+    raise TypeError(f"{msg}, must be a string, regex or varname.")

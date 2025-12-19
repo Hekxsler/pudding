@@ -9,7 +9,9 @@ class Node:
     """Class representing a node."""
 
     attribute_re = re.compile(r"([?&]([\w\-\_]+)=\"((?:\\\"|[^\"])+)\")")
-    node_re = re.compile(r"(([./]?)([\w\-\_ ]+)((?:[?&][\w\-\_]+=\"(?:\\\"|[^\"])+\")*))")
+    node_re = re.compile(
+        r"(([./]?)([\w\-\_ ]+)((?:[?&][\w\-\_]+=\"(?:\\\"|[^\"])+\")*))"
+    )
 
     def __init__(
         self, name: str, attributes: dict[str, str] = {}, text: str | None = None
@@ -39,6 +41,7 @@ class Node:
         return False
 
     def __repr__(self) -> str:
+        """Represent node as string."""
         return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
 
     @classmethod

@@ -5,4 +5,4 @@ from .writer import Writer
 from .xml import Xml
 from .yaml import Yaml
 
-__all__  = ["Json", "Writer", "Xml", "Yaml"]
+__all__ = ["Json", "Writer", "Xml", "Yaml"]

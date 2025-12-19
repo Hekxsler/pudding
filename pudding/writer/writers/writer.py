@@ -70,7 +70,7 @@ class Writer:
 
     def leave_paths(self, amount: int = 1) -> None:
         """Leave the previously entered path.
-        
+
         :param amount: Number of paths to leave.
         """
         raise NotImplementedError
@@ -114,7 +114,10 @@ class BufferedWriter(Writer):
     :var node_re: Regex for a node path.
     """
 
-    def __init__(self, file_path: Path, root_name: str = "root", encoding: str = "utf-8") -> None:
+    def __init__(
+        self, file_path: Path, root_name: str = "root", encoding: str = "utf-8"
+    ) -> None:
+        """Init BufferedWriter."""
         super().__init__(file_path, root_name, encoding)
         self.prev_roots: list[Node] = []
         self.root = Node(root_name)
@@ -227,7 +230,7 @@ class BufferedWriter(Writer):
 
     def leave_paths(self, amount: int = 1) -> None:
         """Set the current root object to the previous one.
-        
+
         :param amount: Amount of paths to leave.
         """
         if amount > 0:

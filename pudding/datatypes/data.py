@@ -13,7 +13,7 @@ class Data:
 
     def __init__(self, line: int, value: str) -> None:
         """Init for Data class.
-        
+
         :param line: Line number of this data.
         :param value: Value of the data object.
         """

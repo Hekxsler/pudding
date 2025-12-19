@@ -37,6 +37,7 @@ class Json(BufferedWriter):
     """Writer class for json output."""
 
     def serialize_node(self, node: Node, parent: JsonType) -> JsonType:
+        """Convert node object to json."""
         existing = parent.get(node.name)
         if isinstance(existing, str):
             raise RuntimeError
