@@ -43,7 +43,7 @@ class Compiler:
         count = len(indent.group(0))
         if line.startswith("\t"):
             return count
-        elif (count / INDENT_SPACES).is_integer():
+        if (count / INDENT_SPACES).is_integer():
             return int(count / INDENT_SPACES)
         raise IndentationError(f"Invalid amount of spaces in line {lineno}")
 
@@ -183,5 +183,6 @@ class Compiler:
         """
         logger.debug("Compiling %s", file)
         self.source_path = file
-        content = open(file, "r", encoding=encoding).read()
+        with open(file, "r", encoding=encoding) as f:
+            content = f.read()
         return self.compile(content)

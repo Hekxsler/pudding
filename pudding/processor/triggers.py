@@ -35,6 +35,10 @@ class TriggerQueue(dict[Timing, list[Trigger]]):
         the value a list of triggers.
     """
 
+    def __init__(self) -> None:
+        self.triggers: dict[Timing, list[Trigger]] = {}
+        return super().__init__()
+
     def add_trigger(self, timing: Timing, trigger: Trigger) -> None:
         """Add a trigger to the queue.
 
@@ -51,6 +55,6 @@ class TriggerQueue(dict[Timing, list[Trigger]]):
         :param timing: Timing of a queue to clear or none to clear all.
         """
         if timing:
-            del self[timing]
+            self[timing] = []
         else:
-            self.triggers: dict[Timing, list[Trigger]] = {}
+            self.triggers = {}

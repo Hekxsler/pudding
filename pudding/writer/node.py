@@ -14,7 +14,7 @@ class Node:
     )
 
     def __init__(
-        self, name: str, attributes: dict[str, str] = {}, text: str | None = None
+        self, name: str, attributes: dict[str, str] | None = None, text: str | None = None
     ) -> None:
         """Init for Node class.
 
@@ -22,8 +22,10 @@ class Node:
         :param attributes: Attributes of this node.
         :param text: Text value of this node.
         """
-        self.name = name
+        if attributes is None:
+            attributes = {}
         self.attribs = attributes
+        self.name = name
         self.children: dict[str, list[Self]] = {}
         self.text = text
         self.parent: Self | None = None
@@ -133,8 +135,7 @@ class Node:
             if childs:
                 root = childs[0]
                 continue
-            else:
-                return None
+            return None
         return root
 
     def set(self: Self, name: str, value: str) -> None:
