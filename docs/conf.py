@@ -26,12 +26,12 @@ try:
     try:
         release = getattr(project_module, "__version__")
     except Exception:
-        release = "0.0.0"
+        release = "1.0.0"
 except Exception:
     # Fallbacks when package can't be imported during doc builds
     project = "pudding"
     author = "Moritz Hille"
-    release = "0.0.0"
+    release = "1.0.0"
 
 
 # -- General configuration ---------------------------------------------------
