@@ -20,9 +20,8 @@ class Match(MultiExpStatement):
         :param context: Current context object.
         :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
         """
-        match = context.reader.match
         for pattern in self.get_compiled_patterns(context):
-            if match(pattern):
+            if context.reader.match(pattern):
                 return PAction.ENTER
         return PAction.NEXT
 
@@ -39,8 +38,7 @@ class IMatch(MultiExpStatement):
         :param context: Current context object.
         :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
         """
-        match = context.reader.match
         for pattern in self.get_compiled_patterns(context, re.RegexFlag.IGNORECASE):
-            if match(pattern):
+            if context.reader.match(pattern):
                 return PAction.ENTER
         return PAction.NEXT
