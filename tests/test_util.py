@@ -5,10 +5,12 @@ import yaml
 
 from lxml import etree
 from pathlib import Path
-from pudding import convert_file
+from pudding import convert_file, convert_string
 
 DATA_DIR = Path(__file__).parent / "data"
 INPUT_FILE = DATA_DIR / "input.txt"
+
+# ------------------ test_convert_file ------------------ #
 
 
 def test_convert_file_json() -> None:
@@ -58,3 +60,63 @@ def test_convert_file_yaml() -> None:
     assert yaml.safe_load(open(DATA_DIR / "result.yaml")) == yaml.safe_load(
         open(DATA_DIR / "expected.yaml")
     )
+
+
+# ------------------ test_convert_string ------------------ #
+
+SYNTAX = """
+define nl /[\\r\\n]/
+define ws /\\s+/
+define fieldname /[\\w ]+/
+define value /[^\\r\\n,]+/
+define field_end /[\\r\\n,] */
+
+grammar user:
+    match 'Name:' ws value field_end:
+        out.add_attribute('.', 'firstname', '$2')
+    match 'Lastname:' ws value field_end:
+        out.add_attribute('.', 'lastname',  '$2')
+    match fieldname ':' ws value field_end:
+        out.add('$0', '$3')
+    match nl:
+        do.return()
+
+grammar input:
+    match 'User' nl '----' nl:
+        out.open('user')
+        user()
+"""
+
+CONTENT = """User
+----
+Name: John, Lastname: Doe
+Office: 1st Ave
+Birth date: 1978-01-01
+
+User
+----
+Name: Jane, Lastname: Foo
+Office: 2nd Ave
+Birth date: 1970-01-01
+"""
+
+RESULT = """user:
+- '@firstname': John
+  '@lastname': Doe
+  office:
+    '#text': 1st Ave
+  birth-date:
+    '#text': '1978-01-01'
+- '@firstname': Jane
+  '@lastname': Foo
+  office:
+    '#text': 2nd Ave
+  birth-date:
+    '#text': '1970-01-01'
+"""
+
+
+def test_convert_string() -> None:
+    """Test convert_string function."""
+    result = convert_string(SYNTAX, CONTENT, "yaml")
+    assert yaml.safe_load(result) == yaml.safe_load(RESULT)
