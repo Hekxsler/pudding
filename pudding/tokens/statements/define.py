@@ -2,9 +2,15 @@
 
 import re
 
+from ...datatypes.or_ import Or
+
+from ...datatypes.regex import Regex
+
+from ...datatypes.string import String
+
 from ...processor import PAction
 from ...processor.context import Context
-from ...datatypes import Data, Or, Varname
+from ...datatypes import Data, Varname
 from ..util import EXP_VAR
 from .statement import Statement
 
@@ -16,23 +22,23 @@ class Define(Statement):
     value_re = re.compile(rf"define ({Varname.regex}) *((?: *{EXP_VAR})+)")
     value_types = (Varname, Data)
 
-    def get_pattern(self, context: Context) -> re.Pattern[str]:
+    def get_patterns(self, context: Context) -> str:
         """Return the combined patterns as a string.
 
         :param context: Context to resolve variables.
-        :returns: Regex pattern.
+        :param re_flag: Regex flag when compiling expression.
+        :returns: List of regex patterns, where each element is a possible pattern.
         """
         pattern = r""
-        for value in self.values[1:]:
-            if isinstance(value, Or):
-                raise SyntaxError(
-                    f"Can not use '|' in define statement. (line {self.lineno})"
-                )
-            if isinstance(value, Varname):
-                pattern += context.get_var(value.value).pattern
-            else:
-                pattern += value.pattern.pattern
-        return re.compile(pattern)
+        for data in self.values[1:]:
+            if isinstance(data, (String, Regex)):
+                pattern += data.re_pattern
+            elif isinstance(data, Varname):
+                pattern += context.get_var(data)
+            elif isinstance(data, Or):
+                msg = "Define statement can't contain Or-character."
+                raise SyntaxError(f"{msg} (line {self.lineno})")
+        return pattern
 
     def execute(self, context: Context) -> PAction:
         """Set a variable.
@@ -40,5 +46,5 @@ class Define(Statement):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        context.variables[self.values[0].value] = self.get_pattern(context)
+        context.variables[self.values[0].value] = self.get_patterns(context)
         return PAction.CONTINUE

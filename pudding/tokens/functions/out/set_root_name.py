@@ -2,7 +2,7 @@
 
 import re
 
-from ....writer.xml import Xml
+from ....writer import Xml
 
 from ....datatypes import String
 from ....processor import PAction

@@ -1,0 +1,165 @@
+"""Node class for caching generated output."""
+
+from itertools import chain
+import re
+from typing import Self
+
+
+class Node:
+    """Class representing a node."""
+
+    attribute_re = re.compile(r"([?&]([\w\-\_]+)=\"((?:\\\"|[^\"])+)\")")
+    node_re = re.compile(
+        r"(([./]?)([\w\-\_ ]+)((?:[?&][\w\-\_]+=\"(?:\\\"|[^\"])+\")*))"
+    )
+
+    def __init__(
+        self, name: str, attributes: dict[str, str] | None = None, text: str | None = None
+    ) -> None:
+        """Init for Node class.
+
+        :param name: Name of this node.
+        :param attributes: Attributes of this node.
+        :param text: Text value of this node.
+        """
+        if attributes is None:
+            attributes = {}
+        self.attribs = attributes
+        self.name = name
+        self.children: dict[str, list[Self]] = {}
+        self.text = text
+        self.parent: Self | None = None
+
+    def __eq__(self, other: object) -> bool:
+        """Compare Node object to other object.
+
+        To equal only name and attributes have to be the same.
+        Text and children of the nodes are ignored.
+        """
+        if not isinstance(other, self.__class__):
+            return False
+        if self.name == other.name and self.attribs == other.attribs:
+            return True
+        return False
+
+    def __repr__(self) -> str:
+        """Represent node as string."""
+        return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
+
+    @classmethod
+    def from_path(cls, path: str, text: str | None = None) -> Self:
+        """Parse node object from path.
+
+        :param path: Node path of the object.
+        :param text: Text of the created node object.
+        :returns Node: The created node object.
+        """
+        return cls(*cls.parse_node_path(path), text)
+
+    @classmethod
+    def parse_node_path(cls, path: str) -> tuple[str, dict[str, str]]:
+        """Read tag name and attributes from an node.
+
+        :param path: Path node to parse.
+        :returns: Tuple with name as string and attributes as a dict.
+        """
+        attributes: dict[str, str] = {}
+        path = path.lstrip("./")
+        for attribute in cls.attribute_re.findall(path):
+            attributes[attribute[1]] = attribute[2]
+            path = path.replace(attribute[0], "")
+        if "/" in path:
+            raise ValueError(f"Path {path} contains more than one node.")
+        path = path.replace(" ", "-")
+        return path.casefold(), attributes
+
+    @classmethod
+    def split_path(cls, path: str) -> list[tuple[str, str, str, str]]:
+        """Split the path into nodes.
+
+        :param path: Path to split.
+        :returns: List of node matches as a tuple.
+            E.g. [(full_nodepath, [./]*, tag, attributes), ...]
+        """
+        if "/" not in path:
+            matches = cls.node_re.fullmatch(path)
+            if matches:
+                return [
+                    (
+                        matches.group(1),
+                        matches.group(2),
+                        matches.group(3),
+                        matches.group(4),
+                    )
+                ]
+        else:
+            matches = cls.node_re.findall(path)
+            if matches:
+                return matches
+        raise ValueError(f"Invalid path {repr(path)}.")
+
+    @property
+    def node_path(self) -> str:
+        """Return node as path."""
+        attributes = "?"
+        for k, v in self.attribs.items():
+            attributes += f'{k}="{v}"&'
+        return f"{self.name}{attributes[:-1]}"
+
+    def add_child(self, node_path: str, text: str | None = None) -> Self:
+        """Create a child node of this node.
+
+        :param node_path: Path of the node to add.
+        :returns Node: The created and added node.
+        """
+        node_path = node_path.lstrip("./")
+        node = self.from_path(node_path, text)
+        node.parent = self
+        childs = self.children.get(node_path, [])
+        self.children[node_path] = childs + [node]
+        return node
+
+    def find(self, path: str) -> Self | None:
+        """Find a child in the given path.
+
+        :param path: Path to the node.
+        :returns: The node or None if it does not exist.
+        """
+        if path == ".":
+            return self
+        if not self.children:
+            return None
+        root = self
+        for node_path in (path[0] for path in self.split_path(path)):
+            childs = root.children.get(node_path.lstrip("./"), [])
+            if childs:
+                root = childs[0]
+                continue
+            return None
+        return root
+
+    def set(self: Self, name: str, value: str) -> None:
+        """Set an attribute of this node.
+
+        :param name: Name of the attribute.
+        :param value: Value of the attribute.
+        """
+        if self.parent:
+            child_list = self.parent.children.get(self.node_path, [])
+            child_list.remove(self)
+        self.attribs[name] = value
+        if self.parent:
+            child_list = self.parent.children.get(self.node_path, [])
+            self.parent.children[self.node_path] = child_list + [self]
+
+    def get(self, name: str, default: None = None) -> str | None:
+        """Get an attribute of this node.
+
+        :param name: Name of the attribute.
+        """
+        return self.attribs.get(name, default)
+
+    def get_sorted_children(self) -> list[Self]:
+        """Return a list of children sorted by name."""
+        childs = chain(*self.children.values())
+        return sorted(childs, key=lambda x: x.name)

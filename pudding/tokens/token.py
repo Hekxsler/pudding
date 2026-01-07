@@ -26,7 +26,7 @@ class Token:
 
     match_re: Pattern[str]
     value_re: Pattern[str]
-    value_types: tuple[type | UnionType, ...]
+    value_types: tuple[type[Data] | UnionType, ...]
 
     def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init function for Token class.
@@ -46,10 +46,12 @@ class Token:
         :returns: The given tuple.
         :raises TypeError: If value is not the correct data type.
         """
-        for value, _type in zip(values, self.value_types):
-            if isinstance(value, _type):
+        for value, value_type in zip(values, self.value_types):
+            if isinstance(value, value_type):
                 continue
-            msg = f"Invalid argument of type {value.__class__.__name__}"
+            is_type = value.__class__.__name__
+            expected = value_type.__class__.__name__
+            msg = f"Invalid argument of type {is_type} (expected {expected})"
             raise TypeError(f"{msg} in line {self.lineno}")
         return values
 
@@ -71,17 +73,8 @@ class Token:
         value_match = cls.value_re.search(token_match.group(0))
         if value_match is None:
             raise ValueError("No values in token.")
-        values = tuple([str(x) for x in value_match.groups() if x is not None])
-        converted: list[Data] = []
-        for value in values:
-            try:
-                data = string_to_datatype(value)
-            except TypeError as e:
-                raise TypeError(
-                    f"ERROR: Invalid data type {repr(value)} in line {lineno}"
-                ) from e
-            converted.append(data)
-        return cls(lineno, name, tuple(converted))
+        values = (str(x) for x in value_match.groups() if x is not None)
+        return cls(lineno, name, tuple((string_to_datatype(v, lineno) for v in values)))
 
     @classmethod
     def matches(cls, string: str) -> bool:

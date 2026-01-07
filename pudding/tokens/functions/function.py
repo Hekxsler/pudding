@@ -1,14 +1,9 @@
 """Module defining functions."""
 
-from typing import NoReturn, Optional, TypeVar
-
 from ...datatypes import Data, String
-from ...processor import PAction
-from ...processor.context import Context
 from ..token import Token
 
 OPTIONAL_STRING = rf"(?:\, *({String.regex}))?"
-_D = TypeVar("_D")
 
 
 class Function(Token):
@@ -29,20 +24,12 @@ class Function(Token):
         :param values: Values of the arguments.
         :raises SyntaxError:
         """
+        if self.min_args <= len(values) <= self.max_args:
+            return super().__init__(lineno, name, values)
         err_msg = f"Expected {self.min_args} but got {len(values)}"
         if len(values) < self.min_args:
             raise SyntaxError(f"Missing arguments in line {lineno}. {err_msg}")
-        if len(values) > self.max_args:
-            raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
-        super().__init__(lineno, name, values)
-
-    def execute(self, context: Context) -> PAction | NoReturn:
-        """Execute this token.
-
-        :param context: Current context object.
-        :returns: Returns PAction for processor class.
-        """
-        raise NotImplementedError()
+        raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
 
     def get_string(self, index: int) -> String:
         """Get String object in values.
@@ -54,27 +41,4 @@ class Function(Token):
         value = self.values[index]
         if isinstance(value, String):
             return value
-        raise TypeError("Value is not a string.")
-
-    def get_replaced_string(self, index: int, context: Context) -> str:
-        """Get a string from values with replaced variables.
-
-        :param index: Index of the string in values.
-        :param context: Current context object.
-        """
-        return context.replace_string_vars(self.get_string(index))
-
-    def get_repl_opt_string(
-        self, index: int, context: Context, default: Optional[_D] = None
-    ) -> str | Optional[_D]:
-        """Get a optional string with replaced variables.
-
-        :param index: Index of the string in values.
-        :param context: Current context object.
-        :param default: Default value to return if string does not exist.
-        :return: The replaced string or default value if index is invalid.
-        """
-        try:
-            return self.get_replaced_string(index, context)
-        except IndexError:
-            return default
+        raise TypeError(f"Value {repr(value)} is not a string. (line {self.lineno})")

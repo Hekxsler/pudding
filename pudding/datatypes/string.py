@@ -10,13 +10,8 @@ class String(Data):
 
     regex = r"\'(?:\\\'|[^\'])+\'"
 
-    def __init__(self, value: str) -> None:
+    def __init__(self, line: int, value: str) -> None:
         """Init for String class."""
-        super().__init__(value)
+        super().__init__(line, value)
         self.value = value[1:-1]
-
-    @property
-    def pattern(self) -> re.Pattern[str]:
-        """Value as a compiled Pattern object."""
-        pattern = re.escape(self.value)
-        return re.compile(pattern)
+        self.re_pattern = re.escape(self.value)

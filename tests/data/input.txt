@@ -39,4 +39,5 @@ Homepage = "https://github.com/Hekxsler/pudding"
 Issues = "https://github.com/Hekxsler/pudding/issues"
 
 add_attribute name=pudding to project
+replace text of before with before
 remove_tag name from project with attribute name=pudding

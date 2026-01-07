@@ -101,7 +101,7 @@
         "@name": "pudding"
     },
     "before": {
-        "#text": "this"
+        "#text": "before"
     },
     "enqueue": {
         "@name": "test",

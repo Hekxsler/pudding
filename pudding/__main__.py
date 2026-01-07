@@ -8,34 +8,36 @@ import os
 from argparse import ArgumentError
 from pathlib import Path
 from .util import convert_files
+from . import __version__
 
 DESCRIPTION = """
 Pudding converts text to a structured format, such as XML, JSON or YAML.
 """
 parser = argparse.ArgumentParser(prog="pudding", description=DESCRIPTION)
-parser.add_argument("filename", help="The file or files to convert.", nargs="+")
+parser.add_argument("filename", metavar="FILE", help="The file or files to convert.", nargs="+")
 parser.add_argument(
     "-s",
     "--syntax",
     default=None,
     help="The file containing the syntax for parsing the input.",
-    metavar="FILE",
+    metavar="SYNTAX_FILE",
     required=True,
 )
 parser.add_argument(
     "-f",
     "--format",
-    choices=["xml", "json", "yaml", "none"],
+    choices=["slixml", "xml", "json", "yaml", "none"],
     default="xml",
     help="The output format.",
     metavar="FORMAT",
 )
 parser.add_argument("--debug", action="store_true", help="Print debug info.")
+parser.add_argument("-V", '--version', action='version', version=__version__)
 
-
-def main() -> None:
-    """Script function."""
+def main():
+    """Main cli function."""
     args = parser.parse_args()
+
     log_level = logging.INFO
     if args.debug:
         log_level = logging.DEBUG
@@ -51,7 +53,6 @@ def main() -> None:
     if not os.path.isfile(args.syntax):
         raise ArgumentError(None, f"not a valid input file: {repr(args.syntax)}")
 
-    start = datetime.datetime.now()
     ins: list[Path] = []
     outs: list[Path] = []
     for f in args.filename:
@@ -62,9 +63,10 @@ def main() -> None:
         path, _ = os.path.splitext(f)
         ins.append(Path(f))
         outs.append(Path(f"{path}.{args.format.lower()}"))
+
+    start = datetime.datetime.now()
     convert_files(Path(args.syntax), ins, outs, args.format)
     logger.debug("Total: %s", str(datetime.datetime.now() - start))
-
 
 if __name__ == "__main__":
     main()

@@ -36,10 +36,11 @@ def convert_files(
     logger.debug("Compiled syntax in %s", str(datetime.datetime.now() - start))
     writer_cls = get_writer_from_format(output_format)
     for input_file, output_file in zip(input_files, output_files):
-        content = open(input_file, "r", encoding=encoding).read()
-        context = Context(content, writer_cls)
+        with open(input_file, "r", encoding=encoding) as file:
+            content = file.read()
+        context = Context(content, writer_cls(output_file, encoding=encoding))
         writer = Processor(context, syntax).convert()
-        writer.write_to(output_file, encoding)
+        writer.write_output()
 
 
 def convert_file(
@@ -62,17 +63,17 @@ def convert_file(
     )
 
 
-def convert_string(syntax: str, input: str, output_format: str) -> str:
+def convert_string(syntax: str, content: str, output_format: str) -> str:
     """Convert a string.
 
     :param syntax: Content of a ".pud" file.
-    :param input: String to convert.
+    :param content: String to convert.
     :param output_format: Format of the output.
     """
     start = datetime.datetime.now()
     compiler = Compiler().compile(syntax)
     logger.debug("Compiled syntax in %s", str(datetime.datetime.now() - start))
     writer_cls = get_writer_from_format(output_format)
-    context = Context(input, writer_cls)
+    context = Context(content, writer_cls(Path()))
     writer = Processor(context, compiler).convert()
     return writer.generate_output()

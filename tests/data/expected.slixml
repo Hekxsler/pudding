@@ -1,0 +1,56 @@
+<xml>
+  <project>
+    <name>pudding</name>
+    <dynamic>
+      <item>version</item>
+    </dynamic>
+    <description>Pudding converts text to a structured format, such as XML, JSON or YAML.</description>
+    <authors>
+      <item name="Moritz Hille" email="moritz.hekxsler@gmail.com"/>
+    </authors>
+    <dependencies>
+      <item>argparse</item>
+      <item>lxml</item>
+      <item>pyyaml</item>
+    </dependencies>
+    <requires-python>>=3.12</requires-python>
+    <readme>README.md</readme>
+    <license>GPL-3.0-only</license>
+    <license-files>
+      <item>LICENSE</item>
+    </license-files>
+    <keywords>
+      <item>parser</item>
+      <item>converter</item>
+      <item>text</item>
+      <item>xml</item>
+      <item>yaml</item>
+      <item>json</item>
+    </keywords>
+    <classifiers>
+      <item>Development Status :: 4 - Beta</item>
+      <item>Programming Language :: Python :: 3.12</item>
+      <item>Programming Language :: Python :: 3.13</item>
+      <item>Topic :: File Formats</item>
+      <item>Topic :: Text Processing</item>
+      <item>Topic :: Utilities</item>
+    </classifiers>
+  </project>
+  <project>
+    <scripts>
+      <pud>pud:main</pud>
+    </scripts>
+  </project>
+  <before>this</before>
+  <enqueue name="test">
+    <start/>
+    <onadd/>
+    <after>that</after>
+  </enqueue>
+  <project>
+    <urls>
+      <homepage>https://github.com/Hekxsler/pudding</homepage>
+      <issues>https://github.com/Hekxsler/pudding/issues</issues>
+    </urls>
+  </project>
+</xml>

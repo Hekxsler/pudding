@@ -7,17 +7,21 @@ class Data:
     """Class representing a data value.
 
     :var regex: Regex matching the data type as a string.
-    :var value: Value of this data object.
     """
 
     regex: str
-    value: str
 
-    def __init__(self, value: str) -> None:
-        """Init for Data class."""
-        if not self.compile_re().fullmatch(value):
+    def __init__(self, line: int, value: str) -> None:
+        """Init for Data class.
+
+        :param line: Line number of this data.
+        :param value: Value of the data object.
+        """
+        if not re.fullmatch(self.regex, value):
             raise TypeError(f"Value is not of type {self.__class__.__name__}")
+        self.line = line
         self.value = value
+        self.re_pattern = re.escape(self.value)
 
     def __str__(self) -> str:
         """Value as a string."""
@@ -26,13 +30,3 @@ class Data:
     def __repr__(self) -> str:
         """Return string representation of this object."""
         return f"<{self.__class__.__name__} value={repr(self.value)}>"
-
-    @classmethod
-    def compile_re(cls) -> re.Pattern[str]:
-        """Return regex as a compiled Pattern object."""
-        return re.compile(cls.regex)
-
-    @property
-    def pattern(self) -> re.Pattern[str]:
-        """Return value as a compiled Pattern object."""
-        return re.compile(self.value)

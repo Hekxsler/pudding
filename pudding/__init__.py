@@ -1,8 +1,7 @@
 """The core module."""
 
-from .util import convert_file, convert_files
+from .util import convert_file, convert_files, convert_string
 
 __author__ = "Moritz Hille"
-__name__ = "pudding"
-__version__ = "0.1.1b1"
-__all__ = ["convert_file", "convert_files"]
+__version__ = "1.0.0"
+__all__ = ["convert_file", "convert_files", "convert_string"]

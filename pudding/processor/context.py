@@ -2,9 +2,11 @@
 
 import re
 
+from ..datatypes.varname import Varname
+
 from ..datatypes.string import String
 from ..reader.reader import Reader
-from ..writer.writer import Writer
+from ..writer import Writer
 from .grammar import Grammar
 from .triggers import TriggerQueue
 
@@ -20,7 +22,7 @@ class Context:
     :var variables: Variables defined in the syntax.
     """
 
-    def __init__(self, content: str, writer_cls: type[Writer]) -> None:
+    def __init__(self, content: str, writer: Writer) -> None:
         """Init for Context class.
 
         :param content: Content of the file to convert.
@@ -28,9 +30,9 @@ class Context:
         """
         self.grammars: dict[str, Grammar] = {}
         self.queue: TriggerQueue = TriggerQueue()
-        self.variables: dict[str, re.Pattern[str]] = {}
+        self.variables: dict[str, str] = {}
         self.reader = Reader(content)
-        self.writer = writer_cls()
+        self.writer = writer
 
     def get_grammar(self, name: str) -> Grammar:
         """Get a grammar by name.
@@ -43,15 +45,18 @@ class Context:
             raise SyntaxError(f'Grammar "{name}" is not defined.')
         return grammar
 
-    def get_var(self, name: str) -> re.Pattern[str]:
+    def get_var(self, varname: Varname) -> str:
         """Get a variable by name.
 
         :param name: Name of the variable to retrieve.
+        :returns str: Defined regex pattern as a string.
         :raises NameError: If variable is not defined.
         """
-        value = self.variables.get(name)
+        value = self.variables.get(varname.value)
         if not value:
-            raise NameError(f'Variable "{name}" is not defined.')
+            raise NameError(
+                f'Variable "{varname.value}" is not defined. (line {varname.line})'
+            )
         return value
 
     def replace_string_vars(self, string: String) -> str:
@@ -70,12 +75,12 @@ class Context:
             )
         new_string = string.value
         matches = self.reader.last_match.groups()
-        for replace, i in string_vars:
+        for replace, number in string_vars:
             assert isinstance(replace, str)
-            if int(i) >= len(matches):
+            if int(number) >= len(matches):
                 raise IndexError(
-                    f"Not enough matches in {matches} to replace variable '${i}'."
+                    f"Not enough matches in {matches} to replace variable '${number}'."
                 )
-            value = replace.replace(f"${i}", matches[int(i)])
-            new_string = re.sub(re.escape(replace), value, new_string)
+            replacement = replace.replace(f"${number}", matches[int(number)], 1)
+            new_string = re.sub(re.escape(replace), replacement, new_string, 1)
         return new_string

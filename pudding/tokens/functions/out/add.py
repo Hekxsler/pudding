@@ -26,7 +26,10 @@ class Add(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        path = self.get_replaced_string(0, context)
-        value = self.get_repl_opt_string(1, context)
-        context.writer.add_element(path, value)
+        value = None
+        if self.get_value(1):
+            value = context.replace_string_vars(self.get_string(1))
+        context.writer.add_element(
+            context.replace_string_vars(self.get_string(0)), value
+        )
         return PAction.CONTINUE

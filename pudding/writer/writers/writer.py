@@ -1,0 +1,254 @@
+"""Module defining base writer class."""
+
+from pathlib import Path
+from typing import Any
+
+from ..node import Node
+
+
+class Writer:
+    """Base writer class.
+
+    :var attrib_re: Regex for node attributes.
+    :var node_re: Regex for a node path.
+    """
+
+    def __init__(
+        self, file_path: Path, root_name: str = "root", encoding: str = "utf-8"
+    ) -> None:
+        """Init for writer class."""
+        self.encoding = encoding
+        self.file_path = file_path
+        self.root_name = root_name
+
+    def add_attribute(self, path: str, name: str, value: str) -> None:
+        """Add an attribute to an element.
+
+        :param path: Path of the element.
+        :param name: Name of the attribute.
+        :param value: Value of the attribute.
+        """
+        raise NotImplementedError
+
+    def create_element(self, path: str, value: str | None = None) -> Any:
+        """Add an element to the current node.
+
+        :param path: Path of the element.
+        :param value: Value of the element or None if it has no value.
+        :returns: The created element.
+        """
+        raise NotImplementedError
+
+    def add_element(self, path: str, value: str | None = None) -> Any:
+        """Add an element if it not already exists.
+
+        Otherwise it appends the string to the already existing element.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        :returns: The created element.
+        """
+        raise NotImplementedError
+
+    def enter_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        raise NotImplementedError
+
+    def open_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        Always creates the last node.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        raise NotImplementedError
+
+    def leave_paths(self, amount: int = 1) -> None:
+        """Leave the previously entered path.
+
+        :param amount: Number of paths to leave.
+        """
+        raise NotImplementedError
+
+    def delete_element(self, path: str) -> None:
+        """Delete an element.
+
+        :param path: Path of the element.
+        """
+        raise NotImplementedError
+
+    def replace_element(self, path: str, value: str | None = None) -> None:
+        """Replace an element.
+
+        :param path: Path of the element.
+        :param value: Value of the replaced element or None if it has no value.
+        """
+        raise NotImplementedError
+
+    def generate_output(self) -> str:
+        """Generate output in specified format."""
+        raise NotImplementedError
+
+    def write_output(self) -> None:
+        """Write generated output to file.
+
+        :param file_path: Path of the file to write to.
+        """
+        with open(self.file_path, "w", encoding=self.encoding) as f:
+            f.write(self.generate_output())
+
+
+class BufferedWriter(Writer):
+    """Base writer class for buffered output.
+
+    :var attrib_re: Regex for node attributes.
+    :var node_re: Regex for a node path.
+    """
+
+    def __init__(
+        self, file_path: Path, root_name: str = "root", encoding: str = "utf-8"
+    ) -> None:
+        """Init BufferedWriter."""
+        super().__init__(file_path, root_name, encoding)
+        self.prev_roots: list[Node] = []
+        self.root = Node(root_name)
+
+    def _get_element(self, path: str) -> Node:
+        """Get first Node at given path.
+
+        :param path: Path from root element.
+        :returns: Node at the given path.
+        :raises ValueError: If no element is found.
+        """
+        elem = self.root.find(path)
+        if elem is None:
+            raise ValueError(f"Node at path {repr(path)} does not exist")
+        return elem
+
+    def _get_or_create_element(self, path: str, root: Node) -> Node:
+        """Get first Node at given path or create it if it does not exist.
+
+        :param xpath: Path from root element.
+        :param root: Node to start from.
+        :returns: Node at the given path.
+        """
+        if path == ".":
+            return root
+        elem = root.find(path)
+        if elem is not None:
+            return elem
+        target = root
+        for node_path, _, _, _ in Node.split_path(path):
+            elem = target.find(node_path)
+            if elem is not None:
+                target = elem
+            else:
+                target = target.add_child(node_path)
+        return target
+
+    def add_attribute(self, path: str, name: str, value: str) -> None:
+        """Add an attribute to an element.
+
+        :param path: Path of the element.
+        :param name: Name of the attribute.
+        :param value: Value of the attribute.
+        """
+        self._get_element(path).set(name, value)
+
+    def create_element(self, path: str, value: str | None = None) -> Node:
+        """Add an element and always create the last element in the path.
+
+        :param path: Path of the element.
+        :param value: Value of the element or None if it has no value.
+        :returns: The created SubElement.
+        """
+        elem = self.root.find(path)
+        if elem is None:
+            new = self._get_or_create_element(path, self.root)
+            new.text = value
+            return new
+        paths = Node.split_path(path)
+        match len(paths):
+            case 0:
+                raise ValueError(f"Invalid path {repr(path)}.")
+            case 1:
+                parent = self.root
+                child_node = paths[0][0]
+            case _:
+                *parent_paths, child_path = paths
+                parent_path = "".join((path[0] for path in parent_paths))
+                parent = self._get_or_create_element(parent_path, self.root)
+                child_node = child_path[0]
+        return parent.add_child(child_node, value)
+
+    def add_element(self, path: str, value: str | None = None) -> Node:
+        """Add an element if it not already exists.
+
+        Otherwise it appends the string to the already existing element.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        :returns: The added/modified SubElement.
+        """
+        elem = self._get_or_create_element(path, self.root)
+        text = elem.text or ""
+        if value is not None:
+            elem.text = f"{text}{value}"
+        return elem
+
+    def enter_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        elem = self._get_or_create_element(path, self.root)
+        elem.text = value
+        self.prev_roots.append(self.root)
+        self.root = elem
+
+    def open_path(self, path: str, value: str | None = None) -> None:
+        """Enter a node and create elements in the path if they do not already exist.
+
+        Always creates the last node.
+
+        :param path: Path to the element.
+        :param value: Value of the element or None if it has no value.
+        """
+        elem = self.create_element(path, value)
+        self.prev_roots.append(self.root)
+        self.root = elem
+
+    def leave_paths(self, amount: int = 1) -> None:
+        """Set the current root object to the previous one.
+
+        :param amount: Amount of paths to leave.
+        """
+        if amount > 0:
+            self.root = self.prev_roots[-amount]
+            del self.prev_roots[-amount:]
+
+    def delete_element(self, path: str) -> None:
+        """Delete an element.
+
+        :param path: Path of the element.
+        """
+        elem = self._get_element(path)
+        parent = elem.parent
+        if parent:
+            parent.children.get(elem.node_path, []).remove(elem)
+        del elem
+
+    def replace_element(self, path: str, value: str | None = None) -> None:
+        """Replace an element.
+
+        :param path: Path of the element.
+        :param value: Value of the replaced element or None if it has no value.
+        """
+        elem = self._get_element(path)
+        elem.text = value
