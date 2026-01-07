@@ -6,6 +6,7 @@ define nows /\S+/
 define quote /\"/
 define word /[\w-]+/
 define enqueue_test /enqueue test[\r\n]+/
+define newline nl
 
 
 grammar dict(default):
@@ -55,3 +56,4 @@ grammar input(default):
     match 'remove_tag' ws word ' from ' word ' with attribute ' word '=' word:
         out.remove('$4?$6="$8"/$2')
     out.set_root_name('test')
+    do.say('Done')
