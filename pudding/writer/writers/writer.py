@@ -94,10 +94,6 @@ class Writer:
         """Generate output in specified format."""
         raise NotImplementedError
 
-    def print_output(self) -> None:
-        """Print output to stdout."""
-        print(self.generate_output())
-
     def write_output(self) -> None:
         """Write generated output to file.
 
