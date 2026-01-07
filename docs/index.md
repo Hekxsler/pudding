@@ -6,3 +6,14 @@
 # pudding
 
 Documentation of pudding.
+
+## Table of Contents
+
+- [API Reference](api.md)
+
+```{toctree}
+:maxdepth: 2
+:caption: Contents:
+
+api
+```
