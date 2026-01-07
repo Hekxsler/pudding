@@ -1,5 +1,5 @@
 <test>
-  <before>this</before>
+  <before>before</before>
   <enqueue name="test">
     <after>that</after>
     <onadd/>

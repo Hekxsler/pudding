@@ -36,4 +36,5 @@ grammar input(default):
         enqueue_test()
         out.clear_queue()
     skip 'add_attribute' ws word '=' word ' to ' word
+    skip 'replace text of' ws word ws word ws word
     skip 'remove_tag' ws word ' from ' word ' with attribute ' word '=' word

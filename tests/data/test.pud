@@ -50,6 +50,8 @@ grammar input(default):
         out.clear_queue()
     match 'add_attribute' ws word '=' word ' to ' word:
         out.add_attribute('$6', '$2', '$4')
+    match 'replace text of' ws word ws word ws word:
+        out.replace('$2', '$6')
     match 'remove_tag' ws word ' from ' word ' with attribute ' word '=' word:
         out.remove('$4?$6="$8"/$2')
     out.set_root_name('test')
