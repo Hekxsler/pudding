@@ -50,8 +50,7 @@ class Token:
             if isinstance(value, value_type):
                 continue
             is_type = value.__class__.__name__
-            expected = value_type.__class__.__name__
-            msg = f"Invalid argument of type {is_type} (expected {expected})"
+            msg = f"Invalid argument of type {is_type} (expected {value_type})"
             raise TypeError(f"{msg} in line {self.lineno}")
         return values
 
