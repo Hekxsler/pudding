@@ -1,4 +1,4 @@
-"""Statement tokens."""
+"""Package containing tokens for statements."""
 
 from .define import Define
 from .grammar import Grammar
