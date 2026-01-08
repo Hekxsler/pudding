@@ -2,15 +2,12 @@
 
 import re
 
+from ...datatypes import Data, Varname
 from ...datatypes.or_ import Or
-
 from ...datatypes.regex import Regex
-
 from ...datatypes.string import String
-
 from ...processor import PAction
 from ...processor.context import Context
-from ...datatypes import Data, Varname
 from ..util import EXP_VAR
 from .statement import Statement
 
