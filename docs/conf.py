@@ -17,22 +17,15 @@ sys.path.insert(0, ROOT)
 
 
 # -- Project information -----------------------------------------------------
+project_module = importlib.import_module("pudding")
+project = getattr(project_module, "__name__", "pudding")
+author = ", ".join(
+    [a.get("name") or "" for a in getattr(project_module, "__authors__", [])]
+) or getattr(project_module, "__author__", "Moritz Hille")
 try:
-    project_module = importlib.import_module("pudding")
-    project = getattr(project_module, "__name__", "pudding")
-    author = ", ".join(
-        [a.get("name") or "" for a in getattr(project_module, "__authors__", [])]
-    ) or getattr(project_module, "__author__", "Moritz Hille")
-    try:
-        release = getattr(project_module, "__version__")
-    except Exception:
-        release = "1.0.0"
+    release = getattr(project_module, "__version__")
 except Exception:
-    # Fallbacks when package can't be imported during doc builds
-    project = "pudding"
-    author = "Moritz Hille"
-    release = "1.0.0"
-
+    release = "Unknown"
 
 # -- General configuration ---------------------------------------------------
 extensions = [
