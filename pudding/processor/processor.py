@@ -134,7 +134,7 @@ class Processor:
         """
         self.trigger(Timing.BEFORE)
         action = token.execute(self.context)
-        if isinstance(token, out.Add):
+        if isinstance(token, (out.Add, out.Create)):
             self.trigger(Timing.ON_ADD)
         self.trigger(Timing.AFTER)
         return action
