@@ -72,7 +72,11 @@ define my_test3 my_test2
 
 ### Grammar
 Grammar statements define a grammar that stores a sequence of statements and functions.
-A grammar can be executed by using a [grammar call](#grammarcall)
+At least one grammar with the name 'input' is required to run a syntax file, because this is the entrypoint for the parser.
+Other grammars can then be executed by using a [grammar call](#grammarcall).
+
+Grammars can also inherit another grammar, by adding it in brackets behind the name.
+Doing this will always execute the inherited grammar first, when the grammar is called.
 
 Example:
 ```
@@ -81,9 +85,13 @@ define nonl /[^\r\n]+/
 define ws /\s+/
 
 grammar default:
-    skip ws
-    skip nl
-    skip '#' nonl nl
+   skip ws
+   skip nl
+   skip '#' nonl nl
+
+grammar input(default):
+   match /\w+/ nl:
+      out.add('$0')
 ```
 
 ### Import
