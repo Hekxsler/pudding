@@ -33,6 +33,13 @@ grammar section(default):
         out.open('$0')
         list()
 
+grammar section(default):
+    match word ws '=' ws quote string quote nl:
+        out.add('$0', '$5')
+    match word ws '=' ws '[':
+        out.open('$0')
+        list()
+
 grammar input(default):
     imatch '[' /[A-Z]+/ ']' nl:
         out.enter('$1')

@@ -1,4 +1,4 @@
-"""Writer package."""
+"""Package for writing output."""
 
 from .writers import Json, Writer, Xml, Yaml
 

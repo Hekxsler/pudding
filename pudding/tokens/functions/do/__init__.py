@@ -1,4 +1,4 @@
-"""Control function tokens."""
+"""Package containing tokens for control functions."""
 
 from .fail import Fail
 from .next import Next

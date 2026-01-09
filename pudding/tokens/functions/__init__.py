@@ -1,4 +1,4 @@
-"""Function tokens."""
+"""Package containing tokens of functions."""
 
 from .do.fail import Fail
 from .do.next import Next

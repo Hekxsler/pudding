@@ -1,4 +1,4 @@
-"""The core module."""
+"""The pudding module."""
 
 from .util import convert_file, convert_files, convert_string
 

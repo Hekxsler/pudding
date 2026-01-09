@@ -98,9 +98,12 @@ class Compiler:
             raise ImportError("Can not import without a source file.")
         import_file = base_dir / f"{path}.pud"
         try:
-            return self.compile_file(import_file)
+            syntax = self.compile_file(import_file)
         except FileNotFoundError as e:
             raise ImportError(f"No file {import_file}") from e
+        return [
+            obj for obj in syntax if not isinstance(obj, Grammar) or obj.name != "input"
+        ]
 
     def _from_import(self, importobj: str, importpath: str) -> Define | Grammar:
         """Get grammar or define statement from another file.
@@ -151,9 +154,7 @@ class Compiler:
                 case FromImport():
                     importpath = token.values[0].value
                     importobj = token.values[1].value
-                    new_syntax.append(
-                        self._from_import(importobj, importpath)
-                    )
+                    new_syntax.append(self._from_import(importobj, importpath))
                 case GrammarStmt():
                     new_syntax.append(create_grammar(token, sub_tokens))
                 case Import():
