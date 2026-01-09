@@ -3,9 +3,9 @@
 The following functions, statements and types are part of the pudding syntax.
 All functions and statements are **one-liners**.
 
-# Value types
+## Value types
 
-## Node
+### Node
 The output generated when running pudding is represented by a tree consisting of nodes.
 To select nodes in this string a URL notated string is used.
 It consists of the node name, optionally followed by attributes.
@@ -17,7 +17,7 @@ element?attribute1="foo"
 element?attribute1="foo"&attribute2="foo"
 ```
 
-## Path
+### Path
 A path addresses a node in the tree.
 Addressing is relative to the currently selected node.
 Path is a string of nodes separated by a slash: `NODE[/NODE[/NODE]]`.
@@ -28,7 +28,7 @@ Examples:
 parent/element?attribute="foo"
 parent/child1?name="foo"/child?attribute="foobar"
 ```
-## Regular expressions
+### Regular expressions
 This type describes a regular expression as used in python, delimited by the character `/`.
 Escaping is again done using the backslash character (`\`).
 The expression MAY NOT extract any subgroups.
@@ -40,7 +40,7 @@ Examples:
 ```
 If you are trying to extract a substring, use a match statement with multiple expressions instead.
 
-## String
+### String
 A string is any series of characters, delimited by the character `'`.
 Escaping is done using the backslash character (`\`).
 Examples:
@@ -49,13 +49,16 @@ Examples:
 'test \'escaped\' strings'
 ```
 
-## Varname
-Variable names can only contain the following set of characters: `[a-z0-9_]`.
+### Varname
+Variable names can only contain the following set of characters (equal to `\w`):
+    - Letters from A to Z, both lower and capital.
+    - Numbers
+    - Underscores (`_`)
 
 
-# Statements
+## Statements
 
-## Define
+### Define
 The define statements assigns a value to a variable name.
 If the variable has a value already assigned it will be replaced.
 This statement can be used anywhere in the code.
@@ -67,20 +70,9 @@ define my_test2 'foobar'
 define my_test3 my_test2
 ```
 
-## Define
-The define statements assigns a value to a variable name.
-If the variable has a value already assigned it will be replaced.
-This statement can be used anywhere in the code.
-
-Examples:
-```
-define my_test /(?:foo|bar)/
-define my_test2 'foobar'
-define my_test3 my_test2
-```
-
-## Grammar
-Grammar statements define a grammar and behave like define statements.
+### Grammar
+Grammar statements define a grammar that stores a sequence of statements and functions.
+A grammar can be executed by using a [grammar call](#grammarcall)
 
 Example:
 ```
@@ -94,7 +86,7 @@ grammar default:
     skip '#' nonl nl
 ```
 
-## Import
+### Import
 Import statements are followed by a single string containing the path to the file.
 The file ending of the import path is omitted.
 Files must end with `.pud` to be imported.
@@ -118,7 +110,7 @@ The import statements behave like copying the content of the other file to the p
 Importing a grammar or variable will fail if it uses grammars/variables not imported and not defined in the current file.
 
 
-## Match
+### Match
 Match statements are followed by at least one expression and end with colon (`:`).
 Multiple expressions are separated by a space. Examples:
 ```
@@ -156,7 +148,7 @@ match 'foo' '[0-9]' /[\r\n]/ | 'bar' /[a-z]/ /[\r\n]/ | 'foobar' /[A-Z]/ /[\r\n]
 ```
 `imatch` statements are like match statements, except that matching is case-insensitive.
 
-## Skip
+### Skip
 Skip statements are like match statements but without any actions.
 
 Example:
@@ -172,7 +164,7 @@ grammar default:
 ```
 `iskip` statements are like skip statements, except that matching is case-insensitive.
 
-## When
+### When
 When statements are like match statements, with the difference that upon a match, the string is not consumed.
 The current position in the content is not advanced.
 
@@ -192,9 +184,9 @@ grammar input:
 `iwhen` statements are like when statements, except that matching is case-insensitive.
 
 
-# Functions
+## Functions
 
-## Control Functions
+### Control Functions
 
 ```{eval-rst}
 .. py:function:: do.fail(message)
@@ -225,7 +217,31 @@ grammar input:
 ```
 
 
-## Output Generating Functions
+### Grammar call
+
+You can call any grammar from inside any grammar, even recursively.
+If the called grammar restarts at least once, the calling grammar also restarts.
+Otherwise the next statement or function in the calling grammar is processed.
+To call a grammar just use the name and add brackets behind it.
+
+Example:
+```
+grammar user:
+    match 'Name:' /\s+/ /\S+/ /\n/:
+        do.say('Name was: $2!')
+    when 'User:':
+        do.return()
+
+grammar input:
+    match 'User:' /\s+/ /\S+/ /\n/:
+        out.enter('user/name', '$2')
+        user()
+```
+
+
+
+
+### Output Generating Functions
 
 ```{eval-rst}
 .. py:function:: out.add_attribute(path, name, value)
@@ -286,7 +302,7 @@ grammar input:
    Instead it is executed after the given expression matches the input and the next function was processed.
 
    :param regex: Pattern to match.
-   :type regex: String, Regex or Varname.
+   :type regex: String, Regex or Varname
    :param path: Path of the node.
    :type path: Path
    :param text: Optional text of the created node.
@@ -299,7 +315,7 @@ grammar input:
    Instead it is executed when the given expression matches the input, regardless of the grammar in which the match occurs.
 
    :param regex: Pattern to match.
-   :type regex: String, Regex or Varname.
+   :type regex: String, Regex or Varname
    :param path: Path of the node.
    :type path: Path
    :param text: Optional text of the created node.
@@ -312,7 +328,7 @@ grammar input:
    Instead it is executed when the given expression matches the input and a node is added to the output.
 
    :param regex: Pattern to match.
-   :type regex: String, Regex or Varname.
+   :type regex: String, Regex or Varname
    :param path: Path of the node.
    :type path: Path
    :param text: Optional text of the created node.

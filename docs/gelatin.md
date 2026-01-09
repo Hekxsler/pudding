@@ -2,7 +2,7 @@
 
 Pudding is not based on Gelatin and therefore does things differently.
 
-## Multine regulare expressions
+## Multiline regular expressions
 Things like these are currently no longer possible:
 ```
 match 'foo' '[0-9]' /[\r\n]/
@@ -38,21 +38,21 @@ becomes this:
 skip 'foo' /[0-9]/
 ```
 
-# New in pudding
+## New in pudding
 
-## Imports
+### Imports
 
 Pudding allows you to import grammars and variables from other files.
-See the [syntax documentation](syntax#import) for more details on how to use it.
+See the [syntax documentation](./syntax.md#import) for more details on how to use it.
 
 
-## Case insensitive when- and skip-statement
+### Case insensitive when- and skip-statement
 
 Behaviour is equal to the regular `when` and `skip` statement.
 The statements for the case insensitive variant are `iwhen` and `iskip`.
 
 
-## Function out.remove()
+### out.remove()
 
 New function to remove a previously created node.
-See the [syntax documentation](syntax#outremove) for more details on how to use it.
+See the [syntax documentation](./syntax.md#out.remove) for more details on how to use it.
