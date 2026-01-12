@@ -47,9 +47,9 @@ grammar input:
 Execution steps explained:
 1. The grammar `input` is the entry point for the processor
 2. Statements in each grammar are executed sequentially. If a match is found, the indented functions of this statement are executed and the grammar restarts at the top of the grammar. Otherwise the next statement or function will be executed.
-3. `out.add('$0', '$3')` creates a node if it does not yet exist. The name of the node is the value of the first matched expression (the fieldname, in this case). The data of the node is the value of the fourth matched field.
-4. `out.open('user')` creates a node with the tag "user" and selects it. Meaning all following function in this statement generate output relative to this node.
-5. `user()` calls the grammar named "user".
+3. `out.open('user')` creates a node with the tag "user" and selects it. Meaning all following functions in this statement and any called grammars generate output relative to this node.
+4. `user()` calls the grammar named "user".
+5. `out.add('$0', '$3')` creates a node if it does not yet exist. The name of the node is the value of the first matched expression (the fieldname, in this case). The data of the node is the value of the fourth matched field.
 6. If the end of a grammar is reached before the end of the input document was reached, an error is raised.
 
 
