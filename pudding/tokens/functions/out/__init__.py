@@ -1,4 +1,4 @@
-"""Output generating functions."""
+"""Package containing tokens for output generating functions."""
 
 from .add_attribute import AddAttribute
 from .add import Add

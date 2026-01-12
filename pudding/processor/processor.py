@@ -31,18 +31,19 @@ class Processor:
         """
 
         def declare_grammar(grammar: Grammar) -> None:
-            """Save a grammar to the context.
+            """Set a grammar in the context.
 
-            :param grammar: Grammar to save.
-            :raises SyntaxError: If grammar already exists.
+            :param grammar: Grammar to declare.
             """
             exists = self.context.grammars.get(grammar.name)
-            if exists is None:
-                self.context.grammars[grammar.name] = grammar
-                return
-            msg = f"Duplicate grammar in line {grammar.lineno}."
-            detail = f'Grammar "{grammar.name}" already exists in line {grammar.lineno}'
-            raise SyntaxError(f"{msg}\n{detail}")
+            if exists is not None:
+                logger.warning(
+                    "Duplicate grammar %s in line %s already exists in line %s.",
+                    repr(grammar.name),
+                    grammar.lineno,
+                    exists.lineno,
+                )
+            self.context.grammars[grammar.name] = grammar
 
         for obj in syntax:
             match obj:
@@ -133,7 +134,7 @@ class Processor:
         """
         self.trigger(Timing.BEFORE)
         action = token.execute(self.context)
-        if isinstance(token, out.Add):
+        if isinstance(token, (out.Add, out.Create)):
             self.trigger(Timing.ON_ADD)
         self.trigger(Timing.AFTER)
         return action

@@ -6,3 +6,6 @@ grammar default:
     skip ws
     skip nl
     skip '#' nonl nl
+
+grammar input:
+    skip ws

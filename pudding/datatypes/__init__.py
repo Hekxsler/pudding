@@ -1,4 +1,4 @@
-"""Subpackage for data types."""
+"""Package containing datatypes used in the pudding syntax."""
 
 from .data import Data
 from .or_ import Or

@@ -1,4 +1,4 @@
-"""Processor package."""
+"""Package for processing tokens of the compiled syntax."""
 
 from enum import Enum
 
