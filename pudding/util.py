@@ -9,6 +9,7 @@ from .writer.util import get_writer_from_format
 from .compiler import Compiler
 from .processor.context import Context
 from .processor.processor import Processor
+from .reader import Reader
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ def convert_files(
     for input_file, output_file in zip(input_files, output_files):
         with open(input_file, "r", encoding=encoding) as file:
             content = file.read()
-        context = Context(content, writer_cls(output_file, encoding=encoding))
+        context = Context(Reader(content), writer_cls(output_file, encoding=encoding))
         writer = Processor(context, syntax).convert()
         writer.write_output()
     logger.debug("Finished in %s", str(datetime.datetime.now() - start))
@@ -75,6 +76,6 @@ def convert_string(syntax: str, content: str, output_format: str) -> str:
     compiler = Compiler().compile(syntax)
     logger.debug("Compiled syntax in %s", str(datetime.datetime.now() - start))
     writer_cls = get_writer_from_format(output_format)
-    context = Context(content, writer_cls(Path()))
+    context = Context(Reader(content), writer_cls(Path()))
     writer = Processor(context, compiler).convert()
     return writer.generate_output()

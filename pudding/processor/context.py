@@ -22,16 +22,16 @@ class Context:
     :var variables: Variables defined in the syntax.
     """
 
-    def __init__(self, content: str, writer: Writer) -> None:
+    def __init__(self, reader: Reader, writer: Writer) -> None:
         """Init for Context class.
 
-        :param content: Content of the file to convert.
-        :param writer_cls: Writer class for generating output.
+        :param reader: Reader with content of the file to convert.
+        :param writer: Writer for generating output.
         """
         self.grammars: dict[str, Grammar] = {}
         self.queue: TriggerQueue = TriggerQueue()
         self.variables: dict[str, str] = {}
-        self.reader = Reader(content)
+        self.reader = reader
         self.writer = writer
 
     def get_grammar(self, name: str) -> Grammar:
