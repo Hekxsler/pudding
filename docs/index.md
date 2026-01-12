@@ -19,7 +19,9 @@ It is written completely in Python and fully customizable.
 :maxdepth: 2
 :caption: Table of Contents:
 
-syntax
+quick_start
 gelatin
+syntax
+customizing
 api
 ```
