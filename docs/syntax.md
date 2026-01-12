@@ -73,25 +73,18 @@ define my_test3 my_test2
 ### Grammar
 Grammar statements define a grammar that stores a sequence of statements and functions.
 At least one grammar with the name 'input' is required to run a syntax file, because this is the entrypoint for the parser.
-Other grammars can then be executed by using a [grammar call](#grammarcall).
+Other grammars can then be executed by using a [grammar call](#grammar-call).
 
 Grammars can also inherit another grammar, by adding it in brackets behind the name.
 Doing this will always execute the inherited grammar first, when the grammar is called.
 
 Example:
 ```
-define nl /[\r\n]+/
-define nonl /[^\r\n]+/
-define ws /\s+/
-
 grammar default:
-   skip ws
-   skip nl
-   skip '#' nonl nl
+    ...
 
 grammar input(default):
-   match /\w+/ nl:
-      out.add('$0')
+    ...
 ```
 
 ### Import
@@ -145,16 +138,17 @@ Otherwise the next statement in the grammar is executed.
 A match statement must be followed by an indented block containing functions.
 In this block, the match of each expression can be accessed using `$X`, where X is the position in the list:
 ```
-        $0     $1      $2
+#       $0     $1      $2
 match 'foo' '[0-9]' /[\r\n]/:
     do.say('Match was: $1!')
 ```
+When matching multiple expression combinations:
 ```
-        $0     $1      $2        $0     $1      $2         $0       $1      $2
+#       $0     $1      $2        $0     $1      $2         $0       $1      $2
 match 'foo' '[0-9]' /[\r\n]/ | 'bar' /[a-z]/ /[\r\n]/ | 'foobar' /[A-Z]/ /[\r\n]/:
     do.say('Match was: $1!')
 ```
-`imatch` statements are like match statements, except that matching is case-insensitive.
+The case-insensitive variant `imatch` works the same, except that matching is case-insensitive.
 
 ### Skip
 Skip statements are like match statements but without any actions.
@@ -170,7 +164,7 @@ grammar default:
     skip nl
     skip '#' nonl nl
 ```
-`iskip` statements are like skip statements, except that matching is case-insensitive.
+The case-insensitive variant `iskip` works the same, except that matching is case-insensitive.
 
 ### When
 When statements are like match statements, with the difference that upon a match, the string is not consumed.
@@ -178,18 +172,10 @@ The current position in the content is not advanced.
 
 Example:
 ```
-grammar user:
-    match 'Name:' /\s+/ /\S+/ /\n/:
-        do.say('Name was: $2!')
-    when 'User:':
-        do.return()
-
-grammar input:
-    match 'User:' /\s+/ /\S+/ /\n/:
-        out.enter('user/name', '$2')
-        user()
+when 'User:':
+    do.return()
 ```
-`iwhen` statements are like when statements, except that matching is case-insensitive.
+The case-insensitive variant `iwhen` works the same, except that matching is case-insensitive.
 
 
 ## Functions
@@ -197,56 +183,43 @@ grammar input:
 ### Control Functions
 
 ```{eval-rst}
-.. py:function:: do.fail(message)
+.. py:method:: do.fail(message)
 
-   Print a given string to stdout and immediately terminate with an error.
+    Print a given string to stdout and immediately terminate with an error.
 
-   :param message: Message to print.
-   :type message: String
+    :param message: Message to print.
+    :type message: String
 
 
 .. py:function:: do.next()
 
-   Immediately execute the next statement or function in the current grammar.
+    Immediately execute the next statement or function in the current grammar.
 
 
 .. py:function:: do.return()
 
-   Immediately leave the current grammar and return to the calling function.
-   When used in the input grammar stop parsing.
+    Immediately leave the current grammar and return to the calling grammar.
+    When used in the input grammar stop parsing.
 
 
 .. py:function:: do.say(message)
 
-   Print to stdout.
+    Print to stdout.
 
-   :param message: Message to print.
-   :type message: String
+    :param message: Message to print.
+    :type message: String
 ```
 
 
 ### Grammar call
 
-You can call any grammar from inside any grammar, even recursively.
-If the called grammar restarts at least once, the calling grammar also restarts.
-Otherwise the next statement or function in the calling grammar is processed.
-To call a grammar just use the name and add brackets behind it.
+```{eval-rst}
+.. py:function:: <grammar_name>()
 
-Example:
+    Execute a grammar.
+    If the called grammar restarts at least once, the calling grammar also restarts.
+    Otherwise the next statement or function in the calling grammar is processed.
 ```
-grammar user:
-    match 'Name:' /\s+/ /\S+/ /\n/:
-        do.say('Name was: $2!')
-    when 'User:':
-        do.return()
-
-grammar input:
-    match 'User:' /\s+/ /\S+/ /\n/:
-        out.enter('user/name', '$2')
-        user()
-```
-
-
 
 
 ### Output Generating Functions
