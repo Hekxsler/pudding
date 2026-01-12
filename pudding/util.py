@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .writer.util import get_writer_from_format
 
-from .compiler.compiler import Compiler
+from .compiler import Compiler
 from .processor.context import Context
 from .processor.processor import Processor
 
