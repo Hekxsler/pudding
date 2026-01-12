@@ -41,6 +41,7 @@ def convert_files(
         context = Context(content, writer_cls(output_file, encoding=encoding))
         writer = Processor(context, syntax).convert()
         writer.write_output()
+    logger.debug("Finished in %s", str(datetime.datetime.now() - start))
 
 
 def convert_file(
