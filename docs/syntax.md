@@ -183,7 +183,7 @@ The case-insensitive variant `iwhen` works the same, except that matching is cas
 ### Control Functions
 
 ```{eval-rst}
-.. py:method:: do.fail(message)
+.. py:function:: do.fail(message)
 
     Print a given string to stdout and immediately terminate with an error.
 
