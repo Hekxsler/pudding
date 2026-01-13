@@ -14,7 +14,7 @@ grammar dict(default):
     match word ws '=' ws quote string quote:
         out.add_attribute('.', '$0', '$5')
     match '}':
-        do.return()
+        return
 
 grammar list(default):
     skip ','
