@@ -17,6 +17,8 @@ from ..util import EXP_VAR
 class Statement(Token):
     """Base class for a statement."""
 
+    value_types = ()
+
 
 class MultiExpStatement(Statement):
     """Base class for a statement with multiple expressions."""
