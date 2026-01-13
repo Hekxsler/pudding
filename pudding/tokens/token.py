@@ -5,7 +5,7 @@ from types import UnionType
 from typing import Any, NoReturn, Optional, Self, TypeVar
 
 from pudding.processor import PAction
-from ..datatypes import Data, string_to_datatype
+from ..datatypes import String, Data, string_to_datatype
 
 
 _D = TypeVar("_D")
@@ -104,3 +104,15 @@ class Token:
         if 0 < index < len(self.values):
             return self.values[index]
         return default
+
+    def get_string(self, index: int) -> String:
+        """Get String object in values.
+
+        :param index: Index of the object in values.
+        :returns: The String object at the given index.
+        :raises TypeError: If object at given index is not of type String.
+        """
+        value = self.values[index]
+        if isinstance(value, String):
+            return value
+        raise TypeError(f"Value {repr(value)} is not a string. (line {self.lineno})")
