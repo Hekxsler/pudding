@@ -1,6 +1,7 @@
 """Control function do.return."""
 
 import re
+import warnings
 
 from ....processor import PAction
 from ....processor.context import Context
@@ -23,4 +24,8 @@ class Return(Do):
         :param context: Current context object.
         :returns: Returns PAction.EXIT for processor class.
         """
+        warnings.warn(
+            "The function 'do.return()' is deprecated. Use statement 'return' instead.",
+            DeprecationWarning,
+        )
         return PAction.EXIT

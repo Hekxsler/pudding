@@ -1,6 +1,7 @@
 """Control function do.next."""
 
 import re
+import warnings
 
 from ....processor import PAction
 from ....processor.context import Context
@@ -24,4 +25,8 @@ class Next(Do):
         :param context: Current context object.
         :returns: Returns PAction.NEXT for processor class.
         """
+        warnings.warn(
+            "The function 'do.next()' is deprecated. Use statement 'next' instead.",
+            DeprecationWarning,
+        )
         return PAction.NEXT

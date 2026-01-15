@@ -1,6 +1,7 @@
 """Control function do.fail."""
 
 import re
+import warnings
 from typing import NoReturn
 
 from ....datatypes.string import String
@@ -27,4 +28,8 @@ class Fail(Do):
         :param context: Current context object.
         :raises RuntimeError: Error with given message.
         """
+        warnings.warn(
+            "The function 'do.fail()' is deprecated. Use statement 'fail' instead.",
+            DeprecationWarning,
+        )
         raise RuntimeError(context.replace_string_vars(self.get_string(0)))
