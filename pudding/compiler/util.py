@@ -35,6 +35,6 @@ DEFAULT_TOKENS: tuple[type[Token], ...] = (
     stmt.ISkip,
     stmt.IWhen,
     stmt.When,
+    Say,
     GrammarCall,
-    Say
 )
