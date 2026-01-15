@@ -11,8 +11,8 @@ from .statement import MultiExpStatement
 class When(MultiExpStatement):
     """Class for `when` statement."""
 
-    match_re = re.compile(rf"(when)(?: {EXP_VAR})+\:$")
-    value_re = re.compile(rf"when((?: {EXP_VAR})+)")
+    match_re = re.compile(rf"(when)(?: +{EXP_VAR})+\:$")
+    value_re = re.compile(rf"when((?: +{EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
         """Search a pattern to the content ahead.
@@ -29,8 +29,8 @@ class When(MultiExpStatement):
 class IWhen(MultiExpStatement):
     """Class for `iwhen` statement."""
 
-    match_re = re.compile(rf"(iwhen)(?: {EXP_VAR})+\:$")
-    value_re = re.compile(rf"iwhen((?: {EXP_VAR})+)")
+    match_re = re.compile(rf"(iwhen)(?: +{EXP_VAR})+\:$")
+    value_re = re.compile(rf"iwhen((?: +{EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
         """Search a pattern to the content ahead (case-insensitive).

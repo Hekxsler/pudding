@@ -15,8 +15,8 @@ from .statement import Statement
 class Define(Statement):
     """Class for `define` statement."""
 
-    match_re = re.compile(rf"(define) {Varname.regex} *(?: *{EXP_VAR})+$")
-    value_re = re.compile(rf"define ({Varname.regex}) *((?: *{EXP_VAR})+)")
+    match_re = re.compile(rf"(define) +{Varname.regex} +(?: +{EXP_VAR})+$")
+    value_re = re.compile(rf"define +({Varname.regex}) +((?: +{EXP_VAR})+)")
     value_types = (Varname, Data)
 
     def get_patterns(self, context: Context) -> str:
