@@ -2,7 +2,6 @@
 
 import re
 import sys
-import warnings
 
 from ...datatypes.string import String
 from ...processor import PAction
