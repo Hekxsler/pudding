@@ -5,7 +5,7 @@ from 'me2' import 'enqueue_test'
 define nows /\S+/
 define quote /\"/
 define word /[\w-]+/
-define enqueue_test /enqueue test[\r\n]+/
+define enqueue_test 'enqueue test' nl
 define newline nl
 
 
