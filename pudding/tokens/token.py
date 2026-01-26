@@ -2,7 +2,7 @@
 
 from re import Pattern
 from types import UnionType
-from typing import Any, NoReturn, Optional, Self, TypeVar
+from typing import Any, Generator, NoReturn, Optional, Self, TypeVar
 
 from pudding.processor import PAction
 from ..datatypes import String, Data, string_to_datatype
@@ -10,6 +10,7 @@ from ..datatypes import String, Data, string_to_datatype
 
 _D = TypeVar("_D")
 _T = TypeVar("_T", bound=tuple[Data, ...])
+type ValueType = type[Data] | UnionType
 
 
 class Token:
@@ -26,7 +27,7 @@ class Token:
 
     match_re: Pattern[str]
     value_re: Pattern[str]
-    value_types: tuple[type[Data] | UnionType, ...]
+    value_types: tuple[ValueType, ...]
 
     def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init function for Token class.
@@ -46,7 +47,7 @@ class Token:
         :returns: The given tuple.
         :raises TypeError: If value is not the correct data type.
         """
-        for value, value_type in zip(values, self.value_types):
+        for value, value_type in zip(values, self._get_value_types()):
             if isinstance(value, value_type):
                 continue
             is_type = value.__class__.__name__
@@ -57,6 +58,10 @@ class Token:
     def __repr__(self) -> str:
         """Return string representation."""
         return f"<{self.lineno}, {self.name}, {self.values}>"
+
+    @classmethod
+    def _get_value_types(cls) -> Generator[ValueType, None, None]:
+        return (t for t in cls.value_types)
 
     @classmethod
     def from_string(cls, string: str, lineno: int) -> Self:

@@ -2,15 +2,14 @@
 
 import re
 from re import RegexFlag as ReFlag
+from types import EllipsisType
 from typing import Generator, Self
 
-from ...datatypes.regex import Regex
-
-from ...datatypes.string import String
-
 from ...datatypes import Data, Or, Varname, string_to_datatype
+from ...datatypes.regex import Regex
+from ...datatypes.string import String
 from ...processor.context import Context
-from ..token import Token
+from ..token import Token, ValueType
 from ..util import EXP_VAR
 
 
@@ -23,7 +22,7 @@ class Statement(Token):
 class MultiExpStatement(Statement):
     """Base class for a statement with multiple expressions."""
 
-    value_types = (Data,)
+    value_types: tuple[*tuple[ValueType, ...], EllipsisType] = (Data, ...)
 
     @classmethod
     def from_string(cls, string: str, lineno: int) -> Self:
@@ -35,9 +34,17 @@ class MultiExpStatement(Statement):
         value_string = cls.value_re.search(statement.group(0))
         if value_string is None:
             raise ValueError("No values in statement.")
-        values = re.findall(rf"{EXP_VAR}", value_string.group(1))
+        values = re.findall(EXP_VAR, value_string.group(1))
         converted = (string_to_datatype(str(v), lineno) for v in values)
         return cls(lineno, name, tuple(converted))
+
+    @classmethod
+    def _get_value_types(cls) -> Generator[ValueType, None, None]:
+        for t in cls.value_types:
+            if isinstance(t, EllipsisType):
+                break
+            yield t
+        yield cls.value_types[-2]
 
     def get_patterns(self, context: Context) -> Generator[str, None, None]:
         """Return the combined patterns as a string.
