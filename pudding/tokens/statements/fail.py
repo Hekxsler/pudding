@@ -14,11 +14,8 @@ class Fail(Statement):
     Takes exactly one argument with a string printed to stdout on execution.
     """
 
-    min_args = 1
-    max_args = 1
-
-    match_re = re.compile(rf"(fail) +{String.regex}$")
-    value_re = re.compile(rf"fail +({String.regex})")
+    match_re = re.compile(rf"(fail)(?: +{String.regex})?$")
+    value_re = re.compile(rf"fail(?: +({String.regex}))?")
     value_types = (String,)
 
     def execute(self, context: Context) -> NoReturn:
@@ -27,4 +24,6 @@ class Fail(Statement):
         :param context: Current context object.
         :raises RuntimeError: Error with given message.
         """
-        raise RuntimeError(context.replace_string_vars(self.get_string(0)))
+        if len(self.values) == 1:
+            raise RuntimeError(context.replace_string_vars(self.get_string(0)))
+        raise RuntimeError(f"Fail statement in line {self.lineno}.")
