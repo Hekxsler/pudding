@@ -16,7 +16,7 @@ The idea is based on [Gelatin](https://github.com/knipknap/Gelatin).
 
 ### CLI
 ```bash
-pud -s <SYNTAX> -f <FORMAT> <INPUT>
+pudding -s <SYNTAX> -f <FORMAT> <INPUT>
 ```
 - `<SYNTAX>`: Path to the syntax file
 - `<FORMAT>`: "xml", "json", or "yaml"
