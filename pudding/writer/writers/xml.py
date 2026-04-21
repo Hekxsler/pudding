@@ -24,7 +24,9 @@ class SliXml(Writer):
         self.last_node: Node = Node(root_name)
         self.prev_roots: list[str] = [root_name]
 
-    def _writenode(self, node: Node, single: bool = False, closing: bool = False) -> None:
+    def _writenode(
+        self, node: Node, single: bool = False, closing: bool = False
+    ) -> None:
         """Write node to file."""
         self._writeline(
             self._to_tag(
@@ -146,12 +148,6 @@ class SliXml(Writer):
 class Xml(BufferedWriter):
     """Writer class for xml output."""
 
-    def __init__(
-        self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
-    ) -> None:
-        """Init buffered xml writer."""
-        super().__init__(file_path, root_name, encoding)
-
     def serialize_node(self, node: Node) -> etree.Element:
         """Convert node object to etree element."""
         root = etree.Element(node.name, node.attribs)
@@ -166,13 +162,12 @@ class Xml(BufferedWriter):
         tree = self.serialize_node(self.root)
         return etree.tostring(tree, pretty_print=True, encoding=str)
 
-    def write_to(self, encoding: str = "utf-8") -> None:
-        """Write generated output to file.
-
-        :param file_path: Path of the file to write to.
-        """
+    def write_output(self) -> None:
+        """Write generated output to file."""
         self.root.name = self.root_name
-        tree = etree.ElementTree(self.serialize_node(self.root))
-        return tree.write(
-            self.file_path, encoding=encoding, pretty_print=True, xml_declaration=False
+        etree.ElementTree(self.serialize_node(self.root)).write(
+            self.file_path,
+            encoding=self.encoding,
+            pretty_print=True,
+            xml_declaration=False,
         )
