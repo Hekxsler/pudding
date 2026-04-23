@@ -12,10 +12,10 @@ class SliXml(Writer):
     """Writer class for slim xml output."""
 
     def __init__(
-        self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
+        self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "xml"
     ) -> None:
         """Init for SliXml class."""
-        super().__init__(file_path, root_name, encoding)
+        super().__init__(file_path, encoding=encoding, root_name=root_name)
         self.last_single = False
         self.last_closing = False
         self.last_indent = 0
