@@ -11,8 +11,8 @@ from .statement import MultiExpStatement
 class Match(MultiExpStatement):
     """Class for `match` statement."""
 
-    match_re = re.compile(rf"(match)(?: {EXP_VAR})+\:$")
-    value_re = re.compile(rf"match((?: {EXP_VAR})+)")
+    match_re = re.compile(rf"(match)(?: +{EXP_VAR})+\:$")
+    value_re = re.compile(rf"match((?: +{EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
         """Match a pattern to the content ahead.
@@ -29,8 +29,8 @@ class Match(MultiExpStatement):
 class IMatch(MultiExpStatement):
     """Class for `imatch` statement."""
 
-    match_re = re.compile(rf"(imatch)(?: {EXP_VAR})+\:$")
-    value_re = re.compile(rf"imatch((?: {EXP_VAR})+)")
+    match_re = re.compile(rf"(imatch)(?: +{EXP_VAR})+\:$")
+    value_re = re.compile(rf"imatch((?: +{EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
         """Match a pattern to the content ahead (case-insensitive).

@@ -11,8 +11,8 @@ from .statement import Statement
 class FromImport(Statement):
     """Class for `from ... import ...` statement."""
 
-    match_re = re.compile(rf"(from) {String.regex} import {String.regex}$")
-    value_re = re.compile(rf"from ({String.regex}) import ({String.regex})")
+    match_re = re.compile(rf"(from) +{String.regex} +import +{String.regex}$")
+    value_re = re.compile(rf"from +({String.regex}) +import +({String.regex})")
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:
@@ -29,8 +29,8 @@ class FromImport(Statement):
 class Import(Statement):
     """Class for `import` statement."""
 
-    match_re = re.compile(rf"(import) {String.regex}$")
-    value_re = re.compile(rf"import ({String.regex})")
+    match_re = re.compile(rf"(import) +{String.regex}$")
+    value_re = re.compile(rf"import +({String.regex})")
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:

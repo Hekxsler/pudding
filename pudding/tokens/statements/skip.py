@@ -12,8 +12,8 @@ from .match import Match, IMatch
 class Skip(Match):
     """Class for `skip` statement."""
 
-    match_re = re.compile(rf"(skip)(?: {EXP_VAR})+$")
-    value_re = re.compile(rf"skip((?: {EXP_VAR})+)")
+    match_re = re.compile(rf"(skip)(?: +{EXP_VAR})+$")
+    value_re = re.compile(rf"skip((?: +{EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
         """Match a pattern to the content ahead and skip it.
@@ -30,8 +30,8 @@ class Skip(Match):
 class ISkip(IMatch):
     """Class for `iskip` statement."""
 
-    match_re = re.compile(rf"(iskip)(?: {EXP_VAR})+$")
-    value_re = re.compile(rf"iskip((?: {EXP_VAR})+)")
+    match_re = re.compile(rf"(iskip)(?: +{EXP_VAR})+$")
+    value_re = re.compile(rf"iskip((?: +{EXP_VAR})+)")
 
     def execute(self, context: Context) -> PAction:
         """Match a pattern to the content ahead and skip it (case-insensitive).

@@ -1,41 +1,25 @@
 """Module defining statements."""
 
 import re
-from re import RegexFlag as ReFlag
-from typing import Generator, Self
+from re import RegexFlag
+from types import EllipsisType
+from typing import Generator
 
-from ...datatypes.regex import Regex
-
-from ...datatypes.string import String
-
-from ...datatypes import Data, Or, Varname, string_to_datatype
+from ...datatypes import Data, Or, Regex, String, Varname
 from ...processor.context import Context
-from ..token import Token
-from ..util import EXP_VAR
+from ..token import MultiExpToken, Token, ValueType
 
 
 class Statement(Token):
     """Base class for a statement."""
 
+    value_types: tuple[ValueType, ...] = ()
 
-class MultiExpStatement(Statement):
+
+class MultiExpStatement(MultiExpToken):
     """Base class for a statement with multiple expressions."""
 
-    value_types = (Data,)
-
-    @classmethod
-    def from_string(cls, string: str, lineno: int) -> Self:
-        """Parse a string into a MultiExpStatement object."""
-        statement = cls.match_re.search(string)
-        if not statement:
-            raise ValueError("Statement not in given string.")
-        name = statement.group(1)
-        value_string = cls.value_re.search(statement.group(0))
-        if value_string is None:
-            raise ValueError("No values in statement.")
-        values = re.findall(rf"{EXP_VAR}", value_string.group(1))
-        converted = (string_to_datatype(str(v), lineno) for v in values)
-        return cls(lineno, name, tuple(converted))
+    value_types: tuple[*tuple[ValueType, ...], EllipsisType] = (Data, ...)
 
     def get_patterns(self, context: Context) -> Generator[str, None, None]:
         """Return the combined patterns as a string.
@@ -56,7 +40,7 @@ class MultiExpStatement(Statement):
         yield pattern
 
     def get_compiled_patterns(
-        self, context: Context, re_flag: ReFlag = ReFlag.NOFLAG
+        self, context: Context, re_flag: RegexFlag = RegexFlag.NOFLAG
     ) -> Generator[re.Pattern[str], None, None]:
         """Return the combined patterns as a string.
 

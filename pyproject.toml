@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools >= 77.0.3", "wheel", "lxml"]
+requires = ["setuptools >= 77.0.3", "wheel", "lxml", "pyyaml"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -37,7 +37,7 @@ Issues = "https://github.com/Hekxsler/pudding/issues"
 
 
 [tool.setuptools.dynamic]
-version = {attr = "pudding.__version__"}
+version = {attr = "pudding.version.__version__"}
 
 
 [tool.pdm.dev-dependencies]

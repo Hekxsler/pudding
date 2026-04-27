@@ -1,6 +1,6 @@
 # Pudding
 [![Coverage Status](https://coveralls.io/repos/github/Hekxsler/pudding/badge.svg?branch=master)](https://coveralls.io/github/Hekxsler/pudding?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/pudding/badge/?version=latest)](http://pudding.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pudding/badge/?version=latest)](https://pudding.readthedocs.io/latest/?badge=latest)
 
 Pudding converts text files into structured formats such as XML, JSON, or YAML. The syntax and parsing rules are defined using a custom DSL in `.pud` files.
 
@@ -16,7 +16,7 @@ The idea is based on [Gelatin](https://github.com/knipknap/Gelatin).
 
 ### CLI
 ```bash
-pud -s <SYNTAX> -f <FORMAT> <INPUT>
+pudding -s <SYNTAX> -f <FORMAT> <INPUT>
 ```
 - `<SYNTAX>`: Path to the syntax file
 - `<FORMAT>`: "xml", "json", or "yaml"

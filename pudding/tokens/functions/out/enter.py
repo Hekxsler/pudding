@@ -29,7 +29,7 @@ class Enter(Out):
         """
         value = None
         if self.get_value(1):
-            value = context.replace_string_vars(self.get_string(0))
+            value = context.replace_string_vars(self.get_string(1))
         context.writer.enter_path(
             context.replace_string_vars(self.get_string(0)),
             value,

@@ -7,7 +7,7 @@ from 'test' import 'section'
 define nows /\S+/
 define quote /\"/
 define word /[\w-]+/
-define enqueue_test /enqueue test[\r\n]+/
+define enqueue_test /enqueue test/ nl
 
 
 grammar list(default):

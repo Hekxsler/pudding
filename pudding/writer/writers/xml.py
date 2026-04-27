@@ -12,10 +12,10 @@ class SliXml(Writer):
     """Writer class for slim xml output."""
 
     def __init__(
-        self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
+        self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "xml"
     ) -> None:
         """Init for SliXml class."""
-        super().__init__(file_path, root_name, encoding)
+        super().__init__(file_path, encoding=encoding, root_name=root_name)
         self.last_single = False
         self.last_closing = False
         self.last_indent = 0
@@ -24,7 +24,9 @@ class SliXml(Writer):
         self.last_node: Node = Node(root_name)
         self.prev_roots: list[str] = [root_name]
 
-    def _writenode(self, node: Node, single: bool = False, closing: bool = False) -> None:
+    def _writenode(
+        self, node: Node, single: bool = False, closing: bool = False
+    ) -> None:
         """Write node to file."""
         self._writeline(
             self._to_tag(
@@ -81,11 +83,11 @@ class SliXml(Writer):
                 node = Node.from_path(paths[0][0], value)
                 self._writenode(node, single=True)
             case _:
-                for node in paths[:-1]:
-                    self._writenode(Node.from_path(node[0], value))
+                for sub_paths in paths[:-1]:
+                    self._writenode(Node.from_path(sub_paths[0], value))
                 self._writenode(Node.from_path(paths[-1][0], value), single=True)
-                for node in reversed(paths[:-1]):
-                    self._writenode(Node.from_path(node[2], value), closing=True)
+                for sub_paths in reversed(paths[:-1]):
+                    self._writenode(Node.from_path(sub_paths[2], value), closing=True)
 
     def add_element(self, path: str, value: str | None = None) -> None:
         """Add an element if its not the current element.
@@ -146,12 +148,6 @@ class SliXml(Writer):
 class Xml(BufferedWriter):
     """Writer class for xml output."""
 
-    def __init__(
-        self, file_path: Path, root_name: str = "xml", encoding: str = "utf-8"
-    ) -> None:
-        """Init buffered xml writer."""
-        super().__init__(file_path, root_name, encoding)
-
     def serialize_node(self, node: Node) -> etree.Element:
         """Convert node object to etree element."""
         root = etree.Element(node.name, node.attribs)
@@ -166,13 +162,12 @@ class Xml(BufferedWriter):
         tree = self.serialize_node(self.root)
         return etree.tostring(tree, pretty_print=True, encoding=str)
 
-    def write_to(self, encoding: str = "utf-8") -> None:
-        """Write generated output to file.
-
-        :param file_path: Path of the file to write to.
-        """
+    def write_output(self) -> None:
+        """Write generated output to file."""
         self.root.name = self.root_name
-        tree = etree.ElementTree(self.serialize_node(self.root))
-        return tree.write(
-            self.file_path, encoding=encoding, pretty_print=True, xml_declaration=False
+        etree.ElementTree(self.serialize_node(self.root)).write(
+            self.file_path,
+            encoding=self.encoding,
+            pretty_print=True,
+            xml_declaration=False,
         )
