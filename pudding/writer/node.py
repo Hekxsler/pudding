@@ -14,7 +14,10 @@ class Node:
     )
 
     def __init__(
-        self, name: str, attributes: dict[str, str] | None = None, text: str | None = None
+        self,
+        name: str,
+        attributes: dict[str, str] | None = None,
+        text: str | None = None,
     ) -> None:
         """Init for Node class.
 
