@@ -83,11 +83,11 @@ class SliXml(Writer):
                 node = Node.from_path(paths[0][0], value)
                 self._writenode(node, single=True)
             case _:
-                for node in paths[:-1]:
-                    self._writenode(Node.from_path(node[0], value))
+                for sub_paths in paths[:-1]:
+                    self._writenode(Node.from_path(sub_paths[0], value))
                 self._writenode(Node.from_path(paths[-1][0], value), single=True)
-                for node in reversed(paths[:-1]):
-                    self._writenode(Node.from_path(node[2], value), closing=True)
+                for sub_paths in reversed(paths[:-1]):
+                    self._writenode(Node.from_path(sub_paths[2], value), closing=True)
 
     def add_element(self, path: str, value: str | None = None) -> None:
         """Add an element if its not the current element.
