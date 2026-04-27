@@ -8,7 +8,7 @@ from ..processor.grammar import Grammar, TokenList
 from ..tokens.statements import Define, FromImport
 from ..tokens.statements import Grammar as GrammarStmt
 from ..tokens.statements import Import
-from ..tokens.token import Token
+from ..tokens.token import BaseToken
 from ..tokens.util import INDENTATION_RE
 from .util import DEFAULT_TOKENS
 
@@ -25,12 +25,12 @@ class Compiler:
 
     source_path: Path
 
-    def __init__(self, tokens: Sequence[type[Token]] | None = None) -> None:
+    def __init__(self, tokens: Sequence[type[BaseToken]] | None = None) -> None:
         """Init of Compiler class.
 
         :param tokens: Token classes needed to compile. If is None use default tokens.
         """
-        default_tokens: Sequence[type[Token]] = DEFAULT_TOKENS
+        default_tokens: Sequence[type[BaseToken]] = DEFAULT_TOKENS
         if tokens is None:
             tokens = default_tokens
         self.tokens = tokens
@@ -47,7 +47,7 @@ class Compiler:
             return int(count / INDENT_SPACES)
         raise IndentationError(f"Invalid amount of spaces in line {lineno}")
 
-    def _parse_line(self, line: str, lineno: int) -> Token:
+    def _parse_line(self, line: str, lineno: int) -> BaseToken:
         """Read statement or function from a line."""
         line = line.strip()
         for token in self.tokens:

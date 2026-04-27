@@ -3,9 +3,9 @@
 from ..tokens import statements as stmt
 from ..tokens.functions import do, out, Say
 from ..tokens.functions.grammar_call import GrammarCall
-from ..tokens.token import Token
+from ..tokens.token import BaseToken
 
-DEFAULT_TOKENS: tuple[type[Token], ...] = (
+DEFAULT_TOKENS: tuple[type[BaseToken], ...] = (
     do.Fail,
     do.Next,
     do.Return,
