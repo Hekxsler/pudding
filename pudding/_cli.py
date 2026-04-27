@@ -7,7 +7,7 @@ import os
 from collections.abc import Sequence
 from pathlib import Path
 
-from . import __version__
+from .version import __version__
 from .util import convert_files
 
 DESCRIPTION = """
