@@ -118,6 +118,10 @@ strict = "true"
 
 
 [tool.coverage.report]
+omit = [
+    "version.py",
+    "__main__.py"
+]
 exclude_also = [
     "def __repr__",
     "def __str__",
