@@ -8,11 +8,10 @@ from pudding.processor.context import Context
 
 from ..util import EXP_VAR
 from .match import IMatch, Match
-from .statement import MultiExpStatement
 
 
-def skip_on_match(method: Callable[..., PAction]):
-    def wrapper(self: Skip | ISkip, context: Context) -> PAction:
+def skip_on_match(method: Callable[..., PAction]) -> Callable[..., PAction]:
+    def wrapper(self: "Skip | ISkip", context: Context) -> PAction:
         action = method(self, context)
         if action == PAction.ENTER:
             return PAction.RESTART
@@ -21,7 +20,7 @@ def skip_on_match(method: Callable[..., PAction]):
     return wrapper
 
 
-class Skip(MultiExpStatement):
+class Skip(Match):
     """Class for `skip` statement."""
 
     match_re = re.compile(rf"(skip)(?: +{EXP_VAR})+$")
@@ -30,7 +29,7 @@ class Skip(MultiExpStatement):
     execute = skip_on_match(Match.execute)
 
 
-class ISkip(MultiExpStatement):
+class ISkip(IMatch):
     """Class for `iskip` statement."""
 
     match_re = re.compile(rf"(iskip)(?: +{EXP_VAR})+$")
