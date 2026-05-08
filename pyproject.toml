@@ -71,6 +71,9 @@ tool = [
     "tox-pdm",
     "pre-commit",
 ]
+typing = [
+    "types-PyYAML",
+]
 
 [tool.pdm.scripts]
 # Better use these unspecific commands, especially in pipelines!
