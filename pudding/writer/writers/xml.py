@@ -151,6 +151,7 @@ class Xml(BufferedWriter):
     def __init__(
         self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "xml"
     ) -> None:
+        """Init XML writer."""
         super().__init__(file_path, encoding=encoding, root_name=root_name)
 
     def serialize_node(self, node: Node) -> etree.Element:
