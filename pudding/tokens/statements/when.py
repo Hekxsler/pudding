@@ -9,7 +9,8 @@ from ..util import EXP_VAR
 from .statement import MultiExpStatement
 
 
-def enter_on_find(method: Callable[..., PAction]) -> Callable[..., PAction]:
+def enter_on_find(_: Callable[..., PAction]) -> Callable[..., PAction]:
+    """Enter code block when pattern is found."""
     def wrapper(self: "When | IWhen", context: Context) -> PAction:
         for pattern in self.get_compiled_patterns(context, re_flag=self.re_flag):
             if context.reader.find(pattern):

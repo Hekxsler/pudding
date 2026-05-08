@@ -11,6 +11,7 @@ from .match import IMatch, Match
 
 
 def skip_on_match(method: Callable[..., PAction]) -> Callable[..., PAction]:
+    """Skip text when it matches."""
     def wrapper(self: "Skip | ISkip", context: Context) -> PAction:
         action = method(self, context)
         if action == PAction.ENTER:

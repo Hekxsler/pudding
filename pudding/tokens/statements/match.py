@@ -9,7 +9,8 @@ from ..util import EXP_VAR
 from .statement import MultiExpStatement
 
 
-def enter_on_match(method: Callable[..., PAction]) -> Callable[..., PAction]:
+def enter_on_match(_: Callable[..., PAction]) -> Callable[..., PAction]:
+    """Enter code block when text matches."""
     def wrapper(self: "Match | IMatch", context: Context) -> PAction:
         for pattern in self.get_compiled_patterns(context, re_flag=self.re_flag):
             if context.reader.match(pattern):
