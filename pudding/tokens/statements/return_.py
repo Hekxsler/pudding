@@ -1,21 +1,20 @@
-"""Control function do.return."""
+"""Return statement."""
 
 import re
-import warnings
 
-from ....processor import PAction
-from ....processor.context import Context
-from .do import Do
+from ...processor import PAction
+from ...processor.context import Context
+from .statement import Statement
 
 
-class Return(Do):
-    """Class for `do.return` function.
+class Return(Statement):
+    """Class for `return` statement.
 
     Immediately leave the current grammar block and return to the calling function.
     When used at the top level (i.e. in the input grammar), stop parsing.
     """
 
-    match_re = re.compile(r"(do\.return)\((.*)\)$")
+    match_re = re.compile(r"(return)(.*)$")
 
     def execute(self, context: Context) -> PAction:
         """Immediately leave the current grammar.
@@ -23,9 +22,4 @@ class Return(Do):
         :param context: Current context object.
         :returns: Returns PAction.EXIT for processor class.
         """
-        warnings.warn(
-            "The function 'do.return()' will be deprecated."
-            " Use statement 'return' instead.",
-            DeprecationWarning,
-        )
         return PAction.EXIT

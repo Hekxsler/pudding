@@ -17,12 +17,7 @@ class AddAttribute(Out):
     min_args = 3
     max_args = 3
 
-    match_re = re.compile(
-        rf"(out\.add_attribute)\({String.regex}, *{String.regex}, *{String.regex}\)$"
-    )
-    value_re = re.compile(
-        rf"out\.add_attribute\(({String.regex}), *({String.regex}), *({String.regex})\)"
-    )
+    match_re = re.compile(r"(out\.add_attribute)\((.*)\)$")
     value_types = (String, String, String)
 
     def execute(self, context: Context) -> PAction:

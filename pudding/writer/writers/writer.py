@@ -14,9 +14,14 @@ class Writer:
     """
 
     def __init__(
-        self, file_path: Path, root_name: str = "root", encoding: str = "utf-8"
+        self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "root"
     ) -> None:
-        """Init for writer class."""
+        """Initialize writer.
+
+        :param file_path: Path of the output file.
+        :param encoding: Encoding of the output file.
+        :param root_name: Name of the root element, if it exists.
+        """
         self.encoding = encoding
         self.file_path = file_path
         self.root_name = root_name
@@ -111,10 +116,15 @@ class BufferedWriter(Writer):
     """
 
     def __init__(
-        self, file_path: Path, root_name: str = "root", encoding: str = "utf-8"
+        self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "root"
     ) -> None:
-        """Init BufferedWriter."""
-        super().__init__(file_path, root_name, encoding)
+        """Initialize buffered writer.
+
+        :param file_path: Path of the output file.
+        :param encoding: Encoding of the output file.
+        :param root_name: Name of the root element, if it exists.
+        """
+        super().__init__(file_path, encoding=encoding, root_name=root_name)
         self.prev_roots: list[Node] = []
         self.root = Node(root_name)
 

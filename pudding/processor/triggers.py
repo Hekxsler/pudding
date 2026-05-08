@@ -36,6 +36,7 @@ class TriggerQueue(dict[Timing, list[Trigger]]):
     """
 
     def __init__(self) -> None:
+        """Init TriggerQueue."""
         self.triggers: dict[Timing, list[Trigger]] = {}
         return super().__init__()
 

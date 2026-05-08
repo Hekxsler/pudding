@@ -1,5 +1,7 @@
 """Module defining functions."""
 
+import re
+
 from ...datatypes import Data, String
 from ..token import Token
 
@@ -15,6 +17,7 @@ class Function(Token):
 
     min_args = 0
     max_args = 0
+    value_delim_re = re.compile(r", *")
 
     def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init for Function class.
@@ -30,15 +33,3 @@ class Function(Token):
         if len(values) < self.min_args:
             raise SyntaxError(f"Missing arguments in line {lineno}. {err_msg}")
         raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
-
-    def get_string(self, index: int) -> String:
-        """Get String object in values.
-
-        :param index: Index of the object in values.
-        :returns: The String object at the given index.
-        :raises TypeError: If object at given index is not of type String.
-        """
-        value = self.values[index]
-        if isinstance(value, String):
-            return value
-        raise TypeError(f"Value {repr(value)} is not a string. (line {self.lineno})")

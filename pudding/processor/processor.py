@@ -6,7 +6,7 @@ from ..compiler.compiler import Syntax
 from ..reader.reader import Reader
 from ..tokens.functions import grammar_call, out
 from ..tokens.statements.define import Define
-from ..tokens.token import Token
+from ..tokens.token import BaseToken
 from ..writer import Writer
 from . import PAction
 from .context import Context
@@ -104,7 +104,7 @@ class Processor:
             return PAction.RESTART
         return PAction.CONTINUE
 
-    def execute_condition(self, token: tuple[Token, TokenList]) -> PAction:
+    def execute_condition(self, token: tuple[BaseToken, TokenList]) -> PAction:
         """Execute a condition.
 
         The condition token will return PAction.ENTER if sub tokens should be
@@ -124,7 +124,7 @@ class Processor:
             return PAction.RESTART
         return sub_action
 
-    def execute_token(self, token: Token) -> PAction:
+    def execute_token(self, token: BaseToken) -> PAction:
         """Execute a token.
 
         Execute the token and trigger Timings before and after the execution.

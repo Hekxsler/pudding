@@ -2,24 +2,22 @@
 
 import re
 import sys
-import warnings
 
 from ....datatypes.string import String
 from ....processor import PAction
 from ....processor.context import Context
-from .do import Do
+from .out import Out
 
 
-class Say(Do):
-    """Class for `do.say` function.
+class Say(Out):
+    """Class for `say` function.
 
     Prints the given string to stdout.
     """
 
-    min_args = 1
     max_args = 1
 
-    match_re = re.compile(r"(do\.say)\((.*)\)$")
+    match_re = re.compile(r"(out\.say)\((.*)\)$")
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:
@@ -28,9 +26,6 @@ class Say(Do):
         :param context: Current context object.
         :returns: Returns PAction.CONTINUE for processor class.
         """
-        warnings.warn(
-            "The function 'do.say()' will be deprecated. Use 'out.say()' instead.",
-            DeprecationWarning,
-        )
-        sys.stdout.write(context.replace_string_vars(self.get_string(0)))
+        message = context.replace_string_vars(self.get_string(0))
+        sys.stdout.write(f"{message}\n")
         return PAction.CONTINUE

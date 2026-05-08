@@ -82,5 +82,5 @@ class Context:
                     f"Not enough matches in {matches} to replace variable '${number}'."
                 )
             replacement = replace.replace(f"${number}", matches[int(number)], 1)
-            new_string = re.sub(re.escape(replace), replacement, new_string, 1)
+            new_string = re.sub(re.escape(replace), replacement, new_string, count=1)
         return new_string

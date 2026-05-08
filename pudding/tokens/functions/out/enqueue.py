@@ -6,8 +6,6 @@ from ....processor import PAction
 from ....processor.context import Context
 from ....processor.triggers import Timing, Trigger
 from ....datatypes import Regex, String, Varname
-from ...util import EXP_VAR
-from ..function import OPTIONAL_STRING
 from .add import Add
 from .out import Out
 
@@ -51,12 +49,7 @@ class EnqueueAfter(Enqueue):
     matches the input and the next token was processed.
     """
 
-    match_re = re.compile(
-        rf"(out\.enqueue_after)\({EXP_VAR}, *{String.regex}{OPTIONAL_STRING}\)$"
-    )
-    value_re = re.compile(
-        rf"out\.enqueue_after\(({EXP_VAR}), *({String.regex}){OPTIONAL_STRING}\)"
-    )
+    match_re = re.compile(r"(out\.enqueue_after)\((.*)\)$")
 
     def execute(self, context: Context) -> PAction:
         """Enqueue token after execution.
@@ -75,12 +68,7 @@ class EnqueueBefore(Enqueue):
     matches the input, regardless of the grammar in which the match occurs.
     """
 
-    match_re = re.compile(
-        rf"(out\.enqueue_before)\({EXP_VAR}, *{String.regex}{OPTIONAL_STRING}\)$"
-    )
-    value_re = re.compile(
-        rf"out\.enqueue_before\(({EXP_VAR}), *({String.regex}){OPTIONAL_STRING}\)"
-    )
+    match_re = re.compile(r"(out\.enqueue_before)\((.*)\)$")
 
     def execute(self, context: Context) -> PAction:
         """Enqueue token before execution.
@@ -99,12 +87,7 @@ class EnqueueOnAdd(Enqueue):
     matches the input and the next node is added to the output.
     """
 
-    match_re = re.compile(
-        rf"(out\.enqueue_on_add)\({EXP_VAR}, *{String.regex}{OPTIONAL_STRING}\)$"
-    )
-    value_re = re.compile(
-        rf"out\.enqueue_on_add\(({EXP_VAR}), *({String.regex}){OPTIONAL_STRING}\)"
-    )
+    match_re = re.compile(r"(out\.enqueue_on_add)\((.*)\)$")
 
     def execute(self, context: Context) -> PAction:
         """Enqueue token on execution of out.add().

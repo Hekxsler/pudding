@@ -2,24 +2,19 @@
 
 import re
 
-from ...datatypes import Data, Varname
-from ...datatypes.or_ import Or
-from ...datatypes.regex import Regex
-from ...datatypes.string import String
+from ...datatypes import Data, Or, Regex, String, Varname
 from ...processor import PAction
 from ...processor.context import Context
-from ..util import EXP_VAR
-from .statement import Statement
+from .statement import MultiExpStatement
 
 
-class Define(Statement):
+class Define(MultiExpStatement):
     """Class for `define` statement."""
 
-    match_re = re.compile(rf"(define) {Varname.regex} *(?: *{EXP_VAR})+$")
-    value_re = re.compile(rf"define ({Varname.regex}) *((?: *{EXP_VAR})+)")
-    value_types = (Varname, Data)
+    match_re = re.compile(r"(define) +(.*)$")
+    value_types = (Varname, Data, ...)
 
-    def get_patterns(self, context: Context) -> str:
+    def get_value_patterns(self, context: Context) -> str:
         """Return the combined patterns as a string.
 
         :param context: Context to resolve variables.
@@ -43,5 +38,5 @@ class Define(Statement):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        context.variables[self.values[0].value] = self.get_patterns(context)
+        context.variables[self.values[0].value] = self.get_value_patterns(context)
         return PAction.CONTINUE
