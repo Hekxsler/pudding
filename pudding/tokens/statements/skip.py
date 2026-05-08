@@ -1,45 +1,39 @@
 """Skip statement."""
 
 import re
+from typing import Callable
 
 from pudding.processor import PAction
 from pudding.processor.context import Context
 
 from ..util import EXP_VAR
-from .match import Match, IMatch
+from .match import IMatch, Match
+from .statement import MultiExpStatement
 
 
-class Skip(Match):
+def skip_on_match(method: Callable[..., PAction]):
+    def wrapper(self: Skip | ISkip, context: Context) -> PAction:
+        action = method(self, context)
+        if action == PAction.ENTER:
+            return PAction.RESTART
+        return PAction.NEXT
+
+    return wrapper
+
+
+class Skip(MultiExpStatement):
     """Class for `skip` statement."""
 
     match_re = re.compile(rf"(skip)(?: +{EXP_VAR})+$")
     value_re = re.compile(rf"skip((?: +{EXP_VAR})+)")
 
-    def execute(self, context: Context) -> PAction:
-        """Match a pattern to the content ahead and skip it.
-
-        :param context: Current context object.
-        :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
-        """
-        action = super().execute(context)
-        if action == PAction.ENTER:
-            return PAction.RESTART
-        return PAction.NEXT
+    execute = skip_on_match(Match.execute)
 
 
-class ISkip(IMatch):
+class ISkip(MultiExpStatement):
     """Class for `iskip` statement."""
 
     match_re = re.compile(rf"(iskip)(?: +{EXP_VAR})+$")
     value_re = re.compile(rf"iskip((?: +{EXP_VAR})+)")
 
-    def execute(self, context: Context) -> PAction:
-        """Match a pattern to the content ahead and skip it (case-insensitive).
-
-        :param context: Current context object.
-        :returns: PAction.ENTER if pattern matches, else PAction.NEXT.
-        """
-        action = super().execute(context)
-        if action == PAction.ENTER:
-            return PAction.RESTART
-        return PAction.NEXT
+    execute = skip_on_match(IMatch.execute)
