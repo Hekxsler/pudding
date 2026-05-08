@@ -1,10 +1,11 @@
 """Test module for pudding.util."""
 
 import json
-import yaml
-
-from lxml import etree
 from pathlib import Path
+
+import yaml
+from lxml import etree
+
 from pudding import convert_file, convert_string
 
 DATA_DIR = Path(__file__).parent / "data"

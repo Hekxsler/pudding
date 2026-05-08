@@ -7,8 +7,8 @@ import os
 from collections.abc import Sequence
 from pathlib import Path
 
-from .version import __version__
 from .util import convert_files
+from .version import __version__
 
 DESCRIPTION = """
 Pudding converts text to a structured format, such as XML, JSON or YAML.
