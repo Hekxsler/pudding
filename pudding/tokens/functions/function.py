@@ -1,5 +1,7 @@
 """Module defining functions."""
 
+import re
+
 from ...datatypes import Data, String
 from ..token import Token
 
@@ -15,6 +17,7 @@ class Function(Token):
 
     min_args = 0
     max_args = 0
+    value_delim_re = re.compile(r", *")
 
     def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init for Function class.

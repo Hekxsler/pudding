@@ -1,7 +1,7 @@
 """Utility functions for compiler."""
 
 from ..tokens import statements as stmt
-from ..tokens.functions import do, out, Say
+from ..tokens.functions import do, out
 from ..tokens.functions.grammar_call import GrammarCall
 from ..tokens.token import BaseToken
 
@@ -21,6 +21,7 @@ DEFAULT_TOKENS: tuple[type[BaseToken], ...] = (
     out.Open,
     out.Remove,
     out.Replace,
+    out.Say,
     out.SetRootName,
     stmt.Define,
     stmt.Fail,
@@ -35,6 +36,5 @@ DEFAULT_TOKENS: tuple[type[BaseToken], ...] = (
     stmt.ISkip,
     stmt.IWhen,
     stmt.When,
-    Say,
     GrammarCall,
 )

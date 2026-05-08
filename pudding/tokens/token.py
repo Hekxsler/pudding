@@ -17,12 +17,14 @@ type ValueType = type[Data] | UnionType
 class BaseToken:
     """Base class for tokens.
 
-    :var match_re: Regex matching the token in a string.
-    :var value_re: Regex matching the user set values of this token.
+    :var match_re: Regex with two groups matching the token name and values
+        in a line.
+    :var value_delim_re: Regex matching the delimiter between values in the string
+        matched by the match_re in group two.
     """
 
     match_re: Pattern[str]
-    value_re: Pattern[str]
+    value_delim_re: Pattern[str]
 
     def __init__(self, lineno: int, name: str, values: tuple[Data, ...]) -> None:
         """Init function for Token class.
@@ -59,13 +61,36 @@ class BaseToken:
         raise NotImplementedError
 
     @classmethod
+    def _match_values(cls, value_string: str) -> list[str]:
+        match = re.match(EXP_VAR, value_string)
+        values: list[str] = []
+        while match is not None:
+            values.append(match.group(0))
+            value_string = value_string[len(match[0]):]
+            if not value_string:
+                return values
+            delim = re.match(cls.value_delim_re, value_string)
+            if not delim:
+                raise SyntaxError("Invalid syntax of values in token.")
+            value_string = value_string[len(delim[0]):]
+            match = re.match(EXP_VAR, value_string)
+            if not match:
+                raise SyntaxError("Invalid syntax of values in token.")
+        return values
+
+    @classmethod
     def from_string(cls, string: str, lineno: int) -> Self:
         """Create Token object from string.
 
         :param string: String containing the token.
         :param lineno: Line number of the token.
         """
-        raise NotImplementedError
+        token_match = cls.match_re.match(string)
+        if token_match is None:
+            raise ValueError("Token not in given string.")
+        name = token_match.group(1)
+        values = cls._match_values(token_match.group(2))
+        return cls(lineno, name, tuple((string_to_datatype(v, lineno) for v in values)))
 
     @classmethod
     def matches(cls, string: str) -> bool:
@@ -74,7 +99,7 @@ class BaseToken:
         :param string: String to search in.
         :returns: True if it exists.
         """
-        return cls.match_re.search(string) is not None
+        return cls.match_re.match(string) is not None
 
     def execute(self, context: Any) -> PAction | NoReturn:
         """Execute this token.
@@ -122,42 +147,11 @@ class Token(BaseToken):
     def _get_value_types(cls) -> Generator[ValueType, None, None]:
         return (t for t in cls.value_types)
 
-    @classmethod
-    def from_string(cls, string: str, lineno: int) -> Self:
-        """Create Token object from string.
-
-        :param string: String containing the token.
-        :param lineno: Line number of the token.
-        """
-        token_match = cls.match_re.search(string)
-        if token_match is None:
-            raise ValueError("Token not in given string.")
-        name = token_match.group(1)
-        value_match = cls.value_re.search(token_match.group(0))
-        if value_match is None:
-            raise ValueError("No values in token.")
-        values = (str(x) for x in value_match.groups() if x is not None)
-        return cls(lineno, name, tuple((string_to_datatype(v, lineno) for v in values)))
-
 
 class MultiExpToken(BaseToken):
     """Token with an unknown amount of values."""
 
     value_types: tuple[*tuple[ValueType, ...], EllipsisType]
-
-    @classmethod
-    def from_string(cls, string: str, lineno: int) -> Self:
-        """Parse a string into a MultiExpStatement object."""
-        statement = cls.match_re.search(string)
-        if not statement:
-            raise ValueError("Statement not in given string.")
-        name = statement.group(1)
-        value_string = cls.value_re.search(statement.group(0))
-        if value_string is None:
-            raise ValueError("No values in statement.")
-        values = re.findall(EXP_VAR, value_string.group(1))
-        converted = (string_to_datatype(str(v), lineno) for v in values)
-        return cls(lineno, name, tuple(converted))
 
     @classmethod
     def _get_value_types(cls) -> Generator[ValueType, None, None]:

@@ -5,7 +5,6 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from ..function import OPTIONAL_STRING
 from .out import Out
 
 
@@ -16,8 +15,7 @@ class Add(Out):
     Otherwise it creates a new node.
     """
 
-    match_re = re.compile(rf"(out\.add)\({String.regex}{OPTIONAL_STRING}\)$")
-    value_re = re.compile(rf"out\.add\(({String.regex}){OPTIONAL_STRING}\)")
+    match_re = re.compile(r"(out\.add)\((.*)\)$")
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:

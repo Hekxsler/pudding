@@ -14,8 +14,7 @@ class Fail(Statement):
     Takes exactly one argument with a string printed to stdout on execution.
     """
 
-    match_re = re.compile(rf"(fail)(?: +{String.regex})?$")
-    value_re = re.compile(rf"fail(?: +({String.regex}))?")
+    match_re = re.compile(r"(fail) *(.*)$")
     value_types = (String,)
 
     def execute(self, context: Context) -> NoReturn:

@@ -5,7 +5,6 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from ..function import OPTIONAL_STRING
 from .out import Out
 
 
@@ -17,8 +16,7 @@ class Enter(Out):
     relative to the selected node until the end of the match block is reached.
     """
 
-    match_re = re.compile(rf"(out\.enter)\({String.regex}{OPTIONAL_STRING}\)$")
-    value_re = re.compile(rf"out\.enter\(({String.regex}{OPTIONAL_STRING})\)")
+    match_re = re.compile(r"(out\.enter)\((.*)\)$")
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:

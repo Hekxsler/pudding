@@ -17,8 +17,7 @@ class ClearQueue(Out):
     min_args = 0
     max_args = 0
 
-    match_re = re.compile(r"(out\.clear_queue)\(\)$")
-    value_re = re.compile(r"out\.clear_queue\(\)")
+    match_re = re.compile(r"(out\.clear_queue)\((.*)\)$")
     value_types = tuple()
 
     def execute(self, context: Context) -> PAction:

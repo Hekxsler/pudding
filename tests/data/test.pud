@@ -66,4 +66,4 @@ grammar input(default):
         out.remove('$4?$6="$8"/$2')
     out.set_root_name('test')
     do.say('deprecated')
-    say('Done')
+    out.say('Done')

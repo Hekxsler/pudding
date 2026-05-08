@@ -5,7 +5,6 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from ..function import OPTIONAL_STRING
 from .out import Out
 
 
@@ -15,8 +14,7 @@ class Replace(Out):
     Replaces the text of the last node in the given path.
     """
 
-    match_re = re.compile(rf"(out\.replace)\({String.regex}{OPTIONAL_STRING}\)$")
-    value_re = re.compile(rf"out\.replace\(({String.regex}){OPTIONAL_STRING}\)")
+    match_re = re.compile(r"(out\.replace)\((.*)\)$")
     value_types = (String, String)
 
     def execute(self, context: Context) -> PAction:

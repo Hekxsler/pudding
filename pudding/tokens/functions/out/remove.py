@@ -14,8 +14,7 @@ class Remove(Out):
     Deletes the last node in the given path.
     """
 
-    match_re = re.compile(rf"(out\.remove)\({String.regex}\)$")
-    value_re = re.compile(rf"out\.remove\(({String.regex})\)")
+    match_re = re.compile(r"(out\.remove)\((.*)\)$")
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:

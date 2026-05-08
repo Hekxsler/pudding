@@ -15,8 +15,7 @@ class SetRootName(Out):
 
     max_args = 1
 
-    match_re = re.compile(rf"(out\.set_root_name)\({String.regex}\)$")
-    value_re = re.compile(rf"out\.set_root_name\(({String.regex})\)")
+    match_re = re.compile(r"(out\.set_root_name)\((.*)\)$")
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:

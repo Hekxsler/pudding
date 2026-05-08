@@ -13,12 +13,14 @@ from ..token import MultiExpToken, Token, ValueType
 class Statement(Token):
     """Base class for a statement."""
 
+    value_delim_re = re.compile(r" +")
     value_types: tuple[ValueType, ...] = ()
 
 
 class MultiExpStatement(MultiExpToken):
     """Base class for a statement with multiple expressions."""
 
+    value_delim_re = re.compile(r" +")
     value_types: tuple[*tuple[ValueType, ...], EllipsisType] = (Data, ...)
 
     def get_patterns(self, context: Context) -> Generator[str, None, None]:

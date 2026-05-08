@@ -18,8 +18,7 @@ class Fail(Do):
     min_args = 1
     max_args = 1
 
-    match_re = re.compile(rf"(do\.fail)\({String.regex}\)$")
-    value_re = re.compile(rf"do\.fail\(({String.regex})\)")
+    match_re = re.compile(r"(do\.fail)\((.*)\)$")
     value_types = (String,)
 
     def execute(self, context: Context) -> NoReturn:

@@ -2,21 +2,16 @@
 
 import re
 
-from ...datatypes import Data, Varname
-from ...datatypes.or_ import Or
-from ...datatypes.regex import Regex
-from ...datatypes.string import String
+from ...datatypes import Data, Or, Regex, String, Varname
 from ...processor import PAction
 from ...processor.context import Context
-from ..util import EXP_VAR
 from .statement import MultiExpStatement
 
 
 class Define(MultiExpStatement):
     """Class for `define` statement."""
 
-    match_re = re.compile(rf"(define)(?: +{EXP_VAR})+$")
-    value_re = re.compile(rf"define((?: +{EXP_VAR})+)")
+    match_re = re.compile(r"(define) +(.*)$")
     value_types = (Varname, Data, ...)
 
     def get_value_patterns(self, context: Context) -> str:

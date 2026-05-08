@@ -14,8 +14,7 @@ class Return(Statement):
     When used at the top level (i.e. in the input grammar), stop parsing.
     """
 
-    match_re = re.compile(r"(return)$")
-    value_re = re.compile(r"return")
+    match_re = re.compile(r"(return)(.*)$")
 
     def execute(self, context: Context) -> PAction:
         """Immediately leave the current grammar.

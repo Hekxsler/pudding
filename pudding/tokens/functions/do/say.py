@@ -19,8 +19,7 @@ class Say(Do):
     min_args = 1
     max_args = 1
 
-    match_re = re.compile(rf"(do\.say)\({String.regex}\)$")
-    value_re = re.compile(rf"do\.say\(({String.regex})\)")
+    match_re = re.compile(r"(do\.say)\((.*)\)$")
     value_types = (String,)
 
     def execute(self, context: Context) -> PAction:
@@ -30,7 +29,7 @@ class Say(Do):
         :returns: Returns PAction.CONTINUE for processor class.
         """
         warnings.warn(
-            "The function 'do.say()' will be deprecated. Use 'say()' instead.",
+            "The function 'do.say()' will be deprecated. Use 'out.say()' instead.",
             DeprecationWarning,
         )
         sys.stdout.write(context.replace_string_vars(self.get_string(0)))

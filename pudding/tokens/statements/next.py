@@ -15,8 +15,7 @@ class Next(Statement):
     probably not what you want, unless it is for some performance-specific hacks.
     """
 
-    match_re = re.compile(r"(next)$")
-    value_re = re.compile(r"next")
+    match_re = re.compile(r"(next)(.*)$")
 
     def execute(self, context: Context) -> PAction:
         """Continue with the next token of the grammar.

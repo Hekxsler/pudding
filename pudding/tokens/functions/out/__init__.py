@@ -9,6 +9,7 @@ from .enter import Enter
 from .open import Open
 from .remove import Remove
 from .replace import Replace
+from .say import Say
 from .set_root_name import SetRootName
 
 __all__ = [
@@ -23,5 +24,6 @@ __all__ = [
     'Open',
     'Remove',
     'Replace',
+    'Say',
     'SetRootName'
 ]

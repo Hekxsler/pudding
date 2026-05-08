@@ -2,17 +2,17 @@
 
 import re
 
+from ...datatypes import Varname
 from ...processor import PAction
 from ...processor.context import Context
-from ...datatypes import Varname
 from .statement import Statement
 
 
 class Grammar(Statement):
     """Class for `grammar` statement."""
 
-    match_re = re.compile(rf"(grammar) +{Varname.regex}(?:\({Varname.regex}\))?\:$")
-    value_re = re.compile(rf"grammar +({Varname.regex})(?:\(({Varname.regex})\))?")
+    match_re = re.compile(r"(grammar) +([^)]*)\)?\:$")
+    value_delim_re = re.compile(r"\(")
     value_types = (Varname, Varname)
 
     def execute(self, context: Context) -> PAction:

@@ -16,8 +16,7 @@ class Next(Do):
     probably not what you want, unless it is for some performance-specific hacks.
     """
 
-    match_re = re.compile(r"(do\.next)\(\)$")
-    value_re = re.compile(r"do\.next\(\)")
+    match_re = re.compile(r"(do\.next)\((.*)\)$")
 
     def execute(self, context: Context) -> PAction:
         """Continue with the next token of the grammar.
