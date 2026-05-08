@@ -25,7 +25,7 @@ class Return(Do):
         :returns: Returns PAction.EXIT for processor class.
         """
         warnings.warn(
-            "The function 'do.return()' is deprecated. Use statement 'return' instead.",
+            "The function 'do.return()' will be deprecated. Use statement 'return' instead.",
             DeprecationWarning,
         )
         return PAction.EXIT

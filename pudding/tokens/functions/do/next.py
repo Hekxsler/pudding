@@ -26,7 +26,7 @@ class Next(Do):
         :returns: Returns PAction.NEXT for processor class.
         """
         warnings.warn(
-            "The function 'do.next()' is deprecated. Use statement 'next' instead.",
+            "The function 'do.next()' will be deprecated. Use statement 'next' instead.",
             DeprecationWarning,
         )
         return PAction.NEXT

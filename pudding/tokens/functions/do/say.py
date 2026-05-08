@@ -30,7 +30,7 @@ class Say(Do):
         :returns: Returns PAction.CONTINUE for processor class.
         """
         warnings.warn(
-            "The function 'do.say()' is deprecated. Use 'say()' instead.",
+            "The function 'do.say()' will be deprecated. Use 'say()' instead.",
             DeprecationWarning,
         )
         sys.stdout.write(context.replace_string_vars(self.get_string(0)))

@@ -29,7 +29,7 @@ class Fail(Do):
         :raises RuntimeError: Error with given message.
         """
         warnings.warn(
-            "The function 'do.fail()' is deprecated. Use statement 'fail' instead.",
+            "The function 'do.fail()' will be deprecated. Use statement 'fail' instead.",
             DeprecationWarning,
         )
         raise RuntimeError(context.replace_string_vars(self.get_string(0)))
