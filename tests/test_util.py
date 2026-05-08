@@ -101,23 +101,20 @@ Office: 2nd Ave
 Birth date: 1970-01-01
 """
 
-RESULT = """user:
-- '@firstname': John
-  '@lastname': Doe
-  office:
-    '#text': 1st Ave
-  birth-date:
-    '#text': '1978-01-01'
-- '@firstname': Jane
-  '@lastname': Foo
-  office:
-    '#text': 2nd Ave
-  birth-date:
-    '#text': '1970-01-01'
+RESULT = """<xml>
+  <user firstname="John" lastname="Doe">
+    <birth-date>1978-01-01</birth-date>
+    <office>1st Ave</office>
+  </user>
+  <user firstname="Jane" lastname="Foo">
+    <birth-date>1970-01-01</birth-date>
+    <office>2nd Ave</office>
+  </user>
+</xml>
 """
 
 
 def test_convert_string() -> None:
     """Test convert_string function."""
-    result = convert_string(SYNTAX, CONTENT, "yaml")
-    assert yaml.safe_load(result) == yaml.safe_load(RESULT)
+    result = convert_string(SYNTAX, CONTENT, "xml")
+    assert result == RESULT
