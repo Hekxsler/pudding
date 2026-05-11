@@ -35,7 +35,7 @@ grammar user:
     match fieldname ':' ws value field_end:
         out.add('$0', '$3')
     match nl:
-        do.return()
+        return
 
 # The grammar named "input" is the entry point for the converter.
 grammar input:

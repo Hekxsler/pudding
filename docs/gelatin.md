@@ -8,35 +8,38 @@ Things like these are currently no longer possible:
 match 'foo' '[0-9]' /[\r\n]/
     | 'bar' /[a-z]/ /[\r\n]/
     | 'foobar' /[A-Z]/ /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 ```
 Solutions are changing it to a single line:
 ```
 match 'foo' '[0-9]' /[\r\n]/ | 'bar' /[a-z]/ /[\r\n]/ | 'foobar' /[A-Z]/ /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 ```
 Or splitting it up in seperate statements:
 ```
 match 'foo' '[0-9]' /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 match 'bar' /[a-z]/ /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 match 'foobar' /[A-Z]/ /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 ```
 
-## Removal of do.skip() / skip multiple expressions
+## Removal of do.* functions
 
-The function `do.skip()` has been removed, because `skip` now supports multiple expressions.
+Functions starting with `do.` have been changed to statements to increase parity with python.
+These functions are marked as deprecated and will work at least until version `1.2.0`.
 For example, this
 ```
 match 'foo' /[0-9]/:
-    do.skip()
+    do.return()
 ```
 becomes this:
 ```
-skip 'foo' /[0-9]/
+match 'foo' /[0-9]/:
+    return
 ```
+See the [syntax documentation](./syntax.md#statements) for all new statements.
 
 ## New in pudding
 
@@ -56,3 +59,11 @@ The statements for the case insensitive variant are `iwhen` and `iskip`.
 
 New function to remove a previously created node.
 See the [syntax documentation](./syntax.md#out.remove) for more details on how to use it.
+
+
+### Skip multiple expressions
+
+The skip statement now supports multiple expression, just like match and when.
+```
+skip 'foo' /[0-9]/
+```
