@@ -44,13 +44,22 @@ def build_parser() -> argparse.ArgumentParser:
         ),
         metavar="FORMAT",
     )
+    parser.add_argument(
+        "-o",
+        "--output",
+        help=(
+            "If converting a single file this is the name of the output file."
+            "When converting multiple files this is the output directory."
+        ),
+        metavar="OUTPUT",
+    )
     parser.add_argument("--debug", action="store_true", help="Print debug info.")
     parser.add_argument("-V", "--version", action="version", version=__version__)
     return parser
 
 
-def is_valid_path(path: str) -> bool:
-    """Check if a file path is valid."""
+def is_valid_inpath(path: str) -> bool:
+    """Check if a syntax file path is valid."""
     if not os.path.exists(path):
         logger.error("no such file or directory: %s", repr(path))
         return False
@@ -73,17 +82,32 @@ def main(argv: Sequence[str] | None = None) -> int:
         level=log_level,
     )
 
-    if not is_valid_path(args.syntax):
+    if not is_valid_inpath(args.syntax):
         return 2
 
     ins: list[Path] = []
     outs: list[Path] = []
-    for f in args.filename:
-        if not is_valid_path(f):
+    if len(args.filename) == 1:
+        f = args.filename[0]
+        if not is_valid_inpath(f):
             return 2
         path, _ = os.path.splitext(f)
         ins.append(Path(f))
-        outs.append(Path(f"{path}.{args.format.lower()}"))
+        if args.output:
+            outs.append(Path(args.output))
+        else:
+            outs.append(Path(f"{path}.{args.format.lower()}"))
+    else:
+        for f in args.filename:
+            if not is_valid_inpath(f):
+                return 2
+            path, _ = os.path.splitext(f)
+            ins.append(Path(f))
+            output_path = Path(f"{path}.{args.format.lower()}")
+            if args.output:
+                outs.append(Path(args.output) / output_path)
+            else:
+                outs.append(output_path)
 
     start = datetime.datetime.now()
     convert_files(Path(args.syntax), ins, outs, args.format)
