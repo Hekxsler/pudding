@@ -39,7 +39,7 @@ becomes this:
 match 'foo' /[0-9]/:
     return
 ```
-See the [syntax documentation](./syntax.md) for all new statements.
+See the [syntax documentation](./syntax.md#statements) for all new statements.
 
 ## New in pudding
 
