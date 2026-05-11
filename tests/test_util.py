@@ -103,12 +103,12 @@ Birth date: 1970-01-01
 
 RESULT = """<xml>
   <user firstname="John" lastname="Doe">
-    <birth-date>1978-01-01</birth-date>
     <office>1st Ave</office>
+    <birth-date>1978-01-01</birth-date>
   </user>
   <user firstname="Jane" lastname="Foo">
-    <birth-date>1970-01-01</birth-date>
     <office>2nd Ave</office>
+    <birth-date>1970-01-01</birth-date>
   </user>
 </xml>
 """
