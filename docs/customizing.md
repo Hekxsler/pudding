@@ -60,10 +60,12 @@ Otherwise you can use `.generate_output()` to receive the converted input as a s
 ## Adding a simple custom function
 Here is an example of a custom function:
 ```python
+import re
 import requests
 
 from pudding.datatypes import String
-from pudding.processor import Context, PAction
+from pudding.processor import PAction
+from pudding.processor.context import Context
 from pudding.tokens.functions.function import Function
 
 class SendRequest(Function):
@@ -84,7 +86,7 @@ class SendRequest(Function):
         :returns: Returns PAction.CONTINUE for processor class.
         """
         url = context.replace_string_vars(self.get_string(0))
-        requests.get(url)
+        print(requests.get(url))
         return PAction.CONTINUE
 
 ```
@@ -116,7 +118,7 @@ As described above you need give all occuring tokens to the compiler.
 from pudding.compiler import Compiler
 from pudding.compiler.util import DEFAULT_TOKENS
 
-tokens = DEFAULT_TOKENS + [SendRequest]
+tokens = DEFAULT_TOKENS + (SendRequest,)
 compiler = Compiler(tokens)
 ...
 ```
