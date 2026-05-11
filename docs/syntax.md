@@ -62,12 +62,22 @@ Variable names can only contain the following set of characters (equal to `\w`):
 The define statements assigns a value to a variable name.
 If the variable has a value already assigned it will be replaced.
 This statement can be used anywhere in the code.
+To combine multiple expressions into a variable just list them.
 
 Examples:
 ```
 define my_test /(?:foo|bar)/
 define my_test2 'foobar'
 define my_test3 my_test2
+define my_test4 'foo' my_test3
+```
+
+### Fail
+Immediately terminate with an error.
+Optionally takes a string as an error message.
+
+```
+fail 'Something went wrong'
 ```
 
 ### Grammar
@@ -110,7 +120,6 @@ If you define a grammar or variable with same name as the imported grammar or va
 The import statements behave like copying the content of the other file to the position of the import statement.
 Importing a grammar or variable will fail if it uses grammars/variables not imported and not defined in the current file.
 
-
 ### Match
 Match statements are followed by at least one expression and end with colon (`:`).
 Multiple expressions are separated by a space. Examples:
@@ -120,16 +129,16 @@ define number /[0-9]+/
 
 grammar input:
     match 'foobar':
-        do.say('Match was: $0!')
+        out.say('Match was: $0!')
     match 'foo' 'bar' /[\r\n]/:
-        do.say('Match was: $0!')
+        out.say('Match was: $0!')
     match 'foobar' digit /\s+/ number /[\r\n]/:
-        do.say('Matches: $1 and $3')
+        out.say('Matches: $1 and $3')
 ```
 You may also use multiple matches resulting in a logical OR:
 ```
 match 'foo' '[0-9]' /[\r\n]/ | 'bar' /[a-z]/ /[\r\n]/ | 'foobar' /[A-Z]/ /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 ```
 The expression(s) is matched against the content at the current position.
 On a match, the matching string is consumed from the input and the current position in the document is advanced.
@@ -140,15 +149,40 @@ In this block, the match of each expression can be accessed using `$X`, where X 
 ```
 #       $0     $1      $2
 match 'foo' '[0-9]' /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 ```
 When matching multiple expression combinations:
 ```
 #       $0     $1      $2        $0     $1      $2         $0       $1      $2
 match 'foo' '[0-9]' /[\r\n]/ | 'bar' /[a-z]/ /[\r\n]/ | 'foobar' /[A-Z]/ /[\r\n]/:
-    do.say('Match was: $1!')
+    out.say('Match was: $1!')
 ```
 The case-insensitive variant `imatch` works the same, except that matching is case-insensitive.
+
+### Next
+Immediately execute the next statement or function in the current grammar.
+Prevents the converter from jumping back to the top of the grammar.
+Example, where the third match is checked directly after the second matched:
+```
+grammar input:
+    match 'foobar':
+        out.say('Match was: $0!')
+    match 'foo' 'bar' /[\r\n]/:
+        out.say('Match was: $0!')
+        next
+    match 'foobar' digit /\s+/ number /[\r\n]/:
+        out.say('Matches: $1 and $3')
+```
+
+### Return
+Immediately leave the current grammar and return to the calling grammar.
+When used in the input grammar stop parsing.
+
+Example:
+```
+when 'User:':
+    return
+```
 
 ### Skip
 Skip statements are like match statements but without any actions.
@@ -173,42 +207,12 @@ The current position in the content is not advanced.
 Example:
 ```
 when 'User:':
-    do.return()
+    out.say('Hey')
 ```
 The case-insensitive variant `iwhen` works the same, except that matching is case-insensitive.
 
 
 ## Functions
-
-### Control Functions
-
-```{eval-rst}
-.. py:function:: do.fail(message)
-
-    Print a given string to stdout and immediately terminate with an error.
-
-    :param message: Message to print.
-    :type message: String
-
-
-.. py:function:: do.next()
-
-    Immediately execute the next statement or function in the current grammar.
-
-
-.. py:function:: do.return()
-
-    Immediately leave the current grammar and return to the calling grammar.
-    When used in the input grammar stop parsing.
-
-
-.. py:function:: do.say(message)
-
-    Print to stdout.
-
-    :param message: Message to print.
-    :type message: String
-```
 
 
 ### Grammar call
@@ -344,6 +348,13 @@ The case-insensitive variant `iwhen` works the same, except that matching is cas
    :param text: New text of the node.
    :type text: String
 
+.. py:function:: out.say(message)
+
+    Print to stdout.
+
+    :param message: Message to print.
+    :type message: String
+```
 
 .. py:function:: out.set_root_name(name)
 

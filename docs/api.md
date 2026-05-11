@@ -84,14 +84,6 @@ This section contains the API reference for the pudding package.
 ```
 
 
-#### Do Functions
-
-```{eval-rst}
-.. automodule:: pudding.tokens.functions.do
-    :members:
-```
-
-
 #### Out Functions
 
 ```{eval-rst}
