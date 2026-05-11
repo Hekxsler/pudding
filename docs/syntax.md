@@ -51,9 +51,9 @@ Examples:
 
 ### Varname
 Variable names can only contain the following set of characters (equal to `\w`):
-    - Letters from A to Z, both lower and capital.
-    - Numbers
-    - Underscores (`_`)
+- Letters from A to Z, both lower and capital.
+- Numbers
+- Underscores (`_`)
 
 
 ## Statements
@@ -354,7 +354,6 @@ The case-insensitive variant `iwhen` works the same, except that matching is cas
 
     :param message: Message to print.
     :type message: String
-```
 
 .. py:function:: out.set_root_name(name)
 
