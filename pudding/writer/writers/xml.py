@@ -158,7 +158,7 @@ class Xml(BufferedWriter):
         """Convert node object to etree element."""
         root = etree.Element(node.name, node.attribs)
         root.text = node.text
-        for child in node.get_sorted_children():
+        for child in node.get_children():
             root.append(self.serialize_node(child))
         return root
 

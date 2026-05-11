@@ -163,8 +163,7 @@ class Node:
         :param name: Name of the attribute.
         """
         return self.attribs.get(name, default)
-
-    def get_sorted_children(self) -> list[Self]:
-        """Return a list of children sorted by name."""
-        childs = chain(*self.children.values())
-        return sorted(childs, key=lambda x: x.name)
+    
+    def get_children(self) -> list[Self]:
+        """Return a list of Nodes that are children to this node."""
+        return list(chain(*self.children.values()))
