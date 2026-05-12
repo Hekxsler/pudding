@@ -1,7 +1,7 @@
 """Node class for caching generated output."""
 
-from itertools import chain
 import re
+from itertools import chain
 from typing import Self
 
 
@@ -10,7 +10,7 @@ class Node:
 
     attribute_re = re.compile(r"([?&]([\w\-\_]+)=\"((?:\\\"|[^\"])+)\")")
     node_re = re.compile(
-        r"(([./]?)([\w\-\_ ]+)((?:[?&][\w\-\_]+=\"(?:\\\"|[^\"])+\")*))"
+        r"((\.)()()|(/?)([\w\-\_ ]+)((?:[?&][\w\-\_]+=\"(?:\\\"|[^\"])+\")*))"
     )
 
     def __init__(
@@ -50,7 +50,7 @@ class Node:
         return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
 
     @classmethod
-    def from_path(cls, path: str, text: str | None = None) -> Self:
+    def from_node_path(cls, path: str, text: str | None = None) -> Self:
         """Parse node object from path.
 
         :param path: Node path of the object.
@@ -78,28 +78,32 @@ class Node:
 
     @classmethod
     def split_path(cls, path: str) -> list[tuple[str, str, str, str]]:
-        """Split the path into nodes.
+        """Parse and split a path into nodes.
 
         :param path: Path to split.
         :returns: List of node matches as a tuple.
             E.g. [(full_nodepath, [./]*, tag, attributes), ...]
         """
         if "/" not in path:
+            if path == ".":
+                return [(".", "", "", "")]
             match = cls.node_re.fullmatch(path)
             if match:
-                groups = match.groups("")[:4]
-                if len(groups) == 4:  # needed for typing
-                    return [groups]
+                groups = match.groups("")
+                return [(groups[0], groups[4], groups[5], groups[6])]
         else:
             matches: list[tuple[str, str, str, str]] = []
             match = cls.node_re.match(path)
             while match:
-                groups = match.groups("")[:4]
-                if len(groups) == 4:  # needed for typing
-                    matches.append(groups)
-                path = path[len(match.group(0)):]
+                if match[0] == ".":
+                    matches.append((".", "", "", ""))
+                    continue
+                groups = match.groups("")
+                matches.append((groups[0], groups[4], groups[5], groups[6]))
+                path = path[len(match.group(0)) :]
                 match = cls.node_re.match(path)
-            if matches:
+            if matches and not path:
+                # remaining chars in path string -> no fullmatch -> invalid path
                 return matches
         raise ValueError(f"Invalid path {repr(path)}.")
 
@@ -118,7 +122,7 @@ class Node:
         :returns Node: The created and added node.
         """
         node_path = node_path.lstrip("./")
-        node = self.from_path(node_path, text)
+        node = self.from_node_path(node_path, text)
         node.parent = self
         childs = self.children.get(node_path, [])
         self.children[node_path] = childs + [node]
@@ -164,7 +168,6 @@ class Node:
         """
         return self.attribs.get(name, default)
 
-    def get_sorted_children(self) -> list[Self]:
-        """Return a list of children sorted by name."""
-        childs = chain(*self.children.values())
-        return sorted(childs, key=lambda x: x.name)
+    def get_children(self) -> list[Self]:
+        """Return a list of Nodes that are children to this node."""
+        return list(chain(*self.children.values()))

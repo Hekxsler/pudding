@@ -2,17 +2,21 @@
 
 import re
 
-from ....processor import PAction
-from ....processor.context import Context
-from ....datatypes import String
-from .out import Out
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
+from ..function import Function
 
 
-class Remove(Out):
+class Remove(Function):
     """Class for `out.remove` function.
 
     Deletes the last node in the given path.
     """
+
+    min_args = 1
+    max_args = 1
 
     match_re = re.compile(r"(out\.remove)\((.*)\)$")
     value_types = (String,)
@@ -23,5 +27,5 @@ class Remove(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        context.writer.delete_element(context.replace_string_vars(self.get_string(0)))
+        context.writer.delete_element(self.get_replaced_string(0, context))
         return PAction.CONTINUE

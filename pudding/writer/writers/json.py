@@ -2,8 +2,8 @@
 
 import json
 
-from .writer import BufferedWriter
 from ..node import Node
+from .writer import BufferedWriter
 
 type JsonType = dict[str, JsonType | list[JsonType] | str]
 
@@ -19,7 +19,7 @@ def _to_json(node: Node) -> JsonType:
         elem[f"@{k}"] = v
     if node.text is not None:
         elem["#text"] = node.text
-    for child in node.get_sorted_children():
+    for child in node.get_children():
         existing = elem.get(child.name)
         if isinstance(existing, str):
             raise RuntimeError
@@ -53,6 +53,6 @@ class Json(BufferedWriter):
     def generate_output(self) -> str:
         """Generate output in specified format."""
         base: JsonType = {}
-        for child in self.root.get_sorted_children():
+        for child in self.root.get_children():
             base = self.serialize_node(child, base)
         return json.dumps(base, indent=4)

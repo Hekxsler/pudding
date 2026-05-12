@@ -2,41 +2,39 @@
 
 import re
 
-from ....processor import PAction
-from ....processor.context import Context
-from ....processor.triggers import Timing, Trigger
-from ....datatypes import Regex, String, Varname
+from pudding.datatypes import Regex, String, Varname
+from pudding.processor import PAction
+from pudding.processor.context import Context
+from pudding.processor.triggers import Timing, Trigger
+
+from ..function import Function
 from .add import Add
-from .out import Out
 
 
-class Enqueue(Out):
+class Enqueue(Function):
     """Base class for `out.enqueue` functions."""
 
     min_args = 2
     max_args = 3
     value_types = (String | Regex | Varname, String, String)
 
-    def get_pattern(self, context: Context) -> re.Pattern[str]:
-        """Return pattern to match."""
-        value = self.values[0].re_pattern
-        if isinstance(self.values[0], Varname):
-            value = context.get_var(self.values[0])
-        return re.compile(value)
-
-    def get_values(self) -> tuple[String, ...]:
-        """Get values to create tag."""
-        if not isinstance(self.get_value(2), String):
-            return (self.get_string(1),)
-        return (self.get_string(1), self.get_string(2))
-
     def add_trigger(self, context: Context, timing: Timing) -> PAction:
         """Add trigger to context."""
+
+        def get_values() -> tuple[String, ...]:
+            """Get values for add function."""
+            if not self.get_value(2):
+                return (self.get_string(1),)
+            return (self.get_string(1), self.get_string(2))
+
+        pattern = self.values[0].re_pattern
+        if isinstance(self.values[0], Varname):
+            pattern = context.get_var(self.values[0])
         context.queue.add_trigger(
             timing,
             Trigger(
-                self.get_pattern(context),
-                Add(self.lineno, "EnqueuedAdd", tuple(self.get_values())),
+                re.compile(pattern),
+                Add(self.lineno, "EnqueuedAdd", get_values()),
             ),
         )
         return PAction.CONTINUE

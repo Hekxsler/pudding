@@ -4,18 +4,6 @@ import pytest
 
 from pudding.util import convert_string
 
-SYNTAX = """
-grammar input:
-    out.open()
-"""
-
-CONTENT = """User
-----
-Name: John, Lastname: Doe
-Office: 1st Ave
-Birth date: 1978-01-01
-"""
-
 
 def test_define() -> None:
     """Test define statement."""

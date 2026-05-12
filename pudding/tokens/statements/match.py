@@ -3,8 +3,9 @@
 import re
 from typing import Callable
 
-from ...processor import PAction
-from ...processor.context import Context
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
 from .statement import MultiExpStatement
 
 

@@ -2,12 +2,13 @@
 
 import re
 
-from ....processor import PAction
-from ....processor.context import Context
-from .out import Out
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
+from ..function import Function
 
 
-class ClearQueue(Out):
+class ClearQueue(Function):
     """Class for `out.clear_queue` function.
 
     Removes any items from the queue that were previously queued

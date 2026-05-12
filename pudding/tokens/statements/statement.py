@@ -1,12 +1,12 @@
 """Module defining statements."""
 
 import re
-from re import RegexFlag
 from types import EllipsisType
 from typing import Generator
 
-from ...datatypes import Data, Or, Regex, String, Varname
-from ...processor.context import Context
+from pudding.datatypes import Data, Or, Regex, String, Varname
+from pudding.processor.context import Context
+
 from ..token import MultiExpToken, Token, ValueType
 
 
@@ -33,7 +33,8 @@ class MultiExpStatement(MultiExpToken):
         pattern = r""
         for data in self.values:
             if isinstance(data, (String, Regex)):
-                pattern += rf"({data.re_pattern})"
+                match_pattern = re.sub(r"(?<!\\)\((?!\?\:)", "(?:", data.re_pattern)
+                pattern += rf"({match_pattern})"
             elif isinstance(data, Varname):
                 pattern += rf"({context.get_var(data)})"
             elif isinstance(data, Or):
@@ -42,7 +43,7 @@ class MultiExpStatement(MultiExpToken):
         yield pattern
 
     def get_compiled_patterns(
-        self, context: Context, re_flag: RegexFlag = RegexFlag.NOFLAG
+        self, context: Context, re_flag: re.RegexFlag = re.RegexFlag.NOFLAG
     ) -> Generator[re.Pattern[str], None, None]:
         """Return the combined patterns as a string.
 

@@ -2,19 +2,23 @@
 
 import re
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
-from .out import Out
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
+from ..function import Function
 
 
-class Enter(Out):
+class Enter(Function):
     """Class for `out.enter` function.
 
     Creates the nodes in the given path if they do not already exist and
     selects the last node. Therefore the PATH of all subsequent function calls is
     relative to the selected node until the end of the match block is reached.
     """
+
+    min_args = 1
+    max_args = 2
 
     match_re = re.compile(r"(out\.enter)\((.*)\)$")
     value_types = (String, String)
@@ -25,11 +29,8 @@ class Enter(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        value = None
-        if self.get_value(1):
-            value = context.replace_string_vars(self.get_string(1))
         context.writer.enter_path(
-            context.replace_string_vars(self.get_string(0)),
-            value,
+            self.get_replaced_string(0, context),
+            self.get_optional_replaced_string(1, context),
         )
         return PAction.CONTINUE

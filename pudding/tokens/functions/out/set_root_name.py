@@ -2,17 +2,17 @@
 
 import re
 
-from ....writer import Xml
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class SetRootName(Out):
+class SetRootName(Function):
     """Class for `out.set_root_name` function."""
 
+    min_args = 1
     max_args = 1
 
     match_re = re.compile(r"(out\.set_root_name)\((.*)\)$")
@@ -24,6 +24,5 @@ class SetRootName(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        if isinstance(context.writer, Xml):
-            context.writer.root_name = self.get_string(0).value
+        context.writer.root_name = self.get_replaced_string(0, context)
         return PAction.CONTINUE

@@ -17,7 +17,7 @@ grammar list(default):
     match '{' word ws '=' ws quote string quote ', ' word ws '=' ws quote string quote '}':
         out.add('item?$1="$6"&$9="$14"')
     match ']':
-        do.return()
+        return
 
 grammar input(default):
     imatch '[' /[A-Z]+/ ']' nl:
@@ -30,7 +30,7 @@ grammar input(default):
         out.enqueue_before(/(before) (this)/, '$0', '$1')
         out.enqueue_after(/(after) (that)/, '$0', '$1')
         out.enqueue_on_add(/(onadd)/, '$0')
-        do.next()
+        next
     match enqueue_test:
         out.enter('enqueue?name="test"')
         enqueue_test()

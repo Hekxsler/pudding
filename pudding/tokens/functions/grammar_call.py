@@ -2,7 +2,8 @@
 
 import re
 
-from ...datatypes.varname import Varname
+from pudding.datatypes import Varname
+
 from .function import Function
 
 

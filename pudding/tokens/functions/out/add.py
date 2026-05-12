@@ -2,18 +2,22 @@
 
 import re
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
-from .out import Out
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
+from ..function import Function
 
 
-class Add(Out):
+class Add(Function):
     """Class for `out.add` function.
 
     Appends the string value to the text of the existing node if it already exists.
     Otherwise it creates a new node.
     """
+
+    min_args = 1
+    max_args = 2
 
     match_re = re.compile(r"(out\.add)\((.*)\)$")
     value_types = (String, String)
@@ -24,10 +28,8 @@ class Add(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        value = None
-        if self.get_value(1):
-            value = context.replace_string_vars(self.get_string(1))
         context.writer.add_element(
-            context.replace_string_vars(self.get_string(0)), value
+            self.get_replaced_string(0, context),
+            self.get_optional_replaced_string(1, context),
         )
         return PAction.CONTINUE

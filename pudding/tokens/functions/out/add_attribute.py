@@ -2,13 +2,14 @@
 
 import re
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
-from .out import Out
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
+from ..function import Function
 
 
-class AddAttribute(Out):
+class AddAttribute(Function):
     """Class for `out.add_attribute` function.
 
     Adds the attribute with the given name and value to the node at the given path.
@@ -27,8 +28,8 @@ class AddAttribute(Out):
         :returns: PAction.CONTINUE
         """
         context.writer.add_attribute(
-            context.replace_string_vars(self.get_string(0)),
-            context.replace_string_vars(self.get_string(1)),
-            context.replace_string_vars(self.get_string(2)),
+            self.get_replaced_path(0, context),
+            self.get_replaced_string(1, context),
+            self.get_replaced_string(2, context),
         )
         return PAction.CONTINUE
