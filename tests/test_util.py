@@ -80,7 +80,7 @@ grammar user:
     match fieldname ':' ws value field_end:
         out.add('$0', '$3')
     match nl:
-        do.return()
+        return
 
 grammar input:
     match 'User' nl '----' nl:
