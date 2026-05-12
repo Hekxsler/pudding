@@ -2,11 +2,10 @@
 
 import re
 
-from ....writer import Xml
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
 from ..function import Function
 
 
@@ -25,6 +24,5 @@ class SetRootName(Function):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        if isinstance(context.writer, Xml):
-            context.writer.root_name = self.get_string(0).value
+        context.writer.root_name = self.get_string(0).value
         return PAction.CONTINUE

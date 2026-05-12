@@ -1,6 +1,7 @@
 """Module defining base writer class."""
 
 import yaml
+
 from .json import Json, JsonType
 
 

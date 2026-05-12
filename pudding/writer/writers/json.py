@@ -2,8 +2,8 @@
 
 import json
 
-from .writer import BufferedWriter
 from ..node import Node
+from .writer import BufferedWriter
 
 type JsonType = dict[str, JsonType | list[JsonType] | str]
 

@@ -1,21 +1,12 @@
 """Utility functions for writer package."""
 
-from .writers.json import Json
+from . import __all__, available_writers
 from .writers.writer import Writer
-from .writers.xml import SliXml, Xml
-from .writers.yaml import Yaml
 
 
 def get_writer_from_format(output_format: str) -> type[Writer]:
     """Return writer class for a output format."""
-    match output_format:
-        case "slixml":
-            return SliXml
-        case "json":
-            return Json
-        case "xml":
-            return Xml
-        case "yaml":
-            return Yaml
-        case _:
-            raise ValueError(f"Unsupported output format {output_format}")
+    for name, cls in zip(__all__, available_writers):
+        if output_format.lower() == name.lower():
+            return cls
+    raise ValueError(f"Unsupported output format {output_format}.")

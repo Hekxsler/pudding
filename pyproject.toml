@@ -9,11 +9,7 @@ description = "Pudding converts text to a structured format, such as XML, JSON o
 authors = [
     {name = "Moritz Hille", email = "moritz.hekxsler@gmail.com"},
 ]
-dependencies = [
-    "argparse",
-    "lxml",
-    "pyyaml",
-]
+dependencies = ["argparse"]
 requires-python = ">=3.12"
 readme = "README.md"
 license = "GPL-3.0-only"
@@ -27,6 +23,11 @@ classifiers = [
   "Topic :: Text Processing",
   "Topic :: Utilities"
 ]
+
+[project.optional-dependencies]
+xml = ["lxml"]
+yaml = ["pyyaml"]
+all = ["lxml", "pyyaml"]
 
 [project.scripts]
 pudding = "pudding.__main__:main"

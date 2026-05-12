@@ -1,7 +1,7 @@
 """Node class for caching generated output."""
 
-from itertools import chain
 import re
+from itertools import chain
 from typing import Self
 
 
@@ -97,7 +97,7 @@ class Node:
                 groups = match.groups("")[:4]
                 if len(groups) == 4:  # needed for typing
                     matches.append(groups)
-                path = path[len(match.group(0)):]
+                path = path[len(match.group(0)) :]
                 match = cls.node_re.match(path)
             if matches:
                 return matches
@@ -163,7 +163,7 @@ class Node:
         :param name: Name of the attribute.
         """
         return self.attribs.get(name, default)
-    
+
     def get_children(self) -> list[Self]:
         """Return a list of Nodes that are children to this node."""
         return list(chain(*self.children.values()))
