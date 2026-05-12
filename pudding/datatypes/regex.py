@@ -1,7 +1,5 @@
 """Data type for a regular expression."""
 
-import re
-
 from .data import Data
 
 
