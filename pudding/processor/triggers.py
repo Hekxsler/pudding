@@ -2,12 +2,10 @@
 
 from enum import Enum
 from re import Pattern
-from typing import TypeVar
 
-from ..tokens.token import Token
+from pudding.tokens.token import Token
 
 Timing = Enum("Timing", "AFTER BEFORE ON_ADD")
-_D = TypeVar("_D")
 
 
 class Trigger:
@@ -37,8 +35,8 @@ class TriggerQueue(dict[Timing, list[Trigger]]):
 
     def __init__(self) -> None:
         """Init TriggerQueue."""
+        super().__init__()
         self.triggers: dict[Timing, list[Trigger]] = {}
-        return super().__init__()
 
     def add_trigger(self, timing: Timing, trigger: Trigger) -> None:
         """Add a trigger to the queue.
