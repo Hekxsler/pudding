@@ -66,6 +66,7 @@ test = [
     "pytest",
     "pytest-env",
     "testfixtures",
+    "pudding[all]",
 ]
 tool = [
     "tox",
