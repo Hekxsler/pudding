@@ -5,14 +5,17 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class Replace(Out):
+class Replace(Function):
     """Class for `out.replace` function.
 
     Replaces the text of the last node in the given path.
     """
+
+    min_args = 1
+    max_args = 2
 
     match_re = re.compile(r"(out\.replace)\((.*)\)$")
     value_types = (String, String)
@@ -23,10 +26,10 @@ class Replace(Out):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        value = None
+        new_value = None
         if self.get_value(1):
-            value = context.replace_string_vars(self.get_string(1))
+            new_value = context.replace_string_vars(self.get_string(1))
         context.writer.replace_element(
-            context.replace_string_vars(self.get_string(0)), value
+            context.replace_string_vars(self.get_string(0)), new_value
         )
         return PAction.CONTINUE

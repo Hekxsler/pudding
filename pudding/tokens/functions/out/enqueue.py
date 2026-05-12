@@ -7,10 +7,10 @@ from ....processor.context import Context
 from ....processor.triggers import Timing, Trigger
 from ....datatypes import Regex, String, Varname
 from .add import Add
-from .out import Out
+from ..function import Function
 
 
-class Enqueue(Out):
+class Enqueue(Function):
     """Base class for `out.enqueue` functions."""
 
     min_args = 2

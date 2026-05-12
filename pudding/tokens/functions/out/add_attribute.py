@@ -5,10 +5,10 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class AddAttribute(Out):
+class AddAttribute(Function):
     """Class for `out.add_attribute` function.
 
     Adds the attribute with the given name and value to the node at the given path.

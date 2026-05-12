@@ -5,14 +5,17 @@ import re
 from ....processor import PAction
 from ....processor.context import Context
 from ....datatypes import String
-from .out import Out
+from ..function import Function
 
 
-class Remove(Out):
+class Remove(Function):
     """Class for `out.remove` function.
 
     Deletes the last node in the given path.
     """
+
+    min_args = 1
+    max_args = 1
 
     match_re = re.compile(r"(out\.remove)\((.*)\)$")
     value_types = (String,)

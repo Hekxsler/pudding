@@ -7,12 +7,13 @@ from ....writer import Xml
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class SetRootName(Out):
+class SetRootName(Function):
     """Class for `out.set_root_name` function."""
 
+    min_args = 1
     max_args = 1
 
     match_re = re.compile(r"(out\.set_root_name)\((.*)\)$")

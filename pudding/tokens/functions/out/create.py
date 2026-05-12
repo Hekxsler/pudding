@@ -5,10 +5,10 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class Create(Out):
+class Create(Function):
     """Class for `out.create` function.
 
     Creates the leaf node (and attributes) in the given path, regardless of whether or
@@ -17,6 +17,9 @@ class Create(Out):
     created if they do not yet exist. If the second argument is given, the new node is
     also assigned the string as data.
     """
+
+    min_args = 1
+    max_args = 2
 
     match_re = re.compile(r"(out\.create)\((.*)\)$")
     value_types = (String, String)

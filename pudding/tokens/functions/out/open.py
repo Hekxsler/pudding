@@ -5,16 +5,19 @@ import re
 from ....datatypes import String
 from ....processor import PAction
 from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class Open(Out):
+class Open(Function):
     """Class for `out.open` function.
 
     Like out.create(), but also selects the addressed node, such that the PATH of all
     subsequent function calls is relative to the selected node until the end of the
     match block is reached.
     """
+
+    min_args = 1
+    max_args = 2
 
     match_re = re.compile(r"(out\.open)\((.*)\)$")
     value_types = (String, String)

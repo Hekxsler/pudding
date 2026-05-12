@@ -6,15 +6,16 @@ import sys
 from ....datatypes.string import String
 from ....processor import PAction
 from ....processor.context import Context
-from .out import Out
+from ..function import Function
 
 
-class Say(Out):
+class Say(Function):
     """Class for `say` function.
 
     Prints the given string to stdout.
     """
 
+    min_args = 1
     max_args = 1
 
     match_re = re.compile(r"(out\.say)\((.*)\)$")
