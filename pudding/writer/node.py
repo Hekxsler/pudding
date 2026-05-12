@@ -85,18 +85,21 @@ class Node:
             E.g. [(full_nodepath, [./]*, tag, attributes), ...]
         """
         if "/" not in path:
+            if path == ".":
+                return [(".", "", "", "")]
             match = cls.node_re.fullmatch(path)
             if match:
-                groups = match.groups("")[:4]
-                if len(groups) == 4:  # needed for typing
-                    return [groups]
+                groups = match.groups("")
+                return [(groups[0], groups[4], groups[5], groups[6])]
         else:
             matches: list[tuple[str, str, str, str]] = []
             match = cls.node_re.match(path)
             while match:
-                groups = match.groups("")[:4]
-                if len(groups) == 4:  # needed for typing
-                    matches.append(groups)
+                if match[0] == ".":
+                    matches.append((".", "", "", ""))
+                    continue
+                groups = match.groups("")
+                matches.append((groups[0], groups[4], groups[5], groups[6]))
                 path = path[len(match.group(0)) :]
                 match = cls.node_re.match(path)
             if matches and not path:
