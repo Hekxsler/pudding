@@ -9,12 +9,13 @@ from pathlib import Path
 
 from .util import convert_files
 from .version import __version__
+from .writer import __all__ as format_choices
 
+DEFAULT_FORMAT = "json"
 DESCRIPTION = """
 Pudding converts text to a structured format, such as XML, JSON or YAML.
 For more information see the documentation at https://pudding.readthedocs.io/latest.
 """
-FORMAT_CHOICES = ["json", "slixml", "xml", "yaml"]
 
 logger = logging.getLogger(__name__)
 
@@ -36,11 +37,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-f",
         "--format",
-        choices=FORMAT_CHOICES,
-        default="xml",
+        choices=format_choices,
+        default=DEFAULT_FORMAT,
         help=(
             "The output format. "
-            f"Choices are: {', '.join(FORMAT_CHOICES)}. Default is `xml`."
+            f"Choices are: {', '.join(format_choices)}. Default is `{DEFAULT_FORMAT}`."
         ),
         metavar="FORMAT",
     )
@@ -110,6 +111,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 outs.append(output_path)
 
     start = datetime.datetime.now()
-    convert_files(Path(args.syntax), ins, outs, args.format)
+    try:
+        convert_files(Path(args.syntax), ins, outs, args.format)
+    except ValueError as e:
+        logger.error(e)
     logger.debug("Total: %s", str(datetime.datetime.now() - start))
     return 0
