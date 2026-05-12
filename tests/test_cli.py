@@ -10,7 +10,17 @@ from .test_util import DATA_DIR, INPUT_FILE
 def test_main() -> None:
     """Test main function."""
     pud_file = DATA_DIR / "test.pud"
-    main(["-s", str(pud_file), str(INPUT_FILE), "-f", "json"])
-    assert json.load(open(DATA_DIR / "input.json")) == json.load(
+    main(
+        [
+            "-s",
+            str(pud_file),
+            str(INPUT_FILE),
+            "-f",
+            "json",
+            "-o",
+            str(DATA_DIR / "cli.json"),
+        ]
+    )
+    assert json.load(open(DATA_DIR / "cli.json")) == json.load(
         open(DATA_DIR / "expected.json")
     )
