@@ -10,9 +10,6 @@ from ..writer import Writer
 from .grammar import Grammar
 from .triggers import TriggerQueue
 
-STRING_VAR_RE = r"([^\d]?\$(\d+)[^\$]?)"
-# match chars before and after to not match $1 and $10 when replacing $1
-
 
 class Context:
     """Class containing context for the processor.
@@ -66,7 +63,7 @@ class Context:
         :param context: The current context.
         :returns: The string with replaced values.
         """
-        string_vars = re.findall(STRING_VAR_RE, string.value)
+        string_vars = re.findall(r"\$(\d+)", string.value)
         if len(string_vars) == 0:
             return string.value
         if self.reader.last_match is None:
@@ -75,12 +72,13 @@ class Context:
             )
         new_string = string.value
         matches = self.reader.last_match.groups()
-        for replace, number in string_vars:
-            assert isinstance(replace, str)
+        for number in string_vars:
+            assert isinstance(number, str)
             if int(number) >= len(matches):
                 raise IndexError(
                     f"Not enough matches in {matches} to replace variable '${number}'."
                 )
-            replacement = replace.replace(f"${number}", matches[int(number)], 1)
-            new_string = re.sub(re.escape(replace), replacement, new_string, count=1)
+            new_string = re.sub(
+                rf"\${number}(?!\d+)", matches[int(number)], new_string, count=1
+            )
         return new_string
