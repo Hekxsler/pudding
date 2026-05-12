@@ -80,14 +80,14 @@ class SliXml(Writer):
             case 0:
                 raise ValueError(f"Invalid path {repr(path)}.")
             case 1:
-                node = Node.from_path(paths[0][0], value)
+                node = Node.from_node_path(paths[0][0], value)
                 self._writenode(node, single=True)
             case _:
                 for sub_paths in paths[:-1]:
-                    self._writenode(Node.from_path(sub_paths[0], value))
-                self._writenode(Node.from_path(paths[-1][0], value), single=True)
+                    self._writenode(Node.from_node_path(sub_paths[0], value))
+                self._writenode(Node.from_node_path(paths[-1][0], value), single=True)
                 for sub_paths in reversed(paths[:-1]):
-                    self._writenode(Node.from_path(sub_paths[2], value), closing=True)
+                    self._writenode(Node.from_node_path(sub_paths[2], value), closing=True)
 
     def add_element(self, path: str, value: str | None = None) -> None:
         """Add an element if its not the current element.
@@ -97,7 +97,7 @@ class SliXml(Writer):
         :param path: Path to the element.
         :param value: Value of the element or None if it has no value.
         """
-        if self.last_node == Node.from_path(path):
+        if self.last_node == Node.from_node_path(path):
             if not value:
                 return
             if not self.last_node.text:
@@ -115,7 +115,7 @@ class SliXml(Writer):
         """
         paths = Node.split_path(path)
         for node_path, _, _, _ in paths:
-            self._writenode(Node.from_path(node_path))
+            self._writenode(Node.from_node_path(node_path))
             self.indent += 1
         self.last_node.text = value
         self.prev_roots.append("/".join([p[2] for p in paths]))

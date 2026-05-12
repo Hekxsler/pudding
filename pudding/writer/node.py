@@ -50,7 +50,7 @@ class Node:
         return f"<Node name={repr(self.name)} {self.attribs} children={self.children}>"
 
     @classmethod
-    def from_path(cls, path: str, text: str | None = None) -> Self:
+    def from_node_path(cls, path: str, text: str | None = None) -> Self:
         """Parse node object from path.
 
         :param path: Node path of the object.
@@ -119,7 +119,7 @@ class Node:
         :returns Node: The created and added node.
         """
         node_path = node_path.lstrip("./")
-        node = self.from_path(node_path, text)
+        node = self.from_node_path(node_path, text)
         node.parent = self
         childs = self.children.get(node_path, [])
         self.children[node_path] = childs + [node]
