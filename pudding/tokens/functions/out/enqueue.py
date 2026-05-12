@@ -18,26 +18,23 @@ class Enqueue(Function):
     max_args = 3
     value_types = (String | Regex | Varname, String, String)
 
-    def get_pattern(self, context: Context) -> re.Pattern[str]:
-        """Return pattern to match."""
-        value = self.values[0].re_pattern
-        if isinstance(self.values[0], Varname):
-            value = context.get_var(self.values[0])
-        return re.compile(value)
-
-    def get_values(self) -> tuple[String, ...]:
-        """Get values to create tag."""
-        if not self.get_value(2):
-            return (self.get_string(1),)
-        return (self.get_string(1), self.get_string(2))
-
     def add_trigger(self, context: Context, timing: Timing) -> PAction:
         """Add trigger to context."""
+
+        def get_values() -> tuple[String, ...]:
+            """Get values for add function."""
+            if not self.get_value(2):
+                return (self.get_string(1),)
+            return (self.get_string(1), self.get_string(2))
+
+        pattern = self.values[0].re_pattern
+        if isinstance(self.values[0], Varname):
+            pattern = context.get_var(self.values[0])
         context.queue.add_trigger(
             timing,
             Trigger(
-                self.get_pattern(context),
-                Add(self.lineno, "EnqueuedAdd", self.get_values()),
+                re.compile(pattern),
+                Add(self.lineno, "EnqueuedAdd", get_values()),
             ),
         )
         return PAction.CONTINUE

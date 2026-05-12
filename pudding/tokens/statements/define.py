@@ -15,12 +15,11 @@ class Define(MultiExpStatement):
     match_re = re.compile(r"(define) +(.*)$")
     value_types = (Varname, Data, ...)
 
-    def get_value_patterns(self, context: Context) -> str:
-        """Return the combined patterns as a string.
+    def execute(self, context: Context) -> PAction:
+        """Set a variable.
 
-        :param context: Context to resolve variables.
-        :param re_flag: Regex flag when compiling expression.
-        :returns: List of regex patterns, where each element is a possible pattern.
+        :param context: Current context object.
+        :returns: PAction.CONTINUE
         """
         pattern = r""
         for data in self.values[1:]:
@@ -31,13 +30,6 @@ class Define(MultiExpStatement):
             elif isinstance(data, Or):
                 msg = "Define statement can't contain Or-character."
                 raise SyntaxError(f"{msg} (line {self.lineno})")
-        return pattern
 
-    def execute(self, context: Context) -> PAction:
-        """Set a variable.
-
-        :param context: Current context object.
-        :returns: PAction.CONTINUE
-        """
-        context.variables[self.values[0].value] = self.get_value_patterns(context)
+        context.variables[self.values[0].value] = pattern
         return PAction.CONTINUE
