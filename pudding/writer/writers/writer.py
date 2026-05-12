@@ -7,11 +7,7 @@ from ..node import Node
 
 
 class Writer:
-    """Base writer class.
-
-    :var attrib_re: Regex for node attributes.
-    :var node_re: Regex for a node path.
-    """
+    """Base writer class."""
 
     def __init__(
         self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "root"
@@ -109,11 +105,7 @@ class Writer:
 
 
 class BufferedWriter(Writer):
-    """Base writer class for buffered output.
-
-    :var attrib_re: Regex for node attributes.
-    :var node_re: Regex for a node path.
-    """
+    """Base writer class for buffered output."""
 
     def __init__(
         self, file_path: Path, *, encoding: str = "utf-8", root_name: str = "root"
