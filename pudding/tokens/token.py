@@ -154,7 +154,9 @@ class BaseToken:
             f"Value {repr(value)} is not a {datatype.__name__}. (line {self.lineno})"
         )
 
-    def get_value(self, index: int, default: Optional[_D] = None) -> Optional[_D] | Data:
+    def get_value(
+        self, index: int, default: Optional[_D] = None
+    ) -> Optional[_D] | Data:
         """Get a value.
 
         :param index: Index of the value in values tuple.
