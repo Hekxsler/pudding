@@ -2,7 +2,7 @@
 
 import re
 from types import EllipsisType, UnionType
-from typing import TYPE_CHECKING, Generator, NoReturn, Self, TypeVar
+from typing import TYPE_CHECKING, Generator, NoReturn, Optional, Self, TypeVar
 
 from ..datatypes import Data, Regex, String, string_to_datatype
 from ..processor import PAction
@@ -154,7 +154,7 @@ class BaseToken:
             f"Value {repr(value)} is not a {datatype.__name__}. (line {self.lineno})"
         )
 
-    def get_value(self, index: int, default: _D = None) -> _D | Data:
+    def get_value(self, index: int, default: Optional[_D] = None) -> Optional[_D] | Data:
         """Get a value.
 
         :param index: Index of the value in values tuple.
