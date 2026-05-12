@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .util import convert_files
 from .version import __version__
-from .writer import __all__ as format_choices
+from .writer import __all__ as formats
 
 DEFAULT_FORMAT = "json"
 DESCRIPTION = """
@@ -17,6 +17,7 @@ Pudding converts text to a structured format, such as XML, JSON or YAML.
 For more information see the documentation at https://pudding.readthedocs.io/latest.
 """
 
+format_choices = [f.lower() for f in formats]
 logger = logging.getLogger(__name__)
 
 
