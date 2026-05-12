@@ -30,7 +30,8 @@ class Function(Token):
         """
         if self.min_args <= len(values) <= self.max_args:
             return super().__init__(lineno, name, values)
-        err_msg = f"Expected {self.min_args} but got {len(values)}"
         if len(values) < self.min_args:
+            err_msg = f"Expected at least {self.min_args} but got {len(values)}"
             raise SyntaxError(f"Missing arguments in line {lineno}. {err_msg}")
+        err_msg = f"Expected maximum {self.max_args} but got {len(values)}"
         raise SyntaxError(f"Too many arguments in line {lineno}. {err_msg}")
