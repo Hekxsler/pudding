@@ -78,7 +78,7 @@ class Node:
 
     @classmethod
     def split_path(cls, path: str) -> list[tuple[str, str, str, str]]:
-        """Split the path into nodes.
+        """Parse and split a path into nodes.
 
         :param path: Path to split.
         :returns: List of node matches as a tuple.
@@ -99,7 +99,8 @@ class Node:
                     matches.append(groups)
                 path = path[len(match.group(0)) :]
                 match = cls.node_re.match(path)
-            if matches:
+            if matches and not path:
+                # remaining chars in path string -> no fullmatch -> invalid path
                 return matches
         raise ValueError(f"Invalid path {repr(path)}.")
 

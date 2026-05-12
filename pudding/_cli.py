@@ -24,7 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Build argument parser."""
     parser = argparse.ArgumentParser(prog="pudding", description=DESCRIPTION)
     parser.add_argument(
-        "filename", metavar="FILE", help="The file or files to convert.", nargs="+"
+        "filename", help="The file or files to convert.", metavar="FILE", nargs="+"
     )
     parser.add_argument(
         "-s",
@@ -49,7 +49,7 @@ def build_parser() -> argparse.ArgumentParser:
         "-o",
         "--output",
         help=(
-            "If converting a single file this is the name of the output file."
+            "If converting a single file this is the name of the output file. "
             "When converting multiple files this is the output directory."
         ),
         metavar="OUTPUT",
