@@ -113,8 +113,10 @@ class BaseToken:
         :returns: PAction for processor class.
         """
         raise NotImplementedError()
-    
-    def get_optional_replaced_string(self, index: int, context: "Context") -> str | None:
+
+    def get_optional_replaced_string(
+        self, index: int, context: "Context"
+    ) -> str | None:
         """Get an optional String with replaced variables or None."""
         if self.get_value(index):
             return self.get_replaced_string(index, context)

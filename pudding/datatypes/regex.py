@@ -13,5 +13,5 @@ class Regex(Data):
     def __init__(self, line: int, value: str) -> None:
         """Init for Regex class."""
         super().__init__(line, value)
-        self.value = re.sub(r"(?<!\\)\((?!\?\:)", "(?:", value[1:-1])
+        self.value = value[1:-1]
         self.re_pattern = self.value

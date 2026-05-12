@@ -33,7 +33,8 @@ class MultiExpStatement(MultiExpToken):
         pattern = r""
         for data in self.values:
             if isinstance(data, (String, Regex)):
-                pattern += rf"({data.re_pattern})"
+                match_pattern = re.sub(r"(?<!\\)\((?!\?\:)", "(?:", data.re_pattern)
+                pattern += rf"({match_pattern})"
             elif isinstance(data, Varname):
                 pattern += rf"({context.get_var(data)})"
             elif isinstance(data, Or):
