@@ -1,13 +1,11 @@
 """Import statement."""
 
 import re
-from typing import Self
+from typing import NoReturn, Self
 
-from ...datatypes.util import string_to_datatype
+from pudding.datatypes import String, string_to_datatype
+from pudding.processor.context import Context
 
-from ...datatypes import String
-from ...processor import PAction
-from ...processor.context import Context
 from .statement import Statement
 
 
@@ -31,7 +29,7 @@ class FromImport(Statement):
         values = [token_match.group(2), token_match.group(3)]
         return cls(lineno, name, tuple((string_to_datatype(v, lineno) for v in values)))
 
-    def execute(self, context: Context) -> PAction:
+    def execute(self, context: Context) -> NoReturn:
         """Execute this token.
 
         :param context: Current context object.
@@ -48,7 +46,7 @@ class Import(Statement):
     match_re = re.compile(r"(import) +(.*)$")
     value_types = (String,)
 
-    def execute(self, context: Context) -> PAction:
+    def execute(self, context: Context) -> NoReturn:
         """Execute this token.
 
         :param context: Current context object.

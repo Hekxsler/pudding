@@ -3,8 +3,9 @@
 import re
 from typing import NoReturn
 
-from ...datatypes.string import String
-from ...processor.context import Context
+from pudding.datatypes import String
+from pudding.processor.context import Context
+
 from .statement import Statement
 
 
@@ -24,5 +25,5 @@ class Fail(Statement):
         :raises RuntimeError: Error with given message.
         """
         if len(self.values) == 1:
-            raise RuntimeError(context.replace_string_vars(self.get_string(0)))
+            raise RuntimeError(self.get_replaced_string(0, context))
         raise RuntimeError(f"Fail statement in line {self.lineno}.")

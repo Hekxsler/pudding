@@ -2,7 +2,8 @@
 
 import re
 
-from ...datatypes import Data, String
+from pudding.datatypes import Data, String
+
 from ..token import Token
 
 OPTIONAL_STRING = rf"(?:\, *({String.regex}))?"

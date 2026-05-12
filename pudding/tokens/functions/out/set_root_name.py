@@ -24,5 +24,5 @@ class SetRootName(Function):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        context.writer.root_name = self.get_string(0).value
+        context.writer.root_name = self.get_replaced_string(0, context)
         return PAction.CONTINUE

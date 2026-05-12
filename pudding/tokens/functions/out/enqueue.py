@@ -2,12 +2,13 @@
 
 import re
 
-from ....processor import PAction
-from ....processor.context import Context
-from ....processor.triggers import Timing, Trigger
-from ....datatypes import Regex, String, Varname
-from .add import Add
+from pudding.datatypes import Regex, String, Varname
+from pudding.processor import PAction
+from pudding.processor.context import Context
+from pudding.processor.triggers import Timing, Trigger
+
 from ..function import Function
+from .add import Add
 
 
 class Enqueue(Function):
@@ -26,7 +27,7 @@ class Enqueue(Function):
 
     def get_values(self) -> tuple[String, ...]:
         """Get values to create tag."""
-        if not isinstance(self.get_value(2), String):
+        if not self.get_value(2):
             return (self.get_string(1),)
         return (self.get_string(1), self.get_string(2))
 
@@ -36,7 +37,7 @@ class Enqueue(Function):
             timing,
             Trigger(
                 self.get_pattern(context),
-                Add(self.lineno, "EnqueuedAdd", tuple(self.get_values())),
+                Add(self.lineno, "EnqueuedAdd", self.get_values()),
             ),
         )
         return PAction.CONTINUE

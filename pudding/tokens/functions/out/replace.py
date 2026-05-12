@@ -2,9 +2,10 @@
 
 import re
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
 from ..function import Function
 
 
@@ -26,10 +27,8 @@ class Replace(Function):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        new_value = None
-        if self.get_value(1):
-            new_value = context.replace_string_vars(self.get_string(1))
         context.writer.replace_element(
-            context.replace_string_vars(self.get_string(0)), new_value
+            self.get_replaced_string(0, context),
+            self.get_optional_replaced_string(1, context),
         )
         return PAction.CONTINUE

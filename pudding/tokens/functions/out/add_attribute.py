@@ -2,9 +2,10 @@
 
 import re
 
-from ....datatypes import String
-from ....processor import PAction
-from ....processor.context import Context
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
 from ..function import Function
 
 
@@ -27,8 +28,8 @@ class AddAttribute(Function):
         :returns: PAction.CONTINUE
         """
         context.writer.add_attribute(
-            context.replace_string_vars(self.get_string(0)),
-            context.replace_string_vars(self.get_string(1)),
-            context.replace_string_vars(self.get_string(2)),
+            self.get_replaced_path(0, context),
+            self.get_replaced_string(1, context),
+            self.get_replaced_string(2, context),
         )
         return PAction.CONTINUE

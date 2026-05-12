@@ -1,10 +1,11 @@
 """Grammar statement."""
 
 import re
+from typing import NoReturn
 
-from ...datatypes import Varname
-from ...processor import PAction
-from ...processor.context import Context
+from pudding.datatypes import Varname
+from pudding.processor.context import Context
+
 from .statement import Statement
 
 
@@ -15,7 +16,7 @@ class Grammar(Statement):
     value_delim_re = re.compile(r"\(")
     value_types = (Varname, Varname)
 
-    def execute(self, context: Context) -> PAction:
+    def execute(self, context: Context) -> NoReturn:
         """Execute this token.
 
         :param context: Current context object.

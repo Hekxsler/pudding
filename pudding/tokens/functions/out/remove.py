@@ -2,9 +2,10 @@
 
 import re
 
-from ....processor import PAction
-from ....processor.context import Context
-from ....datatypes import String
+from pudding.datatypes import String
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
 from ..function import Function
 
 
@@ -26,5 +27,5 @@ class Remove(Function):
         :param context: Current context object.
         :returns: PAction.CONTINUE
         """
-        context.writer.delete_element(context.replace_string_vars(self.get_string(0)))
+        context.writer.delete_element(self.get_replaced_string(0, context))
         return PAction.CONTINUE

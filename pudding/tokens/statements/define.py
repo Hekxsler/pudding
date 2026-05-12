@@ -2,9 +2,10 @@
 
 import re
 
-from ...datatypes import Data, Or, Regex, String, Varname
-from ...processor import PAction
-from ...processor.context import Context
+from pudding.datatypes import Data, Or, Regex, String, Varname
+from pudding.processor import PAction
+from pudding.processor.context import Context
+
 from .statement import MultiExpStatement
 
 

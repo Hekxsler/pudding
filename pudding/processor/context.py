@@ -2,9 +2,7 @@
 
 import re
 
-from ..datatypes.varname import Varname
-
-from ..datatypes.string import String
+from ..datatypes import String, Varname
 from ..reader.reader import Reader
 from ..writer import Writer
 from .grammar import Grammar
